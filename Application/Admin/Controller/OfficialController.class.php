@@ -16,12 +16,19 @@ class officialController extends Controller {
         $map = array();
         if(!empty($areaid))
         {
-            $map['area_id'] = $areaid;
+            $map['a.area_id'] = $areaid;
         }
-        $map['state'] =1;
-		$map['flag']  = 0;
+        $map['a.state'] =1;
+		$map['a.flag']  = 0;
          
-        $list = $HotelModel->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map);
+        //$list = $HotelModel->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map);
+        
+		$fields = 'a.id,a.name,a.gps,a.addr,a.hotel_box_type,a.area_id,ext.is_salehotel';
+		$list = $HotelModel->alias('a')
+                   ->join('savor_hotel_ext ext on a.id=ext.hotel_id','left')
+                   ->field($fields)
+                   ->where($map)
+                   ->select();
         
         $heart_hotel_box_type = C('heart_hotel_box_type');
         $heart_hotel_box_type_arr = array_keys($heart_hotel_box_type);
@@ -43,6 +50,7 @@ class officialController extends Controller {
                 $tmp['lat'] = $gps_arr[1];
                 $tmp['addr'] = $v['addr'];
                 $tmp['areaid'] = $v['area_id'];
+                $tmp['is_salehotel'] = $v['is_salehotel'];
                 if(empty($v['hotel_box_type'])){
                     $tmp['is_screen'] = 0;
                 }else {
