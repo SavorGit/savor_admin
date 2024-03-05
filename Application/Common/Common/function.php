@@ -1375,4 +1375,30 @@ function transformLng($x, $y) {
     return $ret;
 }
 
+function getWeeksMonth($year,$month){
+    $date = new \DateTime("$year-$month-01");
+    $weeks = array();
+    // 如果第一天不是周一，将第一个周的开始日期设置为第一个周一
+    if ($date->format('N') != 1) {
+        $date->modify("last monday of previous month");
+    }
+    // 循环获取每周的开始和结束日期
+    while ($date->format('m') <= $month) {
+        $startOfWeek = $date->format('Y-m-d');
+        $date->modify('next sunday');
+        $endOfWeek = $date->format('Y-m-d');
+        if(date('m',strtotime($startOfWeek))!=$month && date('m',strtotime($endOfWeek))!=$month){
+            break;
+        }
+        $week_no = date('W', strtotime($startOfWeek));
+        // 存储本周的开始和结束日期到数组中
+        $weeks[$week_no] = array(
+            'start' => $startOfWeek,
+            'end' => $endOfWeek
+        );
+        // 移动到下一周的周一
+        $date->modify('next monday');
+    }
+    return $weeks;
+}
 ?>

@@ -502,6 +502,10 @@ class HotelController extends BaseController {
 			$vinfo['residenter_id'] = $main_info['residenter_id'];
 			$vinfo['trade_area_type'] = $main_info['trade_area_type'];
 			$vinfo['cooperate_status'] = $main_info['cooperate_status'];
+			$vinfo['department_name'] = $main_info['department_name'];
+			$vinfo['team_name'] = $main_info['team_name'];
+			$vinfo['service_fee'] = $main_info['service_fee'];
+			$vinfo['bdm_name'] = $main_info['bdm_name'];
             $trainer_id = $main_info['trainer_id'];
 			if(!empty($vinfo['media_id'])){
 				$mediaModel = new \Admin\Model\MediaModel();
@@ -769,11 +773,15 @@ class HotelController extends BaseController {
         $signer_id = I('post.signer_id',0,'intval');
         $is_goods_roll_content = I('post.is_goods_roll_content',0,'intval');
         $is_goods_leftpop_wind = I('post.is_goods_leftpop_wind',0,'intval');
+        $service_fee = I('post.service_fee',0,'intval');
         $is_new = I('post.is_new',0,'intval');
         $trade_area_type = I('post.trade_area_type',0,'intval');
         $jd_custom_no = I('post.jd_custom_no','','trim');
         $sale_start_date = I('post.sale_start_date','');
         $sale_end_date = I('post.sale_end_date','');
+        $department_name = I('post.department_name','');
+        $team_name = I('post.team_name','');
+        $bdm_name = I('post.bdm_name','');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -941,6 +949,10 @@ class HotelController extends BaseController {
         $data['is_goods_roll_content'] = $is_goods_roll_content;
         $data['is_new'] = $is_new;
         $data['trade_area_type'] = $trade_area_type;
+        $data['department_name'] = $department_name;
+        $data['service_fee'] = $service_fee;
+        $data['team_name'] = $team_name;
+        $data['bdm_name'] = $bdm_name;
         $data['jd_custom_no'] = $jd_custom_no;
         $data['dp_comment_num'] = $dp_comment_num;
         $data['residenter_id'] = $residenter_id;

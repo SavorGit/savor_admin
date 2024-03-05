@@ -28,8 +28,38 @@ class ResidentController extends BaseController{
     public function selldata(){
         $area_id = I('get.area_id',1,'intval');
         $month = I('get.month',1,'intval');
-        $year = date('Y');
 
+        $cache_key = 'cronscript:resident:selldata'.$area_id.$month;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $res = $redis->get($cache_key);
+        if(!empty($res)){
+            if($res == 1){
+                $this->success('数据正在生成中,请稍后访问下载');
+            }else{
+                //下载
+                $file_name = $res;
+                $file_path = SITE_TP_PATH.$file_name;
+                $file_size = filesize($file_path);
+                header("Content-type:application/octet-tream");
+                header('Content-Transfer-Encoding: binary');
+                header("Content-Length:$file_size");
+                header("Content-Disposition:attachment;filename=".$file_name);
+                @readfile($file_path);
+            }
+        }else{
+            $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/resident/selldatascript/area_id/$area_id/month/$month > /tmp/null &";
+            system($shell);
+            $redis->set($cache_key,1,3600);
+            $this->success('数据正在生成中,请稍后访问下载');
+        }
+    }
+
+    public function selldatascript(){
+        $area_id = I('get.area_id',1,'intval');
+        $month = I('get.month',1,'intval');
+        $year = date('Y');
+        $cache_file_key = 'cronscript:resident:selldata'.$area_id.$month;
         $startOfMonth = date('Y-m-01', strtotime($year . '-' . $month . '-01'));
         $endOfMonth = date('Y-m-t', strtotime($year . '-' . $month . '-01'));
         /*
@@ -70,7 +100,7 @@ class ResidentController extends BaseController{
         $month_end_time = "$endOfMonth 23:59:59";
         $month = date('m',strtotime($month_start_time));
         $weeks = $this->getWeeksMonth($year,$month);
-
+        $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql ="select a.id as hotel_id,a.name as hotel_name,a.area_id,area.region_name as area_name,circle.name circle_name,
             ext.signer_id,ext.residenter_id,signer.remark as signer_name,residenter.remark as residenter_name
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id
@@ -78,7 +108,7 @@ class ResidentController extends BaseController{
             left join savor_business_circle as circle on a.business_circle_id = circle.id
             left join savor_sysuser signer on ext.signer_id=signer.id
             left join savor_sysuser residenter on ext.residenter_id=residenter.id
-            where a.state=1 and a.flag=0 and ext.is_salehotel=1 and a.area_id={$area_id} order by a.id desc";
+            where a.state=1 and a.flag=0 and ext.is_salehotel=1 and a.area_id={$area_id} and a.id not in ($test_hotel_ids) order by a.id desc";
         $result = M()->query($sql);
         $m_room = new \Admin\Model\RoomModel();
         $m_sale = new \Admin\Model\FinanceSaleModel();
@@ -123,27 +153,14 @@ class ResidentController extends BaseController{
                 if($wk==5)  $sale_week6_num=intval($res_week_stock_record[0]['num']);
             }
 
-            $sale_where = array('stock.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$month_start_time),array('elt',$month_end_time)));
+            $sale_where = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$month_start_time),array('elt',$month_end_time)));
             $sale_where['a.ptype'] = array('in','0,2');
-            $res_sale_qk = $m_sale->getSaleStockRecordList('a.id as sale_id,a.settlement_price,a.ptype,a.is_expire,a.add_time',$sale_where,'','');
-            $qk_money = 0;
-            $cqqk_money = 0;
-            if(!empty($res_sale_qk)){
-                foreach ($res_sale_qk as $salev){
-                    if($salev['ptype']==0){
-                        $now_money = $salev['settlement_price'];
-                    }else{
-                        $res_had_pay = $m_sale_payment_record->getRow('sum(pay_money) as total_pay_money',array('sale_id'=>$salev['sale_id']));
-                        $had_pay_money = intval($res_had_pay['total_pay_money']);
-                        $now_money = $salev['settlement_price']-$had_pay_money;
-                    }
-                    $qk_money+=$now_money;
-                    if($salev['is_expire']==1){
-                        $cqqk_money+=$now_money;
-                    }
-                }
-            }
-            $cqqk_money = abs($cqqk_money);
+            $res_sale_qk = $m_sale->getSaleStockRecordList('sum(a.settlement_price-a.pay_money) as money',$sale_where,'','');
+            $qk_money = $res_sale_qk[0]['money']>0?$res_sale_qk[0]['money']:0;
+
+            $sale_where['a.is_expire'] = 1;
+            $res_sale_qk = $m_sale->getSaleStockRecordList('sum(a.settlement_price-a.pay_money) as money',$sale_where,'','');
+            $cqqk_money = $res_sale_qk[0]['money']>0?$res_sale_qk[0]['money']:0;
 
             $res_merchant = $m_merchant->getMerchants('a.id,a.is_shareprofit',array('a.hotel_id'=>$hotel_id,'a.status'=>1),'');
             $is_shareprofit = 0;
@@ -156,7 +173,6 @@ class ResidentController extends BaseController{
                 }else{
                     $is_shareprofit_str = '否';
                 }
-
                 $res_staff_num = $m_staff->getRow('count(*) as num',array('merchant_id'=>$res_merchant[0]['id'],'status'=>1));
                 $sale_people_num = intval($res_staff_num['num']);
             }
@@ -184,7 +200,6 @@ class ResidentController extends BaseController{
                 'is_shareprofit_str'=>$is_shareprofit_str,
             );
         }
-
         $cell = array(
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
@@ -206,11 +221,13 @@ class ResidentController extends BaseController{
             array('task_demand_finish_rate','点播任务完成率'),
             array('task_invitation_finish_rate','邀请函任务完成率'),
             array('is_shareprofit_str','是否分润'),
-
         );
 
         $filename = '驻店人员工作表';
-        $this->exportToExcel($cell,$datalist,$filename,1);
+        $path = $this->exportToExcel($cell,$datalist,$filename,2);
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $redis->set($cache_file_key,$path,3600);
     }
 
     public function hotelselldata(){

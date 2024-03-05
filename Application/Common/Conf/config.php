@@ -62,6 +62,44 @@ $config = array(
 //     29推广渠道投屏码 30投屏帮助视频 31活动霸王菜
     'TEST_HOTEL'=>array(7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925),
     'MAX_ADS_LOCATION_NUMS'=>50,
+    'DEPARTMENT_NAME'=>array('北京一部','北京二部','广州一部','广州二部','上海一部','佛山一部'),
+    'BDM_NAME'=>array(
+        '李丛'=>'li.cong@littlehotspot.com',
+        '孙子佳'=>'sun.zijia@littlehotspot.com',
+        '吴琳'=>'wu.lin@littlehotspot.com',
+        '谢冰蕾'=>'xie.binglei@littlehotspot.com',
+        '曹捷'=>'cao.jie@littlehotspot.com',
+        '肖雷'=>'xiao.lei@littlehotspot.com'
+    ),
+    'TEAM_NAME'=>array(
+        '李丛'=>'li.cong@littlehotspot.com',
+        '曹捷'=>'cao.jie@littlehotspot.com',
+        '吴琳'=>'wu.lin@littlehotspot.com',
+        '谢冰蕾'=>'xie.binglei@littlehotspot.com',
+        '肖雷'=>'xiao.lei@littlehotspot.com',
+        '辛立娟'=>'xin.lijuan@littlehotspot.com',
+        '卢琼'=>'lu.qiong@littlehotspot.com',
+        '张松'=>'zhang.song@littlehotspot.com',
+        '陈龙彪'=>'chen.longbiao@littlehotspot.com',
+        '孙子佳'=>'sun.zijia@littlehotspot.com',
+        '马元腾'=>'ma.yuanteng@littlehotspot.com',
+        '何世超'=>'he.shichao@littlehotspot.com',
+        '闫明'=>'yan.ming@littlehotspot.com',
+        '苏小娜'=>'su.xiaona@littlehotspot.com',
+        '林名茗'=>'lin.mingming@littlehotspot.com',
+        '梁启梁'=>'liang.qiliang@littlehotspot.com',
+        '陈济民'=>'chen.jimin@littlehotspot.com',
+        '苏剑峰'=>'su.jianfeng@littlehotspot.com',
+        '李海云'=>'li.haiyun@littlehotspot.com',
+        '胡泽霞'=>'hu.zexia@littlehotspot.com',
+        '罗成刚'=>'luo.chenggang@littlehotspot.com',
+        '吴美求'=>'wu.meiqiu@littlehotspot.com',
+        '陆莉'=>'lu.li@littlehotspot.com',
+        '程长江'=>'cheng.changjiang@littlehotspot.com',
+        '翁小虎'=>'weng.xiaohu@littlehotspot.com',
+        '赖桂华'=>'lai.guihua@littlehotspot.com'
+    ),
+    
 
     'SELLWINE_ACTIVITY' =>array(
         'url'=>'media/resource/iWzxhCKCDN.mp4',

@@ -4377,4 +4377,73 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
         echo join("\n",$error_sales);
     }
+
+    public function getweeks(){
+        $year = date('Y');
+        $month = I('get.month',1,'intval');
+
+        $startOfMonth = date('Y-m-01', strtotime($year . '-' . $month . '-01'));
+        $endOfMonth = date('Y-m-t', strtotime($year . '-' . $month . '-01'));
+
+        $month_start_time = "$startOfMonth 00:00:00";
+        $month_end_time = "$endOfMonth 23:59:59";
+        $month = date('m',strtotime($month_start_time));
+        $weeks = $this->getWeeksMonth($year,$month);
+        print_r($weeks);
+    }
+
+    private function getWeeksMonth($year,$month){
+        $date = new \DateTime("$year-$month-01");
+        $weeks = array();
+        // 如果第一天不是周一，将第一个周的开始日期设置为第一个周一
+        if ($date->format('N') != 1) {
+            $date->modify("last monday of previous month");
+        }
+        // 循环获取每周的开始和结束日期
+        while ($date->format('m') <= $month) {
+            $startOfWeek = $date->format('Y-m-d');
+            $date->modify('next sunday');
+            $endOfWeek = $date->format('Y-m-d');
+            if(date('m',strtotime($startOfWeek))!=$month && date('m',strtotime($endOfWeek))!=$month){
+                break;
+            }
+            $week_no = date('W', strtotime($startOfWeek));
+            // 存储本周的开始和结束日期到数组中
+            $weeks[$week_no] = array(
+                'start' => $startOfWeek,
+                'end' => $endOfWeek
+            );
+            // 移动到下一周的周一
+            $date->modify('next monday');
+        }
+        return $weeks;
+    }
+
+    public function uphotelbdm(){
+        $file_path = '/application_data/web/php/savor_admin/Public/content/hotel022901.xlsx';
+
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        for ($row = 2; $row<=$highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            $hotel_id = intval($rowData[0][0]);
+            $department_name = trim($rowData[0][1]);
+            $team_name = trim($rowData[0][2]);
+            $bdm_name = trim($rowData[0][3]);
+            $m_hotel_ext->updateData(array('hotel_id'=>$hotel_id),array('department_name'=>$department_name,'team_name'=>$team_name,'bdm_name'=>$bdm_name));
+
+            echo "hotel_id:$hotel_id ok \r\n";
+
+        }
+    }
+
 }
