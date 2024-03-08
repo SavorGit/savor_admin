@@ -4446,4 +4446,41 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
+    public function uphotelac(){
+        $file_path = '/application_data/web/php/savor_admin/Public/content/hotelac0306001.xlsx';
+
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $m_sysuser = new \Admin\Model\UserModel();
+        for ($row = 2; $row<=$highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            $hotel_id = intval($rowData[0][0]);
+            $ac_name = trim($rowData[0][1]);
+            $team_name = trim($rowData[0][2]);
+            $bdm_name = trim($rowData[0][3]);
+            $department_name = trim($rowData[0][4]);
+
+            $res_user = $m_sysuser->getUserData('id',array('remark'=>$ac_name,'status'=>1));
+            $user_id = $res_user[0]['id'];
+
+            $m_hotel_ext->updateData(array('hotel_id'=>$hotel_id),
+                array('maintainer_id'=>$user_id,'residenter_id'=>$user_id,
+                'department_name'=>$department_name,'team_name'=>$team_name,'bdm_name'=>$bdm_name
+                )
+            );
+
+            echo "hotel_id:$hotel_id ok \r\n";
+
+        }
+    }
+
 }
