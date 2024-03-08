@@ -23,7 +23,7 @@ class BbsController extends Controller{
         $hot_end_time = date('Y-m-d 23:59:59',strtotime("+14 day"));
         foreach ($category_ids as $v){
             $category_id = $v;
-            $res_ccontent = $m_bbscontent->getAll('id',array('category_id'=>$category_id,'is_hot'=>0),0,10,'hot_num desc');
+            $res_ccontent = $m_bbscontent->getAll('id',array('category_id'=>$category_id,'is_hot'=>0,'hot_num'=>array('gt',0)),0,10,'hot_num desc');
             if(!empty($res_ccontent)){
                 $cids = array();
                 foreach ($res_ccontent as $cv){
