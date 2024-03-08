@@ -40,7 +40,7 @@ class SalerecordController extends BaseController{
             }
             $data[$key]['visit_purpose_str'] = $visit_p_s;
             $data[$key]['visite_type_str']   = $cate_arr[$v['visit_type']]['name'];
-            $data[$key]['visit_duration']    = secsToStr(strtotime($v['signout_time']) - strtotime($v['signin_time']));
+            $data[$key]['visit_duration']    = round((strtotime($v['signout_time']) - strtotime($v['signin_time']))/60);
             if($v['update_time']=='0000-00-00 00:00:00'){
                 $add_time = $v['add_time'];
             }else{
@@ -57,7 +57,7 @@ class SalerecordController extends BaseController{
             array('hotel_name','餐厅名称'),
             array('signin_time','签到时间'),
             array('signout_time','签退时间'),
-            array('visit_duration','拜访时长'),
+            array('visit_duration','拜访时长(分钟)'),
             array('visite_type_str','拜访类型'),
             array('visit_purpose_str','拜访目的'),
             array('add_time','提交时间'),
