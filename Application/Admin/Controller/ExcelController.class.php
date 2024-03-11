@@ -6373,7 +6373,14 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         $redis = SavorRedis::getInstance();
         $redis->select(15);
         $hotel_box_types = getHeartBoXtypeIds(2);
-        $not_hotel_in = '201,1129,925,791,7,883,845,598,597,504,482,493,53';
+        //$not_hotel_in = '201,1129,925,791,7,883,845,598,597,504,482,493,53';
+        $test_hotels = C('TEST_HOTEL');
+        $not_hotel_in = '';
+        foreach($test_hotels as $key=>$v){
+            $not_hotel_in .=$space .$v;
+            $space = ',';
+        }
+        
         $sql = "select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark,
         box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id,hlog.pro_period,
         hlog.apk_version,case ext.is_salehotel 
@@ -6387,6 +6394,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         left join savor_sysuser user on user.id= ext.maintainer_id
         left join savor_heart_log hlog on box.id=hlog.box_id
         where hotel.id not in($not_hotel_in) and  hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+       
         $data = M()->query($sql);
         // $datalist = [];
         $promenuHoModel = new \Admin\Model\ProgramMenuHotelModel();
