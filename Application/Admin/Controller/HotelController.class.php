@@ -500,6 +500,7 @@ class HotelController extends BaseController {
 			$vinfo['main_id'] = $main_info['maintainer_id'];
 			$vinfo['signer_id'] = $main_info['signer_id'];
 			$vinfo['residenter_id'] = $main_info['residenter_id'];
+			$vinfo['responsible_maintainer_id'] = $main_info['responsible_maintainer_id'];
 			$vinfo['trade_area_type'] = $main_info['trade_area_type'];
 			$vinfo['cooperate_status'] = $main_info['cooperate_status'];
 			$vinfo['department_name'] = $main_info['department_name'];
@@ -770,6 +771,7 @@ class HotelController extends BaseController {
         $is_salestat = I('post.is_salestat',0,'intval');
         $is_salehotel = I('post.is_salehotel',0,'intval');
         $residenter_id = I('post.residenter_id',0,'intval');
+        $responsible_maintainer_id = I('post.responsible_maintainer_id',0,'intval');
         $signer_id = I('post.signer_id',0,'intval');
         $is_goods_roll_content = I('post.is_goods_roll_content',0,'intval');
         $is_goods_leftpop_wind = I('post.is_goods_leftpop_wind',0,'intval');
@@ -956,6 +958,7 @@ class HotelController extends BaseController {
         $data['jd_custom_no'] = $jd_custom_no;
         $data['dp_comment_num'] = $dp_comment_num;
         $data['residenter_id'] = $residenter_id;
+        $data['responsible_maintainer_id'] = $responsible_maintainer_id;
         $data['signer_id'] = $signer_id;
 		$tranDb = new Model();
 		$tranDb->startTrans();
