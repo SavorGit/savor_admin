@@ -4483,4 +4483,21 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
+    public function rewosale(){
+        exit;
+        $json_wo = '{"id":"326395","stock_id":"6171","stock_detail_id":"8793","goods_id":"6","batch_no":"1706357140052","pidcode":"","idcode":"9dd8d4d03b71d674","vintner_code":"","price":"-568.00","total_fee":"-568.00","avg_price":"567.47","unit_id":"1","amount":"-1","total_amount":"-1","status":"0","type":"7","reason":"","wo_reason_type":"3","wo_data_imgs":"","wo_status":"2","wo_num":"1","department_user_id":"0","audit_user_id":"0","recycle_status":"4","recycle_audit_user_id":"0","recycle_time":"0000-00-00 00:00:00","recycle_img":"","recycle_audit_time":"0000-00-00 00:00:00","op_openid":"o9GS-4gy3kS--R6_Ci07Vajq483Q","dstatus":"1","update_time":"2024-01-27 20:05:40","wo_time":"2024-01-27 20:05:40","out_time":"2023-11-28 18:35:31","longitude":"113.412448","latitude":"23.114107","is_notifymsg":"0","add_time":"2024-01-27 20:05:40"}';
+
+        $json_sale = '{"id":"51025","stock_record_id":"326395","goods_id":"6","order_id":"0","idcode":"9dd8d4d03b71d674","num":"1","gift_idcode":"","cost_price":"568.00","settlement_price":"0.00","goods_settlement_price":"530.00","sale_price":"0.00","now_avg_price":"524.42","area_id":"236","hotel_id":"1091","sale_openid":"o9GS-4gy3kS--R6_Ci07Vajq483Q","maintainer_id":"544","residenter_id":"544","guest_openid":"","guest_mobile":"","invoice_time":"0000-00-00 00:00:00","invoice_money":"0.00","invoice_type":"0","invoice_number":"","invoice_payname":"","is_express":"0","express_name":"","express_number":"","sale_payment_id":"0","payer_name":"","payer_account":"","pay_image":"","status":"0","tax_rate":"0","pay_money":"0.00","pay_time":"0000-00-00 00:00:00","ptype":"0","type":"1","push_u8_status13":"0","push_u8_time13":"0000-00-00 00:00:00","push_u8_status2":"0","push_u8_time2":"0000-00-00 00:00:00","jd_voucher_no":"0","is_expire":"1","is_notifymsg_qk":"0","is_notifymsg_sk":"0","add_time":"2024-01-27 20:05:40","edit_time":"2024-01-27 20:05:40"}';
+
+        $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $wo_data = json_decode($json_wo,true);
+        $stock_record_id = $m_stock_record->add($wo_data);
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $sale_data = json_decode($json_sale,true);
+        $sale_id = $m_sale->add($sale_data);
+
+        echo "wo:$stock_record_id=====sale:$sale_id";
+
+    }
+
 }
