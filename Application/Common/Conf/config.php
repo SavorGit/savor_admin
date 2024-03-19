@@ -99,7 +99,11 @@ $config = array(
         '翁小虎'=>'weng.xiaohu@littlehotspot.com',
         '赖桂华'=>'lai.guihua@littlehotspot.com'
     ),
-    
+    'OPS_TASK_SOURCES'=>array(
+        '1'=>array('id'=>1,'name'=>'渠道部'),
+        '2'=>array('id'=>2,'name'=>'运维部'),
+        '3'=>array('id'=>3,'name'=>'系统任务'),
+    ),
 
     'SELLWINE_ACTIVITY' =>array(
         'url'=>'media/resource/iWzxhCKCDN.mp4',

@@ -83,7 +83,7 @@ class SalerecordController extends BaseController{
         foreach ($res_user as $v){
             $all_user[$v['id']]=$v;
         }
-
+        $all_task_resource = C('OPS_TASK_SOURCES');
         $where ="a.add_time>='$start_date' and a.add_time<='$end_date' and a.type=3 and a.status=2";
         $sql = 'select a.ops_staff_id,area.region_name,staff.sysuser_id user_id,hotel.id hotel_id,hotel.name hotel_name,
                a.signin_time,a.signout_time,a.update_time,a.add_time,a.visit_type,a.content,a.task_source,a.box_handle_num,
@@ -94,6 +94,7 @@ class SalerecordController extends BaseController{
                left join savor_area_info area on hotel.area_id=area.id where '.$where;
         $datalist = M()->query($sql);
         foreach($datalist as $k=>$v){
+            $datalist[$k]['task_source_str'] = $all_task_resource[$v['task_source']]['name'];
             $datalist[$k]['visite_type_str'] = $cate_arr[$v['visit_type']]['name'];
             $datalist[$k]['visit_duration'] = round((strtotime($v['signout_time']) - strtotime($v['signin_time']))/60);
             if($v['update_time']=='0000-00-00 00:00:00'){
