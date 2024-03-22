@@ -6374,6 +6374,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         $redis->select(15);
         $hotel_box_types = getHeartBoXtypeIds(2);
         //$not_hotel_in = '201,1129,925,791,7,883,845,598,597,504,482,493,53';
+        $heart_hotel_box_type = C('heart_hotel_box_type');
         $test_hotels = C('TEST_HOTEL');
         $not_hotel_in = '';
         foreach($test_hotels as $key=>$v){
@@ -6382,7 +6383,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         }
         
         $sql = "select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark,
-        box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id,hlog.pro_period,
+        box.mac box_mac,hlog.last_heart_time ,box.id box_id ,box.box_type,hlog.box_id hlog_box_id,hlog.pro_period,
         hlog.apk_version,case ext.is_salehotel 
 				when 1 then '是'
 				when 0 then '否' END AS is_salehotel
@@ -6401,7 +6402,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         $promenuListModel = new \Admin\Model\ProgramMenuListModel();
         $pro_hotel_arr = [];
         foreach ($data as $key => $v) {
-            
+            $data[$key]['box_type'] = $heart_hotel_box_type[$v['box_type']]; 
             if (empty($v['last_heart_time'])) {
                 $data[$key]['last_heart_time'] = '';
                 $data[$key]['last_heart_time_str'] = '30';
@@ -6474,6 +6475,10 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             array(
                 'box_mac',
                 '机顶盒mac'
+            ),
+            array(
+                'box_type',
+                '机顶盒类型'
             ),
             array(
                 'last_heart_time',
