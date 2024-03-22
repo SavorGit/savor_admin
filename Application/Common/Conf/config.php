@@ -1174,6 +1174,23 @@ $config['ORDER_EXPRESS_DTYPES'] = array(
     '2'=>array('id'=>2,'name'=>'第三方发货'),
 
 );
+$config['JOB_DEPARTMENT_LIST'] = array( '1'=>array('id'=>1,'name'=>'AC'),'2'=>array('id'=>2,'name'=>'BD'), 
+                                        '3'=>array('id'=>3,'name'=>'BDM'),'4'=>array('id'=>4,'name'=>'CM'),
+                                    
+                                        '5'=>array('id'=>5,'name'=>'CEO'),'6'=>array('id'=>6,'name'=>'COO'),
+                                        '7'=>array('id'=>7,'name'=>'副总裁'),'8'=>array('id'=>8,'name'=>'助理'),
+                                        
+                                        '9'=>array('id'=>9,'name'=>'视觉设计'),'10'=>array('id'=>10,'name'=>'运营总监'),
+                                        '11'=>array('id'=>'11','name'=>'培训讲师'),'12'=>array('id'=>12,'name'=>'财务经理'),
+                                        
+                                        '13'=>array('id'=>13,'name'=>'财务总监'),'14'=>array('id'=>14,'name'=>'库管'),
+                                        '15'=>array('id'=>'15','name'=>'人事经理'),'16'=>array('id'=>16,'name'=>'人事主管'),
+                                        
+                                        '17'=>array('id'=>17,'name'=>'研发经理'),'18'=>array('id'=>18,'name'=>'研发工程师'),
+                                        '19'=>array('id'=>19,'name'=>'产品经理'),'20'=>array('id'=>20,'name'=>'测试工程师'),
+                                        
+                                        '21'=>array('id'=>21,'name'=>'运维'),'22'=>array('id'=>22,'name'=>'会计'),
+);
 $config['RD_TEST_HOTEL'] =
     array (
 
