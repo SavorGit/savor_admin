@@ -1,0 +1,96 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<script src="/Public/admin/assets/js/timepicki.js" type="text/javascript" />
+<link href="/Public/admin/assets/css/timepicki.css" rel="stylesheet" type="text/css" />
+
+
+
+<style type="text/css">
+    .zhezhao{
+
+
+
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+ <div class="tools-group hidden-xs ">员工绩效设置</div>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print" style="overflow:hidden;">
+    <div class="no-more-tables" style="margin-top:20px;">
+      
+      
+      <form method="post" action="{$host_name}/sysconfig/updateUserkpi" id="configvolume" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <!-- <th colspan="5">音量设置</th> -->
+            <tr >
+              <td>基准单瓶成本：<input  placeholder="请输入数字" type="text" name="per_bottle_cost" value="{$config_info.per_bottle_cost}" min='0' max='10000'  />元</td>
+              <td>基准单瓶奖励：<input  placeholder="请输入数字" type="text" name="per_botte_award" value="{$config_info.per_botte_award}" min='0' max='10000'  />元</td>
+              
+              
+            </tr>
+            <volist name="config_info.payback_day_commission" id="vinfo">
+			<tr >
+				<td>回款天数区间：</td>
+                <td><input  placeholder="请输入数字" type="text" name="min[]" value="{$vinfo.min}" min='0' max='100'  />
+                    <input  placeholder="请输入数字" type="text" name="max[]" value="{$vinfo.max}" min='0' max='9999'  />
+                
+                </td>
+                <td>提成可获得：<input  placeholder="请输入数字" type="text" name="percent[]" value="{$vinfo.percent}" min='0' max='100'  />%</td>
+                
+                
+            </tr>
+            </volist>
+            <tr>
+            	<td>
+            	</td>
+            	<td>
+            	</td>
+            	<td>
+                    <button class="btn btn-primary" type="submit">保存</button>
+                </td>
+            </tr>
+          
+
+
+          </thead>
+          
+          </tbody>
+        </table>
+        
+      </form>
+
+    
+
+
+
+
+
+        
+    </div>
+  </div>
+  {$page}
+</div>

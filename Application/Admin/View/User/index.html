@@ -14,7 +14,16 @@
           </div>
         </div>
         <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
+        	
           <div class="input-group input-group-sm">
+            <span class="input-group-btn">
+              <select name="job_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >所有职位</option>
+                <volist name="job_list" id="vinfo">
+                  <option value="{$vinfo.id}" <if condition="$job_id eq $vinfo['id']">selected</if> >{$vinfo.name}</option>
+                </volist>
+              </select>
+            </span>
             <input type="text" class="form-control" name="searchTitle" value="{$searchTitle}" placeholder="用户昵称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>

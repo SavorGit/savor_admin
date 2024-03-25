@@ -6,7 +6,7 @@ namespace Admin\Controller;
  */
 use \Common\Lib\Tree;
 class UserController extends BaseController {
-    
+    //var $departmentlist = array('1'=>array('id'=>1,'name'=>'AC'),'2'=>array('id'=>'2','name'=>'BD'), '3'=>array('id'=>'3','name'=>'BDM'),'4'=>array('id'=>'4','name'=>'CM'));
     public function __construct() {
         parent::__construct();
     }
@@ -34,10 +34,21 @@ class UserController extends BaseController {
             $where .= " and shw_cid = '$searchClass'";
             $this->assign('searchClass',  $searchClass);
         }
+        $job_id = I('job_id');
+        if($job_id){
+            $where .=' and job_id='.$job_id;
+            $this->assign('job_id',$job_id);
+        }
         
         $result = $user->getUserlist($where, $orders, $start, $size);
         $groups = new \Admin\Model\SysusergroupModel();
         $rstGroup= $groups->getAllGroup();
+        
+        $job_list = C('JOB_DEPARTMENT_LIST');
+        
+        $this->assign('job_list',$job_list);
+        
+        
         $this->assign('groupslist',$rstGroup);
         
         $this->assign('userlist', $result['list']);
@@ -52,7 +63,7 @@ class UserController extends BaseController {
         $rstGroup= $groups->getAllGroup();
         $this->assign('groupslist',$rstGroup);
         $user = new \Admin\Model\UserModel();
-        
+        $departmentlist = C('JOB_DEPARTMENT_LIST');
         //处理提交数据
         if(IS_POST) {
             //获取参数
@@ -62,6 +73,12 @@ class UserController extends BaseController {
             $username= I('username');
             $userpwd = I('userpwd');
             $status  = I('status', 1, 'int');
+            $salary  = I('salary');
+            $telephone = I('telephone');
+            $email   = I('email');
+            $entry_time = I('entry_time');
+            $out_time   = I('out_time');
+            $job_id     = I('job_id');
             $count = $user->getUserCount(array('username'=>$username));
             if($count > 0){
                 $this->error('用户登录名称已经存在');
@@ -72,11 +89,19 @@ class UserController extends BaseController {
             }
             //判断添加
             if($remark && $username && $userpwd) {
-                $data['id']   = $userId;
-                $data['remark']   = $remark;
-                $data['username'] = $username;
-                $data['groupId'] = $groupId;
-                $data['status'] = $status;
+                $data['id']         = $userId;
+                $data['remark']     = $remark;
+                $data['username']   = $username;
+                $data['groupId']    = $groupId;
+                $data['status']     = $status;
+                $data['salary']     = $salary;
+                $data['telephone']  = $telephone;
+                $data['email']      = $email;
+                $data['entry_time'] = $entry_time;
+                $data['out_time']   = $out_time;
+                $data['job_id']     = $job_id;
+                
+                
                 $pwdpre = C('PWDPRE');
                 $userpwd = $userpwd.$pwdpre;
                 $data['password'] = md5($userpwd);
@@ -102,9 +127,11 @@ class UserController extends BaseController {
             $result = $user->getUserInfo($uid);
             $this->assign('vinfo', $result);
             $this->assign('acttype', 1);
+            
         } else {
             $this->assign('acttype', 0);
         }
+        $this->assign('departmentlist',$departmentlist);
         $this->display('User/useradd');
     }
     
@@ -115,6 +142,7 @@ class UserController extends BaseController {
         $groups = new \Admin\Model\SysusergroupModel();
         $rstGroup= $groups->getAllGroup();
         $this->assign('groupslist',$rstGroup);
+        $departmentlist = C('JOB_DEPARTMENT_LIST');
         if(IS_POST) {
             //获取参数
             $groupId= I('group', 0, 'int');
@@ -122,6 +150,12 @@ class UserController extends BaseController {
             $remark  = I('remark');
             $newuserpwd = I('newuserpwd');
             $status  = I('status', 1, 'int');
+            $salary  = I('salary');
+            $telephone = I('telephone');
+            $email   = I('email');
+            $entry_time = I('entry_time');
+            $out_time   = I('out_time');
+            $job_id     = I('job_id');
             //判断昆成
             $user = new \Admin\Model\UserModel();
             $map['remark'] = trim($remark);
@@ -140,6 +174,13 @@ class UserController extends BaseController {
                     $newuserpwd = $newuserpwd.$pwdpre;
                     $data['password'] = md5($newuserpwd);
                 }
+                $data['salary']     = $salary;
+                $data['telephone']  = $telephone;
+                $data['email']      = $email;
+                $data['entry_time'] = $entry_time;
+                $data['out_time']   = $out_time;
+                $data['job_id']     = $job_id;
+                //print_r($data);exit;
                 $user = new \Admin\Model\UserModel();
                 $result = $user->addData($data, $acttype);
                 $this->output('操作成功!', 'user/userList');
@@ -151,7 +192,10 @@ class UserController extends BaseController {
         //非提交处理
         $user = new \Admin\Model\UserModel();
         $result = $user->getUserInfo($uid);
+        $result['entry_time'] = $result['entry_time'] =='0000-00-00' ? '' : $result['entry_time'];
+        $result['out_time']   = $result['out_time'] == '0000-00-00'  ? '' : $result['out_time'];
         $this->assign('vinfo', $result);
+        $this->assign('departmentlist',$departmentlist);
         $this->display('useredit');
     }
     

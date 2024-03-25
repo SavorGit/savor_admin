@@ -43,6 +43,68 @@
           </select>
         </div>
       </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          	薪资：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="salary" type="text" value="{$vinfo.salary}"  minlength="3" maxlength="9" class="form-control" />
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          	手机：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="telephone" type="text" value="{$vinfo.telephone}"  maxlength="11" class="form-control" />
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          	邮箱：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="email" type="text" value="{$vinfo.email}"  maxlength="50" class="form-control" />
+        </div>
+      </div>
+      <div class="form-group row send_time1" id="goods_start_date">
+			<label class="col-xs-12 col-sm-2 control-label">入职日期：</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="input-group date form_datetime" data-date="{$vinfo.entry_time}" data-ymd="true">
+					<input name="entry_time" type="text" size="16" class="form-control date" placeholder="入职日期" value="{$vinfo.entry_time}">
+					<span class="input-group-btn">
+							<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+							<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+				</div>
+			</div>
+	  </div>	
+      <div class="form-group row send_time2" id="goods_end_date">
+			<label class="col-xs-12 col-sm-2 control-label">离职日期：</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="input-group date form_datetime" data-date="{$vinfo.out_time}" data-ymd="true">
+					<input name="out_time" type="text" size="16" class="form-control date" placeholder="离职日期" value="{$vinfo.out_time}" >
+					<span class="input-group-btn">
+						<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+						<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+					</span>
+				</div>
+			</div>
+	  </div>	
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          职位：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select name="job_id"  class="form-control bs-select" title="请选择职位...">
+            <option value='' <if condition="$vinfo['deparment'] eq ''">selected</if>>请选择职位</option>
+            <volist name="departmentlist" id="vo">
+              
+              <option value="{$vo.id}"  <if condition="$vinfo['job_id'] eq $vo['id']">selected</if>> {$vo.name} </option>
+            </volist>
+          </select>
+        </div>
+      </div>
 
       <div class="form-group row">
         <label for="" class="col-xs-12 col-sm-2 control-label">

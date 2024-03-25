@@ -9,6 +9,16 @@ use Common\Lib\SavorRedis;
 class SysconfigController extends BaseController {
     
      private $oss_host = '';
+     private $payback_day_commission_conf = array(
+         
+         array('min'=>0,'max'=>7,'percent'=>''),
+         array('min'=>8,'max'=>15,'percent'=>''),
+         array('min'=>16,'max'=>30,'percent'=>''),
+         array('min'=>31,'max'=>60,'percent'=>''),
+         array('min'=>61,'max'=>90,'percent'=>''),
+         array('min'=>91,'max'=>9999,'percent'=>''),
+         
+     );
 	 public function __construct(){
 	     parent::__construct();
 	     $this->oss_host = get_oss_host();
@@ -317,6 +327,68 @@ class SysconfigController extends BaseController {
             $this->output('操作成功!', 'sysconfig/configData',2);
         }else {
             $this->error('操作失败3!');
+        }
+    }
+    public function userkpi(){
+        $m_sysconfig = new \Admin\Model\SysConfigModel();
+        //per_bottle_cost    per_botte_award payback_day_commission
+        $where = [];
+        $where['status'] = 1;
+        $where['config_key'] = array('in',array('per_bottle_cost','per_botte_award','payback_day_commission'));
+        $config_list = $m_sysconfig->where($where)->select();
+        
+        $per_bottle_cost = '';
+        $per_botte_award = '';
+        $payback_day_commission = $this->payback_day_commission_conf;
+        foreach($config_list as $key=>$v){
+            if($v['config_key']=='per_bottle_cost'){
+                $per_bottle_cost = $v['config_value'];
+            }
+            if($v['config_key']=='per_botte_award'){
+                $per_botte_award = $v['config_value'];
+            }
+            if($v['config_key'] =='payback_day_commission' && !empty($v['config_value'])){
+                $payback_day_commission = json_decode($v['config_value'],true);
+            }
+        }
+        $config_info = [];
+        $config_info['per_bottle_cost'] = $per_bottle_cost;
+        $config_info['per_botte_award'] = $per_botte_award;
+        $config_info['payback_day_commission'] = $payback_day_commission;
+        ///print_r($config_info);
+        //echo  json_encode($payback_day_commission);
+        
+        $this->assign('config_info',$config_info);
+        $this->display('userkpi');
+    }
+    public function updateUserkpi(){
+        
+        $per_bottle_cost = I('post.per_bottle_cost');
+        $per_botte_award = I('post.per_botte_award');
+        $min             = I('post.min');
+        $max             = I('post.max');
+        $percent         = I('post.percent');
+        //print_r($percent);exit;
+        $payback_day_commission_conf = $this->payback_day_commission_conf;
+        //print_r($payback_day_commission_conf);exit;
+        foreach($payback_day_commission_conf as $key=>$v){
+            
+            $payback_day_commission_conf[$key]['min']     = $min[$key];
+            $payback_day_commission_conf[$key]['max']     = $max[$key];
+            $payback_day_commission_conf[$key]['percent'] = $percent[$key];
+        }
+        $m_sysconfig = new \Admin\Model\SysConfigModel();
+        
+        $data = [];
+        $data['per_bottle_cost'] = $per_bottle_cost;
+        $data['per_botte_award'] = $per_botte_award;
+        $data['payback_day_commission'] = json_encode($payback_day_commission_conf);
+        
+        $ret = $m_sysconfig->updateInfo($data);
+        if($ret){
+            $this->output('操作成功!', 'sysconfig/configData',2);
+        }else {
+            $this->error('操作失败!');
         }
     }
 
