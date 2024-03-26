@@ -360,7 +360,7 @@ class HotelgoodsController extends BaseController {
             $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
             foreach ($hotel_arr as $v){
                 $hotel_id = $v['hotel_id'];
-                $where = array('hotel_id'=>$hotel_id,'goods_id'=>$goods_id,'openid'=>'','type'=>1);
+                $where = array('hotel_id'=>$hotel_id,'goods_id'=>$goods_id,'type'=>1);
                 $res = $m_hotelgoods->where($where)->find();
                 if(empty($res)){
                     $is_succ = true;

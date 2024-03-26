@@ -4497,6 +4497,27 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $sale_id = $m_sale->add($sale_data);
 
         echo "wo:$stock_record_id=====sale:$sale_id";
+    }
+
+    public function uphotelgoods(){
+        $goods_ids = array(11816,11815,11814,11685,11675,11644,11633,11629,11584,11575,11569,11435,11395,11388,11387,11385,11384,11373,11211,11210,11209,11199,11198,10980,10967,10966,10965,10964,10963,10962,10960,10959,10931,10930,10928,10927);
+        foreach ($goods_ids as $v){
+            $goods_id = $v;
+            $sql = "select * from (
+            select count(id) as num,hotel_id,GROUP_CONCAT(id) as ids from savor_smallapp_hotelgoods where goods_id={$goods_id} 
+            group by hotel_id
+            ) as a where a.num>1";
+            $res = M()->query($sql);
+            if(!empty($res)){
+                foreach ($res as $rv){
+                    $ids = explode(',',$rv['ids']);
+                    rsort($ids);
+                    M()->execute("delete from savor_smallapp_hotelgoods where id={$ids[0]}");
+                    echo "del_id:{$ids[0]} \r\n";
+                }
+                echo "goods_id:$goods_id ok \r\n";
+            }
+        }
 
     }
 
