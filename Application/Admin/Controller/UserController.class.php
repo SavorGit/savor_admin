@@ -22,6 +22,7 @@ class UserController extends BaseController {
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
+        $orders = ' status asc,id desc';
         $start  = ( $start-1 ) * $size;
         $where = " where 1";
         $searchTitle= I('searchTitle');
@@ -38,6 +39,11 @@ class UserController extends BaseController {
         if($job_id){
             $where .=' and job_id='.$job_id;
             $this->assign('job_id',$job_id);
+        }
+        $status = I('status');
+        if($status){
+            $where .='  and status='.$status;
+            $this->assign('status',$status);
         }
         
         $result = $user->getUserlist($where, $orders, $start, $size);

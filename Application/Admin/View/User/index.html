@@ -16,6 +16,15 @@
         <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
         	
           <div class="input-group input-group-sm">
+          	<span class="input-group-btn">
+          		<select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >人员状态</option>
+                
+                <option value="1" <if condition="$status eq 1">selected</if> >启用</option>
+                <option value="2" <if condition="$status eq 2">selected</if> >禁用</option>
+              </select>
+          	</span>
+          
             <span class="input-group-btn">
               <select name="job_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value='0' >所有职位</option>

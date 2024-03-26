@@ -334,11 +334,12 @@ class SysconfigController extends BaseController {
         //per_bottle_cost    per_botte_award payback_day_commission
         $where = [];
         $where['status'] = 1;
-        $where['config_key'] = array('in',array('per_bottle_cost','per_botte_award','payback_day_commission'));
+        $where['config_key'] = array('in',array('per_bottle_cost','per_botte_award','award_coefficient','payback_day_commission'));
         $config_list = $m_sysconfig->where($where)->select();
         
         $per_bottle_cost = '';
         $per_botte_award = '';
+        $award_coefficient = '';
         $payback_day_commission = $this->payback_day_commission_conf;
         foreach($config_list as $key=>$v){
             if($v['config_key']=='per_bottle_cost'){
@@ -347,15 +348,19 @@ class SysconfigController extends BaseController {
             if($v['config_key']=='per_botte_award'){
                 $per_botte_award = $v['config_value'];
             }
+            if($v['config_key'] =='award_coefficient'){
+                $award_coefficient = $v['config_value'];
+            }
             if($v['config_key'] =='payback_day_commission' && !empty($v['config_value'])){
                 $payback_day_commission = json_decode($v['config_value'],true);
             }
         }
         $config_info = [];
-        $config_info['per_bottle_cost'] = $per_bottle_cost;
-        $config_info['per_botte_award'] = $per_botte_award;
+        $config_info['per_bottle_cost']        = $per_bottle_cost;
+        $config_info['per_botte_award']        = $per_botte_award;
+        $config_info['award_coefficient']      = $award_coefficient;
         $config_info['payback_day_commission'] = $payback_day_commission;
-        ///print_r($config_info);
+        //print_r($config_info);
         //echo  json_encode($payback_day_commission);
         
         $this->assign('config_info',$config_info);
@@ -363,11 +368,12 @@ class SysconfigController extends BaseController {
     }
     public function updateUserkpi(){
         
-        $per_bottle_cost = I('post.per_bottle_cost');
-        $per_botte_award = I('post.per_botte_award');
-        $min             = I('post.min');
-        $max             = I('post.max');
-        $percent         = I('post.percent');
+        $per_bottle_cost   = I('post.per_bottle_cost');
+        $per_botte_award   = I('post.per_botte_award');
+        $award_coefficient = I('post.award_coefficient');
+        $min               = I('post.min');
+        $max               = I('post.max');
+        $percent           = I('post.percent');
         //print_r($percent);exit;
         $payback_day_commission_conf = $this->payback_day_commission_conf;
         //print_r($payback_day_commission_conf);exit;
@@ -380,8 +386,9 @@ class SysconfigController extends BaseController {
         $m_sysconfig = new \Admin\Model\SysConfigModel();
         
         $data = [];
-        $data['per_bottle_cost'] = $per_bottle_cost;
-        $data['per_botte_award'] = $per_botte_award;
+        $data['per_bottle_cost']   = $per_bottle_cost;
+        $data['per_botte_award']   = $per_botte_award;
+        $data['award_coefficient'] = $award_coefficient;
         $data['payback_day_commission'] = json_encode($payback_day_commission_conf);
         
         $ret = $m_sysconfig->updateInfo($data);
