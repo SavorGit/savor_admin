@@ -87,26 +87,70 @@ class BoxModel extends BaseModel{
 		$data = array('list'=>$result,'page'=>$show);
 		return $data;
 	}
-
-
-	public function getBoxExNumNew(){
-		$Model = new \Think\Model();
-		$sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,tv.state tsta,box.state boxstate,hotel.hotel_box_type,
-	         box.mac mac,box.name bname, room.name rname, room.type rtype, tv.tv_brand tbrd, tv.tv_size tsiz,
-	         tv.tv_source, hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
-	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer
+    public function getAllTv(){
+        
+        $r_arr = array(
+            1=>'包间',
+            2=>'大厅',
+            3=>'等候区',
+        );
+        $rtype_sql = " case room.type  ";
+        foreach ($r_arr as $key=>$v){
+            $rtype_sql .= " when $key then '".$v."' ";
+        }
+        $rtype_sql .=" END as rtype ";
+        
+        //电视信号源
+        $tv_arr = array(
+            1=>'ant',
+            2=>'av',
+            3=>'hdmi',
+            4=>'',
+        );
+        $tv_source_sql = " case tv.tv_source";
+        foreach($tv_arr as $key=>$v){
+            $tv_source_sql .= " when $key then '".$v."' ";
+        }
+        $tv_source_sql .= " END as tv_source";
+        //重点酒楼
+        $ho_key = C('HOTEL_KEY');
+        $iskey_sql = ' case hotel.iskey';
+        foreach($ho_key as $key=>$v){
+            $iskey_sql .= " when $key then '".$v."' ";
+        }
+        $iskey_sql .= " END as iskey";
+        
+        
+        $htype = C('hotel_box_type');
+        $htpe_sql = 'case box.box_type';
+        foreach($htype as $key=>$v){
+            $htpe_sql .= " when $key then '".$v."'  "; 
+                           
+        }
+        $htpe_sql .= " END as box_type";
+        $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,
+                tv.state tsta,box.state boxstate,'.$htpe_sql.',
+	         box.mac mac,box.name bname, room.name rname, 
+             '.$rtype_sql.',
+             tv.tv_brand tbrd, tv.tv_size tsiz,
+	         '.$tv_source_sql.',
+             hotel.name hname, hotel.level, hotel.area_id,area.region_name area_name, hotel.addr, hotel.contractor,
+	         hotel.mobile, hotel.tel, 
+             '.$iskey_sql.',
+             sys.remark as maintainer, hotel.tech_maintainer
 	         from savor_tv as tv
 	         left join savor_box as box on tv.box_id = box.id
 	         left join savor_room as room on box.room_id = room.id
 	         left join savor_hotel as hotel on room.hotel_id = hotel.id
+             left join savor_area_info area on hotel.area_id = area.id
 	         left join savor_hotel_ext as hext on hext.hotel_id = hotel.id
 	         left join savor_sysuser as sys on sys.id = hext.maintainer_id
 	         where tv.flag=0 AND tv.state != 3 and hotel.flag=0 and hotel.state=1 order by hotel.id';
-		$volist = $Model->query($sql);
+        $volist = $this->query($sql);
+        return $volist;
+    }
 
-		$res = $this->changeInfoName($volist);
-		return $res;
-	}
+	
     public function getBoxList(){
         $Model = new \Think\Model();
         $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,box.state boxstate,hotel.hotel_box_type,
@@ -477,5 +521,22 @@ class BoxModel extends BaseModel{
             ->select();
         return $data;
     }
-
+    public function getBoxExNumNew(){
+        $Model = new \Think\Model();
+        $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,tv.state tsta,box.state boxstate,hotel.hotel_box_type,
+	         box.mac mac,box.name bname, room.name rname, room.type rtype, tv.tv_brand tbrd, tv.tv_size tsiz,
+	         tv.tv_source, hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
+	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer
+	         from savor_tv as tv
+	         left join savor_box as box on tv.box_id = box.id
+	         left join savor_room as room on box.room_id = room.id
+	         left join savor_hotel as hotel on room.hotel_id = hotel.id
+	         left join savor_hotel_ext as hext on hext.hotel_id = hotel.id
+	         left join savor_sysuser as sys on sys.id = hext.maintainer_id
+	         where tv.flag=0 AND tv.state != 3 and hotel.flag=0 and hotel.state=1 order by hotel.id';
+        $volist = $Model->query($sql);
+        
+        $res = $this->changeInfoName($volist);
+        return $res;
+    }
 }

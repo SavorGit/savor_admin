@@ -16,7 +16,7 @@ class ExcelController extends Controller
     public function exportExcel($expTitle, $expCellName, $expTableData,$filename,$type=1,$user_path = '/temp/test.xls')
     {
         set_time_limit(9000);
-        ini_set("memory_limit", "8018M");
+        ini_set("memory_limit", "18018M");
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
         $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
@@ -1610,17 +1610,17 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $rea,$filename);
 
     }
-
-
     function hotelinfo()
     {//导出Excel
+        set_time_limit(90000);
+        ini_set("memory_limit", "18018M");
         $boxModel = new \Admin\Model\BoxModel();
         //获取所有数据
-        $box_arr = $boxModel->getBoxExNumNew();
-        $htype = C('hotel_box_type');
+        $box_arr = $boxModel->getAllTv();
+        /*$htype = C('hotel_box_type');
         foreach($box_arr as $bk=>$bv) {
             $box_arr[$bk]['hotel_box_type'] = $htype[$box_arr[$bk]['hotel_box_type']];
-        }
+        }*/
         $filename = 'hotelboxlist';
         $xlsName = "User";
         $xlsCell = array(
@@ -1635,8 +1635,7 @@ class ExcelController extends Controller
             array('tsiz', '尺寸'),
             array('tv_source', '电视信号源'),
             array('hname', '酒店名称'),
-            array('level', '酒店级别'),
-            array('area_id', '酒店区域'),
+            array('area_name', '酒店区域'),
             array('addr', '酒店地址'),
             array('contractor', '酒店联系人'),
             array('mobile', '手机'),
@@ -1644,12 +1643,13 @@ class ExcelController extends Controller
             array('iskey', '重点酒楼'),
             array('maintainer', '合作维护人'),
             array('tech_maintainer', '技术运维人'),
-            array('hotel_box_type', '设备类型'),
+            array('box_type', '设备类型'),
         );
-
+        
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
-
+         
     }
+
     function hotelboxinfo(){
         $boxModel = new \Admin\Model\BoxModel();
         //获取所有数据
