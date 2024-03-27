@@ -1669,9 +1669,10 @@ class ExcelController extends Controller
             array('bname', '机顶盒名称'),
             
             array('hname', '酒店名称'),
-            array('area_id', '酒店区域'),
+            array('area_id', '酒店城市'),
+            array('county_id', '酒店区域'),
             array('addr', '酒店地址'),
-            
+            array('is_salehotel','是否售酒餐厅'),
             array('maintainer', '合作维护人'),
             array('box_type', '设备类型'),
             array('remark','包间备注'),

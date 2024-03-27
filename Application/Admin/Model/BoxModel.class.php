@@ -130,9 +130,12 @@ class BoxModel extends BaseModel{
         $not_hotel_in = '201,1129,925,791,7,883,845,598,597,504,482,493,53,495,493';
         $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,box.state boxstate,hotel.hotel_box_type,box.box_type,
 	         box.mac mac,box.name bname, room.name rname, room.type rtype,
-	          hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
+	          hotel.name hname, hotel.level, hotel.area_id,hotel.county_id, hotel.addr, hotel.contractor,
 	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer,
              room.remark,box.tag,hext.avg_expense,
+             case hext.is_salehotel
+                when 0 then "否"
+                when 1 then "是" END as is_salehotel,
              box.wifi_name,box.wifi_password,
              case box.`is_4g`
                 when 0 then "否"
@@ -225,6 +228,9 @@ class BoxModel extends BaseModel{
 			foreach ($area_info as  $v){
 				if($value['area_id'] == $v['id']){
 					$value['area_id'] = $v['region_name'];
+				}
+				if($value['county_id'] == $v['id']){
+				    $value['county_id'] = $v['region_name'];
 				}
 			}
 			foreach ($ho_key as  $k=>$v){
