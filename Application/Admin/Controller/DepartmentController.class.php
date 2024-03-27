@@ -170,8 +170,10 @@ class DepartmentController extends BaseController {
             $where = [];
             $where['job_id'] = 1;
             $where['status'] = 1;
-            $where['deparment_id'] = array('neq',$department_id);
+            //$where['deparment_id'] = array('neq',$department_id);
+            
             $user_list = $m_user->field('id,remark name')->where($where)->select();
+            echo $m_user->getLastSql();
             $this->assign('user_list',$user_list);
             $this->assign('department_info',$department_info);
             $this->display('memberadd');
