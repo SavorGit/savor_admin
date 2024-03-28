@@ -64,7 +64,6 @@ $config = array(
     'MAX_ADS_LOCATION_NUMS'=>50,
     'DEPARTMENT_NAME'=>array('北京一部','北京二部','广州一部','广州二部','上海一部','佛山一部'),
     'BDM_NAME'=>array(
-        '李丛'=>'li.cong@littlehotspot.com',
         '孙子佳'=>'sun.zijia@littlehotspot.com',
         '吴琳'=>'wu.lin@littlehotspot.com',
         '谢冰蕾'=>'xie.binglei@littlehotspot.com',
@@ -72,7 +71,6 @@ $config = array(
         '肖雷'=>'xiao.lei@littlehotspot.com'
     ),
     'TEAM_NAME'=>array(
-        '李丛'=>'li.cong@littlehotspot.com',
         '曹捷'=>'cao.jie@littlehotspot.com',
         '吴琳'=>'wu.lin@littlehotspot.com',
         '谢冰蕾'=>'xie.binglei@littlehotspot.com',
