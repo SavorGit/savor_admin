@@ -803,4 +803,38 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $this->exportToExcel($cell,$datalist,$filename,1);
         
     }
+
+    public function createqrcode(){
+        $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
+        for ($i=1;$i<=7000;$i++){
+            $pdata = array('status'=>1,'type'=>1,'ctype'=>2);
+            $parent_id = $m_qrcode_content->add($pdata);
+            $all_sdata = array();
+            for($si=1;$si<=6;$si++){
+                $sdata = array('parent_id'=>$parent_id,'status'=>1,'type'=>2,'ctype'=>2);
+                $all_sdata[]=$sdata;
+            }
+            $m_qrcode_content->addAll($all_sdata);
+        }
+        sleep(1);
+        $res_data = $m_qrcode_content->getDataList('id',array('ctype'=>2,'type'=>2),'id desc');
+        $datalist = array();
+        foreach ($res_data as $v){
+            $qrcontent = encrypt_data($v['id']);
+            $datalist[]=array('hotel_id'=>'','hotel_name'=>'','qrcode'=>$qrcontent,'in_id'=>'','out_id'=>'','wo_time'=>'');
+        }
+
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('qrcode','唯一码'),
+            array('in_id','入库单ID'),
+            array('out_id','出库单ID'),
+            array('wo_time','核销时间'),
+
+        );
+        echo 'finish';
+        $filename = '批量导入唯一码';
+        $this->exportToExcel($cell,$datalist,$filename,2);
+    }
 }
