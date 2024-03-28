@@ -63,7 +63,7 @@ class DepartmentController extends BaseController {
             $m_user = new \Admin\Model\UserModel();
             $where = [];
             $where['job_id'] = 2;
-            $where['status'] = 1;
+            //$where['status'] = 1;
             $userlist = $m_user->field('id,remark name')->where($where)->select();
             $this->assign('userlist',$userlist);
             $this->display('add');
@@ -169,7 +169,7 @@ class DepartmentController extends BaseController {
             $field = 'id,remark name';
             $where = [];
             $where['job_id'] = 1;
-            $where['status'] = 1;
+            //$where['status'] = 1;
             //$where['deparment_id'] = array('neq',$department_id);
             
             $user_list = $m_user->field('id,remark name')->where($where)->select();
