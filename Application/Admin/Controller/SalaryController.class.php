@@ -9,8 +9,8 @@ class SalaryController extends BaseController {
     
     public function filelist() {
         $static_month = date('Ym',strtotime('-1 month'));
-        $cache_salary_acbd_self_key = 'salary_acbd_self'.$static_month;
-        $cache_salary_acbd_team_key = 'salary_acbd_team'.$static_month;
+        $cache_salary_acbd_self_key = 'cronscript:salary_acbd_self'.$static_month;
+        $cache_salary_acbd_team_key = 'cronscript:salary_acbd_team'.$static_month;
         $redis  =  \Common\Lib\SavorRedis::getInstance();
         $redis->select(1);
         $acbd_self_data = $redis->get($cache_salary_acbd_self_key);
@@ -22,7 +22,7 @@ class SalaryController extends BaseController {
                 $acbd_self_down_time = time()-$acbd_self_data;
             }else{
                 $acbd_self_file_name = $acbd_self_data;
-                $acbd_self_download_url = $host_name.'/'.$acbd_self_file_name;
+                $acbd_self_download_url = $host_name.$acbd_self_file_name;
             }
         }
 
@@ -34,14 +34,16 @@ class SalaryController extends BaseController {
                 $acbd_team_down_time = time()-$acbd_team_data;
             }else{
                 $acbd_team_file_name = $acbd_team_data;
-                $acbd_team_download_url = $host_name.'/'.$acbd_team_file_name;
+                $acbd_team_download_url = $host_name.$acbd_team_file_name;
             }
         }
-
-        $datalist = array(
-            array('name'=>'AC和BD个人绩效','down_time'=>$acbd_self_down_time,'download_url'=>$acbd_self_download_url),
-            array('name'=>'BD小组绩效','down_time'=>$acbd_team_down_time,'download_url'=>$acbd_team_download_url),
-        );
+        $datalist = array();
+        if(!empty($acbd_self_down_time) || !empty($acbd_team_down_time) || !empty($acbd_self_download_url) || !empty($acbd_team_download_url)){
+            $datalist = array(
+                array('name'=>'AC和BD个人绩效','down_time'=>$acbd_self_down_time,'download_url'=>$acbd_self_download_url),
+                array('name'=>'BD小组绩效','down_time'=>$acbd_team_down_time,'download_url'=>$acbd_team_download_url),
+            );
+        }
         $this->assign('datalist', $datalist);
         $this->display('filelist');
     }
@@ -74,6 +76,8 @@ class SalaryController extends BaseController {
                 $file_name = urlencode($info['fileup']['savepath'].$info['fileup']['savename']);
                 $file_month = date('Ym',strtotime('-1 month'));
                 $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/salary/calculateBdac/filename/$file_name/filemonth/$file_month > /tmp/null &";
+                echo $shell;
+                exit;
                 system($shell);
                 $now_time = time();
                 $redis->set($cache_key,$now_time,86400);
