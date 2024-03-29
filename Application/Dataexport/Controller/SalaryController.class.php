@@ -417,8 +417,8 @@ class SalaryController extends BaseController{
                         }
                     }
                     //奖励金额=超额销量*(回款总数/总共销量)*基准单瓶奖励*系数*回款提成系数
-                    $wo_up_money = $wo_up_num*($repay_sale_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['team_award_coefficien']*$repay_coefficient;
-                    $jt_money = $wo_up_num*($jt_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['team_award_coefficien']*$repay_coefficient;
+                    $wo_up_money = $wo_up_num*($repay_sale_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['team_leader_award_coefficien']*$repay_coefficient;
+                    $jt_money = $wo_up_num*($jt_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['team_leader_award_coefficien']*$repay_coefficient;
                 }
             }
             $money = $wo_up_money;//小组当月实际发放提成总金额
@@ -474,7 +474,7 @@ class SalaryController extends BaseController{
                                 }
                                 $month_wo_up_num = $month_staff_sale_task['team_wo_up_num'];
                                 $all_month_task_sale_num = $month_staff_sale_task['team_wo_sale_num']+$month_staff_sale_task['team_group_sale_num'];
-                                $jt_repay_money = $month_wo_up_num*($jt_repay_num/$all_month_task_sale_num)*$month_config['per_botte_award']*$month_config['team_award_coefficien']*$month_repay_coefficient;
+                                $jt_repay_money = $month_wo_up_num*($jt_repay_num/$all_month_task_sale_num)*$month_config['per_botte_award']*$month_config['team_leader_award_coefficien']*$month_repay_coefficient;
                             }
                         }
                     }
