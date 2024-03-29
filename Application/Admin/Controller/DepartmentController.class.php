@@ -121,6 +121,7 @@ class DepartmentController extends BaseController {
         $this->assign('_sort',$sort);
         $start  = ( $start-1 ) * $size;
         $orders = $order.' '.$sort;
+        $orders =' status asc,id desc';
         
         $department_id = I('department_id');
         if(!empty($department_id)){
