@@ -33,7 +33,7 @@ class DepartmentController extends BaseController {
         foreach($result['list'] as $key=>$v){
             $where = [];
             $where['deparment_id'] = $v['id'];
-            $where['status'] = 1;
+            //$where['status'] = 1;
             $member_nums = $m_user->where($where)->count();
             $result['list'][$key]['member_nums'] = $member_nums;
         }
@@ -137,7 +137,7 @@ class DepartmentController extends BaseController {
         }
         
         $where .=  " and deparment_id=".$department_id;
-        $where .= " and `status`=1";
+        //$where .= " and `status`=1";
         $result = $m_user->getUserlist($where, $orders,$start,$size);
         $job_department_list = C('JOB_DEPARTMENT_LIST');
         
@@ -173,7 +173,7 @@ class DepartmentController extends BaseController {
             //$where['deparment_id'] = array('neq',$department_id);
             
             $user_list = $m_user->field('id,remark name')->where($where)->select();
-            echo $m_user->getLastSql();
+            //echo $m_user->getLastSql();
             $this->assign('user_list',$user_list);
             $this->assign('department_info',$department_info);
             $this->display('memberadd');
@@ -200,7 +200,7 @@ class DepartmentController extends BaseController {
             $field = 'id,remark name';
             $where = [];
             $where['job_id'] = 1;
-            $where['status'] = 1;
+            //$where['status'] = 1;
             $user_list = $m_user->field('id,remark name')->where($where)->select();
             
             

@@ -19,7 +19,7 @@
           组领导：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select name="leader_user_id"  class="form-control bs-select" title="请选择分组...">
+          <select name="leader_user_id"  class="form-control bs-select" title="请选择组领导...">
             <option value=0>未分组</option>
             <volist name="userlist" id="vo">
               <option value="{$vo.id}"  <if condition="$vinfo['leader_user_id'] eq $vo['id']">selected</if>> {$vo.name} </option>

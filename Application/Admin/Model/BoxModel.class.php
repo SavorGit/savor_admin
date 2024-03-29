@@ -89,6 +89,14 @@ class BoxModel extends BaseModel{
 	}
     public function getAllTv(){
         
+        $h_arr = C('HOTEL_STATE');
+        
+        $boxstate_sql = " case box.state ";
+        foreach($h_arr as $key=>$v){
+            $boxstate_sql .=" when $key then '".$v."' ";
+        }
+        $boxstate_sql .=" END AS boxstate";
+        
         $r_arr = array(
             1=>'包间',
             2=>'大厅',
@@ -129,7 +137,7 @@ class BoxModel extends BaseModel{
         }
         $htpe_sql .= " END as box_type";
         $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,
-                tv.state tsta,box.state boxstate,'.$htpe_sql.',
+                tv.state tsta,'.$boxstate_sql.','.$htpe_sql.',
 	         box.mac mac,box.name bname, room.name rname, 
              '.$rtype_sql.',
              tv.tv_brand tbrd, tv.tv_size tsiz,

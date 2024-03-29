@@ -42,7 +42,9 @@
               <th>职位</th>
               <th>手机</th>
               <th>邮箱</th>
-              
+              <th>入职时间</th>
+              <th>离职时间</th>
+              <th>账号状态</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -55,6 +57,16 @@
               <td data-title="职位"><php>echo $job_department_list[$vlist['job_id']]['name'];</php></td>
               <td data-title="手机">{$vlist.telephone}</td>
               <td data-title="邮箱">{$vlist.email}</td>
+              <td data-title="入职时间">{$vlist.entry_time}</td>
+              <td data-title="离职时间">{$vlist.out_time}</td>
+              <td data-title="账号状态"><php>
+              	if($vlist['status']==1){
+              		echo "启用";
+              	}else if($vlist['status']==2){
+              		echo "禁用";
+              	}
+              
+              </php></td>
               <td class="table-tool" data-title="操作">
 				<div class="tools-edit">
                   <a data-tip="修改状态" target="dialog" mask="true"

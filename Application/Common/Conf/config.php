@@ -340,6 +340,7 @@ $config['MANGER_KEY'] = array(
     'miniprogram'=>'小程序管理',
     'integral'=>'积分系统',
     'crmtask'=>'渠道任务',
+    'staffmanage'=>'员工管理'
 
 );
 $config['STATE_REASON'] = array(
