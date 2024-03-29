@@ -1,0 +1,54 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/salary/filelist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-98">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/salary/addexcel" title="导入数据" target="dialog" mask="true"><i class="fa fa-upload"></i> 导入数据</a>
+          </div>
+        </div>
+        
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 pull-right">
+          <div class="input-group input-group-sm">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>名称</th>
+              <th>执行时间</th>
+              <th>下载地址</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+              <td data-title="名称">{$dinfo.name}</td>
+              <td data-title="执行时间">{$dinfo.down_time}</td>
+              <td data-title="下载地址"><a href="{$dinfo.download_url}" target="_blank">查看</a></td>
+            </tr>
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
