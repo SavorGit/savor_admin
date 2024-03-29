@@ -62,10 +62,10 @@
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td class="table-tool" data-title="操作">
 				<div class="tools-edit">
-                  <a data-tip="修改状态" target="dialog" mask="true"
+                  <a data-tip="修改小组" target="dialog" mask="true"
                     href="{$host_name}/Department/edit?id={$vlist.id}"
                   class="btn btn-success btn-icon">
-                  <i class="fa fa-pencil"></i>
+                  <i class="fa fa-edit"></i>
                   </a>
                   
                   <a title="{$vlist.name}成员列表" data-tip="{$vlist.name}-小组人员列表" target="navTab" mask="true" rel="department/memberlist" href="{$host_name}/department/memberlist?department_id={$vlist.id}" class="btn btn-default btn-icon">
