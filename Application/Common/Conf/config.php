@@ -1190,6 +1190,7 @@ $config['JOB_DEPARTMENT_LIST'] = array( '1'=>array('id'=>1,'name'=>'AC'),'2'=>ar
                                         
                                         '21'=>array('id'=>21,'name'=>'运维'),'22'=>array('id'=>22,'name'=>'会计'),
 );
+$config['DATA_GOODS_IDS'] = array(56);
 $config['RD_TEST_HOTEL'] =
     array (
 

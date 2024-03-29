@@ -84,10 +84,11 @@ class MessageModel extends BaseModel{
     }
 
     public function opsSaleNotify(){
+        $data_goods_ids = C('DATA_GOODS_IDS');
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $m_payrecord = new \Admin\Model\FinanceSalePaymentRecordModel();
         $field = 'hotel_id,GROUP_CONCAT(id) as sale_ids,sum(settlement_price) as total_money,max(add_time) as new_time';
-        $where = array('ptype'=>array('in','0,2'),'is_expire'=>0,'is_notifymsg_sk'=>0,'settlement_price'=>array('gt',0));
+        $where = array('ptype'=>array('in','0,2'),'goods_id'=>array('not in',$data_goods_ids),'is_expire'=>0,'is_notifymsg_sk'=>0,'settlement_price'=>array('gt',0));
         $res_data = $m_sale->getAllData($field,$where,'','hotel_id');
         $config_qk_day = 3;
         foreach ($res_data as $v){
@@ -108,7 +109,7 @@ class MessageModel extends BaseModel{
         echo "message_type:14 ok \r\n";
 
         $field = 'hotel_id,GROUP_CONCAT(id) as sale_ids,sum(settlement_price) as total_money';
-        $where = array('ptype'=>array('in','0,2'),'is_expire'=>1,'is_notifymsg_qk'=>0,'settlement_price'=>array('gt',0));
+        $where = array('ptype'=>array('in','0,2'),'goods_id'=>array('not in',$data_goods_ids),'is_expire'=>1,'is_notifymsg_qk'=>0,'settlement_price'=>array('gt',0));
         $res_data = $m_sale->getAllData($field,$where,'','hotel_id');
         foreach ($res_data as $v){
             $hotel_id = $v['hotel_id'];
@@ -125,8 +126,9 @@ class MessageModel extends BaseModel{
     }
 
     public function opsOhtersNotify(){
+        $data_goods_ids = C('DATA_GOODS_IDS');
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
-        $where = array('a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),'a.is_notifymsg'=>0);
+        $where = array('a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),'a.is_notifymsg'=>0,'a.goods_id'=>array('not in',$data_goods_ids));
         $fileds = 'a.id,a.op_openid,stock.hotel_id,sale.settlement_price as money,sale.residenter_id';
         $res_stock_record = $m_stock_record->alias('a')
             ->field($fileds)
