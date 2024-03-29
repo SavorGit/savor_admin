@@ -78,6 +78,7 @@ class UserController extends BaseController {
             $remark  = I('remark');
             $username= I('username');
             $userpwd = I('userpwd');
+            $area_id = I('area_id',0,'intval');
             $status  = I('status', 1, 'int');
             $salary  = I('salary');
             $telephone = I('telephone');
@@ -98,6 +99,7 @@ class UserController extends BaseController {
                 $data['id']         = $userId;
                 $data['remark']     = $remark;
                 $data['username']   = $username;
+                $data['area_id']    = $area_id;
                 $data['groupId']    = $groupId;
                 $data['status']     = $status;
                 $data['salary']     = $salary;
@@ -137,6 +139,9 @@ class UserController extends BaseController {
         } else {
             $this->assign('acttype', 0);
         }
+        $areaModel =  new \Admin\Model\AreaModel();
+        $area_list = $areaModel->getAllArea();
+        $this->assign('area_list',$area_list);
         $this->assign('departmentlist',$departmentlist);
         $this->display('User/useradd');
     }
@@ -155,6 +160,7 @@ class UserController extends BaseController {
             $userId  = I('id', '', 'int');
             $remark  = I('remark');
             $newuserpwd = I('newuserpwd');
+            $area_id = I('area_id',0,'intval');
             $status  = I('status', 1, 'int');
             $salary  = I('salary');
             $telephone = I('telephone');
@@ -175,6 +181,7 @@ class UserController extends BaseController {
                 $data['remark']   = $remark;
                 $data['status'] = $status;
                 $data['groupId'] = $groupId;
+                $data['area_id'] = $area_id;
                 if($newuserpwd){
                     $pwdpre = C('PWDPRE');
                     $newuserpwd = $newuserpwd.$pwdpre;
@@ -200,6 +207,9 @@ class UserController extends BaseController {
         $result = $user->getUserInfo($uid);
         $result['entry_time'] = $result['entry_time'] =='0000-00-00' ? '' : $result['entry_time'];
         $result['out_time']   = $result['out_time'] == '0000-00-00'  ? '' : $result['out_time'];
+        $areaModel =  new \Admin\Model\AreaModel();
+        $area_list = $areaModel->getAllArea();
+        $this->assign('area_list',$area_list);
         $this->assign('vinfo', $result);
         $this->assign('departmentlist',$departmentlist);
         $this->display('useredit');
