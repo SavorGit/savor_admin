@@ -20,7 +20,7 @@
           成员名称：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select name="user_id" disabled='true'  class="form-control bs-select" title="请选择成员...">
+          <select name="user_id" disabled='true'  class="form-control bs-select"  title="请选择成员...">
             <option value=0>请选择成员</option>
             <volist name="user_list" id="vo">
               <option value="{$vo.id}"  <if condition="$user_id eq $vo['id']">selected</if>> {$vo.name} </option>
@@ -35,7 +35,7 @@
           组名称：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select name="department_id"  class="form-control bs-select" title="请选择所属组...">
+          <select name="department_id"  class="form-control bs-select" data-live-search="true" title="请选择所属组...">
             <option value=0>请选择成员</option>
             <volist name="department_list" id="vo">
               <option value="{$vo.id}"  <if condition="$department_id eq $vo['id']">selected</if>> {$vo.name} </option>

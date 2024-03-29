@@ -19,7 +19,7 @@
           成员列表：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select name="user_id"  class="form-control bs-select" title="请选择成员...">
+          <select name="user_id"  class="form-control bs-select" data-live-search="true" title="请选择成员...">
             <option value=0>请选择成员</option>
             <volist name="user_list" id="vo">
               <option value="{$vo.id}"  > {$vo.name} </option>
