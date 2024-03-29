@@ -130,7 +130,7 @@ class BoxModel extends BaseModel{
         
         
         $htype = C('hotel_box_type');
-        $htpe_sql = 'case box.box_type';
+        $htpe_sql = 'case hotel.hotel_box_type';
         foreach($htype as $key=>$v){
             $htpe_sql .= " when $key then '".$v."'  "; 
                            
