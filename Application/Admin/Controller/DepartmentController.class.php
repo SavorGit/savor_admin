@@ -96,7 +96,7 @@ class DepartmentController extends BaseController {
             $m_user = new \Admin\Model\UserModel();
             $where = [];
             $where['job_id'] = 2;
-            $where['status'] = 1;
+            //$where['status'] = 1;
             
             $userlist = $m_user->field('id,remark name')->where($where)->select();
             
