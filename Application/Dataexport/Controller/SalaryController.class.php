@@ -41,6 +41,7 @@ class SalaryController extends BaseController{
         $group_task_percent = 0.15;
         $group_up_per_money = 10;
         $begin_month = '2024-03-01';
+        $data_goods_ids = C('DATA_GOODS_IDS');
         $jt_lastmonth = date('Y-m-01',strtotime('-6 month'));
         if($jt_lastmonth<$begin_month){
             $jt_lastmonth = $begin_month;
@@ -157,6 +158,7 @@ class SalaryController extends BaseController{
 
             //核销售卖
             $wo_where = array('a.residenter_id'=>$residenter_id,'a.type'=>1,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+            $wo_where['a.goods_id'] = array('not in',$data_goods_ids);
             $wo_where['a.add_time'] = array(array('egt',$month_stime),array('elt',$month_etime));
             $res_wosale = $m_sale->getSaleStockRecordList('sum(a.num) as sale_num',$wo_where,'','');
             $wo_sale_num = intval($res_wosale[0]['sale_num']);//个人餐厅核销数
@@ -164,12 +166,16 @@ class SalaryController extends BaseController{
             $all_task_sale_num = $wo_sale_num+$group_sale_num;//个人完成任务总数
 
             $wo_where['a.ptype']=1;
-            $res_wosale_data = $m_sale->getSaleStockRecordList('a.id,a.add_time',$wo_where,'','');
+            $res_wosale_data = $m_sale->getSaleStockRecordList('a.id,a.add_time,a.pay_time',$wo_where,'','');
             $sale_data = array();
-            foreach ($res_wosale_data as $wdv){
-                $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
-            }
             $jt_sales = array();
+            foreach ($res_wosale_data as $wdv){
+                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_stime){
+                    $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
+                }else{
+                    $jt_sales[$wdv['id']] = array('staff_id'=>$residenter_id,'add_month'=>$static_month,'sale_id'=>$wdv['id']);
+                }
+            }
             $wo_where['a.ptype']=array('in','0,2');
             $res_wojtsale_data = $m_sale->getSaleStockRecordList('a.id',$wo_where,'','');
             foreach ($res_wojtsale_data as $jtdv){
@@ -220,6 +226,7 @@ class SalaryController extends BaseController{
             $money = $wo_up_money+$group_up_money;//个人当月实际发放提成总金额
 
             $wo_where = array('a.residenter_id'=>$residenter_id,'a.type'=>1,'a.ptype'=>array('in','0,2'),'record.wo_reason_type'=>1,'record.wo_status'=>2);
+            $wo_where['a.goods_id'] = array('not in',$data_goods_ids);
             $wo_where['a.add_time'] = array('egt',$jt_lastmonth_time);
             $res_wosale = $m_sale->getSaleStockRecordList('sum(a.num) as sale_num',$wo_where,'','');
             $all_jt_num = intval($res_wosale[0]['sale_num']);//个人计提剩余瓶数
@@ -398,12 +405,15 @@ class SalaryController extends BaseController{
             $all_task_sale_num = $wo_sale_num+$group_sale_num;//小组完成任务总数
 
             $wo_where = array('a.residenter_id'=>array('in',$bd_team_uids),'a.type'=>1,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+            $wo_where['a.goods_id'] = array('not in',$data_goods_ids);
             $wo_where['a.add_time'] = array(array('egt',$month_stime),array('elt',$month_etime));
             $wo_where['a.ptype']=1;
-            $res_wosale_data = $m_sale->getSaleStockRecordList('a.id,a.add_time',$wo_where,'','');
+            $res_wosale_data = $m_sale->getSaleStockRecordList('a.id,a.add_time,a.pay_time',$wo_where,'','');
             $sale_data = array();
             foreach ($res_wosale_data as $wdv){
-                $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
+                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_stime){
+                    $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
+                }
             }
 
             $repay_sale_num = count($sale_data);//小组当月回款瓶数
