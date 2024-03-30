@@ -170,7 +170,7 @@ class SalaryController extends BaseController{
                 $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
             }
             $jt_sales = array();
-            $wo_where['a.ptype']=0;
+            $wo_where['a.ptype']=array('in','0,2');
             $res_wojtsale_data = $m_sale->getSaleStockRecordList('a.id',$wo_where,'','');
             foreach ($res_wojtsale_data as $jtdv){
                 $jt_sales[$jtdv['id']] = array('staff_id'=>$residenter_id,'add_month'=>$static_month,'sale_id'=>$jtdv['id']);
