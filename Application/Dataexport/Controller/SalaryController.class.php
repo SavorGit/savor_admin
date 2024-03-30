@@ -31,13 +31,11 @@ class SalaryController extends BaseController{
             $sale_num = intval($rowData[0][7]);
             $cost = intval($rowData[0][8]);
             $team_cost = intval($rowData[0][9]);
-
-            $m_staff_saletask->add(
-                array('staff_id'=>$staff_id,'staff_name'=>$staff_name,'job_id'=>$job_id,'job'=>$job,
+            $ssdata = array('staff_id'=>$staff_id,'staff_name'=>$staff_name,'job_id'=>$job_id,'job'=>$job,
                 'deparment_id'=>$deparment_id,'deparment'=>$deparment,'team_sale_num'=>$team_sale_num,
                 'sale_num'=>$sale_num,'cost'=>$cost,'team_cost'=>$team_cost,'add_month'=>$file_month
-                )
             );
+            $m_staff_saletask->add($ssdata);
         }
 
         $group_task_percent = 0.15;
@@ -48,8 +46,16 @@ class SalaryController extends BaseController{
             $jt_lastmonth = $begin_month;
         }
         $jt_lastmonth_time = "$jt_lastmonth 00:00:00";
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+        $all_area = array();
+        foreach ($area_arr as $v){
+            $all_area[$v['id']] = $v['region_name'];
+        }
         $all_static_month = array();
         $m_staff_config = new \Admin\Model\StaffPerformanceConfigModel();
+
+        /* 没到4月份需要暂时修改
         for($i=6;$i<=1;$i--){
             $static_month = date('Ym',strtotime("-$i month"));
             $month_sdate = date('Y-m-01',strtotime("-$i month"));
@@ -65,12 +71,26 @@ class SalaryController extends BaseController{
         $static_month = date('Ym',strtotime('-1 month'));
         $month_sdate = date('Y-m-01',strtotime('-1 month'));
         $month_edate = date('Y-m-t',strtotime('-1 month'));
+        */
+
+        //暂时使用
+        $static_month = date('Ym',strtotime('2024-03-01 15:00:12'));
+        $month_sdate = date('Y-m-01',strtotime('2024-03-01 15:00:12'));
+        $month_edate = date('Y-m-t',strtotime('2024-03-01 15:00:12'));
+        $config = $m_staff_config->getInfo(array('add_month'=>$static_month));
+        if(!empty($config)){
+            $config['payback_day_commission'] = json_decode($config['payback_day_commission'],true);
+        }
+        $all_static_month[$static_month]=array('month'=>$static_month,'config'=>$config,'sdate'=>$month_sdate,'edate'=>$month_edate);
+        //end
+
+
         $month_stime = "$month_sdate 00:00:00";
         $month_etime = "$month_edate 23:59:59";
         $reward_config = $all_static_month[$static_month]['config'];
-        $cache_file_key = 'cronscript:salaryexcel';
-        $cache_salary_acbd_self_key = 'salary_acbd_self'.$static_month;
-        $cache_salary_acbd_team_key = 'salary_acbd_team'.$static_month;
+        $cache_file_key = 'cronscript:salaryexcel'.$static_month;
+        $cache_salary_acbd_self_key = 'cronscript:salary_acbd_self'.$static_month;
+        $cache_salary_acbd_team_key = 'cronscript:salary_acbd_team'.$static_month;
         $redis  =  \Common\Lib\SavorRedis::getInstance();
         $redis->select(1);
         $redis->set($cache_salary_acbd_self_key,time(),86400);
@@ -87,19 +107,19 @@ class SalaryController extends BaseController{
 
         $now_time = date('Y-m-d H:i:s');
         echo "AC&BD self start,time:$now_time \r\n";
-        $field = 'id,remark as real_name,telephone,email,deparment_id,job_id,salary,entry_time,out_time';
+        $field = 'id,remark as real_name,area_id,telephone,email,deparment_id,job_id,salary,entry_time,out_time';
         $job_ids = '1,2';//1ac 2bd
         $sql = "select {$field} from savor_sysuser where job_id in ($job_ids) and ((status=1) or (status=2 and out_time>='{$month_sdate}' and out_time<='{$month_edate}'))";
+
         $m_user = new \Admin\Model\UserModel();
         $res_user = $m_user->query($sql);
         $m_sale = new \Admin\Model\FinanceSaleModel();
-        $m_salepaymentrecord = new \Admin\Model\FinanceStockPaymentRecordModel();
+        $m_salepaymentrecord = new \Admin\Model\FinanceSalePaymentRecordModel();
         $m_staff_accruesales = new \Admin\Model\StaffAccrueSalesModel();
         $bd_users = array();
         $finish_acbd_self_data = array();
         $excel_self_datas = array();
         foreach ($res_user as $v){
-            $bd_users[]=$v;
             $residenter_id = $v['id'];
             $residenter_name = $v['real_name'];
             $entry_time = $v['entry_time'];
@@ -112,6 +132,9 @@ class SalaryController extends BaseController{
             if(empty($sale_task)){
                 continue;
             }
+            if($sale_task['job_id']==2){
+                $bd_users[]=$v;
+            }
 
             $task_sale_num = $sale_task['sale_num'];
             $task_group_sale_num = round($task_sale_num*$group_task_percent);
@@ -119,7 +142,7 @@ class SalaryController extends BaseController{
 
             //团购
             $salewhere = array('maintainer_id'=>$residenter_id,'type'=>4);
-            $salewhere['add_time'] = array(array('egt',$month_stime),array('elt'=>$month_etime));
+            $salewhere['add_time'] = array(array('egt',$month_stime),array('elt',$month_etime));
             $res_groupsale = $m_sale->getAllData('sum(num) as sale_num',$salewhere);
             $group_num = intval($res_groupsale[0]['sale_num']);//个人团购销量
             $group_up_money = 0;
@@ -134,7 +157,7 @@ class SalaryController extends BaseController{
 
             //核销售卖
             $wo_where = array('a.residenter_id'=>$residenter_id,'a.type'=>1,'record.wo_reason_type'=>1,'record.wo_status'=>2);
-            $wo_where['a.add_time'] = array(array('egt',$month_stime),array('elt'=>$month_etime));
+            $wo_where['a.add_time'] = array(array('egt',$month_stime),array('elt',$month_etime));
             $res_wosale = $m_sale->getSaleStockRecordList('sum(a.num) as sale_num',$wo_where,'','');
             $wo_sale_num = intval($res_wosale[0]['sale_num']);//个人餐厅核销数
             $all_sale_num = $wo_sale_num+$group_num;//个人实际总销量
@@ -165,7 +188,7 @@ class SalaryController extends BaseController{
                     $jt_num = $wo_sale_num - $repay_sale_num;
                     $sale_ids = array_keys($sale_data);
                     $pwhere = array('a.sale_id'=>array('in',$sale_ids));
-                    $pwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt'=>$month_edate));
+                    $pwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt',$month_edate));
                     $res_payrecord = $m_salepaymentrecord->alias('a')->field('sum(a.pay_money) as total_pay_money')
                         ->join('savor_finance_sale_payment p on a.sale_payment_id=p.id','left')
                         ->where($pwhere)->select();
@@ -186,17 +209,17 @@ class SalaryController extends BaseController{
                         }
                     }
                     //奖励金额=超额销量*(回款总数/总共销量)*基准单瓶奖励*系数*回款提成系数
-                    $wo_up_money = $wo_up_num*($repay_sale_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['person_award_coefficient']*$repay_coefficient;
-                    $jt_money = $wo_up_num*($jt_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['person_award_coefficient']*$repay_coefficient;
-
+                    $wo_up_money = $wo_up_num*($repay_sale_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['person_award_coefficien']*$repay_coefficient;
+                    //计算N*(R/(M+P))*105*0.6*S
+                    $jt_money = $wo_up_num*($jt_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['person_award_coefficien']*$repay_coefficient;
                     if(!empty($jt_sales)){
                         $m_staff_accruesales->addAll(array_values($jt_sales));
                     }
                 }
             }
-            $money = $wo_up_money;//个人当月实际发放提成总金额
+            $money = $wo_up_money+$group_up_money;//个人当月实际发放提成总金额
 
-            $wo_where = array('a.residenter_id'=>$residenter_id,'a.type'=>1,'a.ptype'=>0,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+            $wo_where = array('a.residenter_id'=>$residenter_id,'a.type'=>1,'a.ptype'=>array('in','0,2'),'record.wo_reason_type'=>1,'record.wo_status'=>2);
             $wo_where['a.add_time'] = array('egt',$jt_lastmonth_time);
             $res_wosale = $m_sale->getSaleStockRecordList('sum(a.num) as sale_num',$wo_where,'','');
             $all_jt_num = intval($res_wosale[0]['sale_num']);//个人计提剩余瓶数
@@ -230,7 +253,7 @@ class SalaryController extends BaseController{
                                     $monthjt_datas[$jtp['id']]=$jtp['add_time'];
                                 }
                                 $monthpjtwhere = array('a.sale_id'=>array('in',$jt_sale_ids));
-                                $monthpjtwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt'=>$month_edate));
+                                $monthpjtwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt',$month_edate));
                                 $res_monthpayrecord = $m_salepaymentrecord->alias('a')->field('sum(a.pay_money) as total_pay_money')
                                     ->join('savor_finance_sale_payment p on a.sale_payment_id=p.id','left')
                                     ->where($monthpjtwhere)->select();
@@ -252,7 +275,7 @@ class SalaryController extends BaseController{
                                 }
                                 $month_wo_up_num = $month_staff_sale_task['wo_up_num'];
                                 $all_month_task_sale_num = $month_staff_sale_task['wo_sale_num']+$month_staff_sale_task['group_sale_num'];
-                                $jt_repay_money = $month_wo_up_num*($jt_repay_num/$all_month_task_sale_num)*$month_config['per_botte_award']*$month_config['person_award_coefficient']*$month_repay_coefficient;
+                                $jt_repay_money = $month_wo_up_num*($jt_repay_num/$all_month_task_sale_num)*$month_config['per_botte_award']*$month_config['person_award_coefficien']*$month_repay_coefficient;
                             }
                         }
                     }
@@ -264,20 +287,20 @@ class SalaryController extends BaseController{
             }
             $updata = array('all_sale_num'=>$all_sale_num,'wo_sale_num'=>$wo_sale_num,'wo_up_num'=>$wo_up_num,'group_num'=>$group_num,
                 'group_sale_num'=>$group_sale_num,'group_up_num'=>$group_up_num,'repay_sale_num'=>$repay_sale_num,'repay_coefficient'=>$repay_coefficient,
-                'group_up_money'=>$group_up_money,'wo_up_money'=>$wo_up_money,'jt_repay_num'=>$all_jt_repay_num,'jt_repay_money'=>$all_jt_repay_money,
-                'jt_repay_data'=>json_encode($month_datas),'money'=>$money,'jt_num'=>$jt_num,'jt_money'=>$jt_money,'all_jt_num'=>$all_jt_num,
+                'group_up_money'=>$group_up_money,'wo_up_money'=>round($wo_up_money),'jt_repay_num'=>$all_jt_repay_num,'jt_repay_money'=>round($all_jt_repay_money),
+                'jt_repay_data'=>json_encode($month_datas),'money'=>round($money),'jt_num'=>$jt_num,'jt_money'=>round($jt_money),'all_jt_num'=>$all_jt_num,
                 'update_time'=>date('Y-m-d H:i:s')
             );
             $m_staff_saletask->updateData(array('id'=>$staff_performance_saletask),$updata);
             $finish_acbd_self_data[$deparment_id][]= array('wo_sale_num'=>$wo_sale_num,'group_num'=>$group_num,'all_jt_num'=>$all_jt_num);
 
-            $excel_info = array('month'=>$static_month,'staff_id'=>$staff_sale_task['staff_id'],'staff_name'=>$staff_sale_task['staff_name'],
-                'job'=>$staff_sale_task['job'],'city'=>'','team_name'=>$staff_sale_task['deparment'],'entry_time'=>$entry_time,'out_time'=>$out_time,'salary'=>$salary,
-                'cost'=>$staff_sale_task['cost'],'sale_num'=>$staff_sale_task['sale_num'],
+            $excel_info = array('month'=>$static_month,'staff_id'=>$sale_task['staff_id'],'staff_name'=>$residenter_name,
+                'job'=>$sale_task['job'],'city'=>$all_area[$v['area_id']],'team_name'=>$sale_task['deparment'],'entry_time'=>$entry_time,'out_time'=>$out_time,'salary'=>$salary,
+                'cost'=>$sale_task['cost'],'sale_num'=>$sale_task['sale_num'],
                 'all_sale_num'=>$all_sale_num,'wo_sale_num'=>$wo_sale_num,'wo_up_num'=>$wo_up_num,'group_num'=>$group_num,
                 'group_sale_num'=>$group_sale_num,'group_up_num'=>$group_up_num,'repay_sale_num'=>$repay_sale_num,'repay_coefficient'=>$repay_coefficient,
-                'group_up_money'=>$group_up_money,'wo_up_money'=>$wo_up_money,'money'=>$money,'jt_num'=>$jt_num,'jt_money'=>$jt_money,'all_jt_num'=>$all_jt_num,
-                'jt_repay_num'=>$all_jt_repay_num,'jt_repay_money'=>$all_jt_repay_money,
+                'group_up_money'=>$group_up_money,'wo_up_money'=>round($wo_up_money),'money'=>round($money),'jt_num'=>$jt_num,'jt_money'=>round($jt_money),'all_jt_num'=>$all_jt_num,
+                'jt_repay_num'=>$all_jt_repay_num,'jt_repay_money'=>round($all_jt_repay_money),
             );
             foreach ($month_datas as $emdv){
                 $key_jt_repay_num = 'jt_repay_num'.$emdv[0];
@@ -336,11 +359,11 @@ class SalaryController extends BaseController{
         foreach ($bd_users as $v){
             $residenter_id = $v['id'];
             $residenter_name = $v['real_name'];
-            $deparment_id = $v['deparment_id'];
             $entry_time = $v['entry_time'];
             $out_time = $v['out_time'];
             $salary = $v['salary'];
             $sale_task = $staff_sale_task[$residenter_id];
+            $deparment_id = $sale_task['deparment_id'];
             $staff_performance_saletask_id = $sale_task['id'];
             $bd_sale_task = $team_sale_task[$deparment_id];
             if(empty($bd_sale_task)){
@@ -375,7 +398,7 @@ class SalaryController extends BaseController{
             $all_task_sale_num = $wo_sale_num+$group_sale_num;//小组完成任务总数
 
             $wo_where = array('a.residenter_id'=>array('in',$bd_team_uids),'a.type'=>1,'record.wo_reason_type'=>1,'record.wo_status'=>2);
-            $wo_where['a.add_time'] = array(array('egt',$month_stime),array('elt'=>$month_etime));
+            $wo_where['a.add_time'] = array(array('egt',$month_stime),array('elt',$month_etime));
             $wo_where['a.ptype']=1;
             $res_wosale_data = $m_sale->getSaleStockRecordList('a.id,a.add_time',$wo_where,'','');
             $sale_data = array();
@@ -396,7 +419,7 @@ class SalaryController extends BaseController{
                     $jt_num = $wo_sale_num - $repay_sale_num;
                     $sale_ids = array_keys($sale_data);
                     $pwhere = array('a.sale_id'=>array('in',$sale_ids));
-                    $pwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt'=>$month_edate));
+                    $pwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt',$month_edate));
                     $res_payrecord = $m_salepaymentrecord->alias('a')->field('sum(a.pay_money) as total_pay_money')
                         ->join('savor_finance_sale_payment p on a.sale_payment_id=p.id','left')
                         ->where($pwhere)->select();
@@ -421,7 +444,7 @@ class SalaryController extends BaseController{
                     $jt_money = $wo_up_num*($jt_num/$all_task_sale_num)*$reward_config['per_botte_award']*$reward_config['team_leader_award_coefficien']*$repay_coefficient;
                 }
             }
-            $money = $wo_up_money;//小组当月实际发放提成总金额
+            $money = $wo_up_money+$group_up_money;//小组当月实际发放提成总金额
 
             $month_datas = array();
             $all_jt_repay_num = 0;//小组计提回款瓶数
@@ -452,7 +475,7 @@ class SalaryController extends BaseController{
                                     $monthjt_datas[$jtp['id']]=$jtp['add_time'];
                                 }
                                 $monthpjtwhere = array('a.sale_id'=>array('in',$jt_sale_ids));
-                                $monthpjtwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt'=>$month_edate));
+                                $monthpjtwhere['p.pay_time'] = array(array('egt',$month_sdate),array('elt',$month_edate));
                                 $res_monthpayrecord = $m_salepaymentrecord->alias('a')->field('sum(a.pay_money) as total_pay_money')
                                     ->join('savor_finance_sale_payment p on a.sale_payment_id=p.id','left')
                                     ->where($monthpjtwhere)->select();
@@ -486,19 +509,19 @@ class SalaryController extends BaseController{
             }
             $updata = array('team_all_sale_num'=>$all_sale_num,'team_wo_sale_num'=>$wo_sale_num,'team_wo_up_num'=>$wo_up_num,'team_group_num'=>$group_num,
                 'team_group_sale_num'=>$group_sale_num,'team_group_up_num'=>$group_up_num,'team_repay_sale_num'=>$repay_sale_num,'team_repay_coefficient'=>$repay_coefficient,
-                'team_group_up_money'=>$group_up_money,'team_wo_up_money'=>$wo_up_money,'team_jt_repay_num'=>$all_jt_repay_num,'team_jt_repay_money'=>$all_jt_repay_money,
-                'team_jt_repay_data'=>json_encode($month_datas),'team_money'=>$money,'team_jt_num'=>$jt_num,'team_jt_money'=>$jt_money,'team_all_jt_num'=>$all_jt_num,
+                'team_group_up_money'=>$group_up_money,'team_wo_up_money'=>round($wo_up_money),'team_jt_repay_num'=>$all_jt_repay_num,'team_jt_repay_money'=>round($all_jt_repay_money),
+                'team_jt_repay_data'=>json_encode($month_datas),'team_money'=>round($money),'team_jt_num'=>$jt_num,'team_jt_money'=>round($jt_money),'team_all_jt_num'=>$all_jt_num,
                 'update_time'=>date('Y-m-d H:i:s')
             );
             $m_staff_saletask->updateData(array('id'=>$staff_performance_saletask_id),$updata);
 
-            $excel_info = array('month'=>$static_month,'staff_id'=>$staff_sale_task['staff_id'],'staff_name'=>$staff_sale_task['staff_name'],
-                'job'=>$staff_sale_task['job'],'city'=>'','team_name'=>$staff_sale_task['deparment'],'entry_time'=>$entry_time,'out_time'=>$out_time,'salary'=>$salary,
-                'cost'=>$staff_sale_task['team_cost'],'sale_num'=>$staff_sale_task['team_sale_num'],
+            $excel_info = array('month'=>$static_month,'staff_id'=>$sale_task['staff_id'],'staff_name'=>$residenter_name,
+                'job'=>$sale_task['job'],'city'=>$all_area[$v['area_id']],'team_name'=>$sale_task['deparment'],'entry_time'=>$entry_time,'out_time'=>$out_time,'salary'=>$salary,
+                'cost'=>$sale_task['team_cost'],'sale_num'=>$sale_task['team_sale_num'],
                 'all_sale_num'=>$all_sale_num,'wo_sale_num'=>$wo_sale_num,'wo_up_num'=>$wo_up_num,'group_num'=>$group_num,
                 'group_sale_num'=>$group_sale_num,'group_up_num'=>$group_up_num,'repay_sale_num'=>$repay_sale_num,'repay_coefficient'=>$repay_coefficient,
-                'group_up_money'=>$group_up_money,'wo_up_money'=>$wo_up_money,'money'=>$money,'jt_num'=>$jt_num,'jt_money'=>$jt_money,'all_jt_num'=>$all_jt_num,
-                'jt_repay_num'=>$all_jt_repay_num,'jt_repay_money'=>$all_jt_repay_money,
+                'group_up_money'=>$group_up_money,'wo_up_money'=>round($wo_up_money),'money'=>round($money),'jt_num'=>$jt_num,'jt_money'=>round($jt_money),'all_jt_num'=>$all_jt_num,
+                'jt_repay_num'=>$all_jt_repay_num,'jt_repay_money'=>round($all_jt_repay_money),
             );
             foreach ($month_datas as $emdv){
                 $key_jt_repay_num = 'jt_repay_num'.$emdv[0];
@@ -545,7 +568,7 @@ class SalaryController extends BaseController{
         }
         $filename = 'BD小组绩效表';
         $path = $this->exportToExcel($cell,$excel_team_datas,$filename,2);
-        $redis->set($cache_salary_acbd_self_key,$path,86400);
+        $redis->set($cache_salary_acbd_team_key,$path,86400);
         $redis->set($cache_file_key,time(),600);
 
         $now_time = date('Y-m-d H:i:s');
