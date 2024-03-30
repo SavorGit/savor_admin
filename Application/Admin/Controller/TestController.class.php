@@ -4500,6 +4500,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function uphotelgoods(){
+        exit;
         $goods_ids = array(11816,11815,11814,11685,11675,11644,11633,11629,11584,11575,11569,11435,11395,11388,11387,11385,11384,11373,11211,11210,11209,11199,11198,10980,10967,10966,10965,10964,10963,10962,10960,10959,10931,10930,10928,10927);
         foreach ($goods_ids as $v){
             $goods_id = $v;
@@ -4517,6 +4518,18 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 }
                 echo "goods_id:$goods_id ok \r\n";
             }
+        }
+    }
+
+    public function upsalepaytime(){
+        $sql = "select a.id as sale_id,a.sale_payment_id,p.pay_time from savor_finance_sale as a left join savor_finance_sale_payment as p on a.sale_payment_id=p.id
+        where a.ptype=1 and a.type=1 order by a.id desc ";
+        $res = M()->query($sql);
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        foreach ($res as $v){
+            $sale_id = $v['sale_id'];
+            $m_sale->updateData(array('id'=>$sale_id),array('pay_time'=>"{$v['pay_time']} 00:00:00"));
+            echo "sale_id:$sale_id \r\n";
         }
 
     }
