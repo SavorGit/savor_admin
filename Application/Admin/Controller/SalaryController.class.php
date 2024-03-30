@@ -59,6 +59,7 @@ class SalaryController extends BaseController {
             $errMsg = "你上传的文件正在处理中，处理时间{$diff_time}秒，请稍后。";
             $this->output($errMsg, 'salary/filelist', 3,0);
         }
+        $last_month = date('Ym',strtotime('-1 month'));
         if(IS_POST){
             $upload = new \Think\Upload();
             $upload->exts = array('xls','xlsx','csv');
@@ -74,16 +75,20 @@ class SalaryController extends BaseController {
                 $userinfo = session('sysUserInfo');
                 $sysuser_id = $userinfo['id'];
                 $file_name = urlencode($info['fileup']['savepath'].$info['fileup']['savename']);
-                $file_month = date('Ym',strtotime('-1 month'));
-                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/salary/calculateBdac/filename/$file_name/filemonth/$file_month > /tmp/null &";
-                echo $shell;
-                exit;
+                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/salary/calculateBdac/filename/$file_name/filemonth/$last_month > /tmp/null &";
                 system($shell);
                 $now_time = time();
                 $redis->set($cache_key,$now_time,86400);
                 $this->output('导入成功,开始处理数据', 'salary/filelist');
             }
         }else{
+            $is_up = 1;
+            $m_staff_saletask = new \Admin\Model\StaffPerformanceSaletaskModel();
+            $res_saletask = $m_staff_saletask->getAll('id',array('add_month'=>$last_month),0,1,'id desc');
+            if(!empty($res_saletask[0]['id'])){
+                $is_up = 0;
+            }
+            $this->assign('is_up',$is_up);
             $this->display();
         }
 
