@@ -170,7 +170,7 @@ class SalaryController extends BaseController{
             $sale_data = array();
             $jt_sales = array();
             foreach ($res_wosale_data as $wdv){
-                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_stime){
+                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_etime){
                     $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
                 }else{
                     $jt_sales[$wdv['id']] = array('staff_id'=>$residenter_id,'add_month'=>$static_month,'sale_id'=>$wdv['id']);
@@ -411,7 +411,7 @@ class SalaryController extends BaseController{
             $res_wosale_data = $m_sale->getSaleStockRecordList('a.id,a.add_time,a.pay_time',$wo_where,'','');
             $sale_data = array();
             foreach ($res_wosale_data as $wdv){
-                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_stime){
+                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_etime){
                     $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
                 }
             }
