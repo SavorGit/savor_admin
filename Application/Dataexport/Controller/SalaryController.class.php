@@ -55,8 +55,6 @@ class SalaryController extends BaseController{
         }
         $all_static_month = array();
         $m_staff_config = new \Admin\Model\StaffPerformanceConfigModel();
-
-        /* 没到4月份需要暂时修改
         for($i=6;$i<=1;$i--){
             $static_month = date('Ym',strtotime("-$i month"));
             $month_sdate = date('Y-m-01',strtotime("-$i month"));
@@ -72,19 +70,17 @@ class SalaryController extends BaseController{
         $static_month = date('Ym',strtotime('-1 month'));
         $month_sdate = date('Y-m-01',strtotime('-1 month'));
         $month_edate = date('Y-m-t',strtotime('-1 month'));
-        */
 
         //暂时使用
-        $static_month = date('Ym',strtotime('2024-03-01 15:00:12'));
-        $month_sdate = date('Y-m-01',strtotime('2024-03-01 15:00:12'));
-        $month_edate = date('Y-m-t',strtotime('2024-03-01 15:00:12'));
-        $config = $m_staff_config->getInfo(array('add_month'=>$static_month));
-        if(!empty($config)){
-            $config['payback_day_commission'] = json_decode($config['payback_day_commission'],true);
-        }
-        $all_static_month[$static_month]=array('month'=>$static_month,'config'=>$config,'sdate'=>$month_sdate,'edate'=>$month_edate);
+//        $static_month = date('Ym',strtotime('2024-03-01 15:00:12'));
+//        $month_sdate = date('Y-m-01',strtotime('2024-03-01 15:00:12'));
+//        $month_edate = date('Y-m-t',strtotime('2024-03-01 15:00:12'));
+//        $config = $m_staff_config->getInfo(array('add_month'=>$static_month));
+//        if(!empty($config)){
+//            $config['payback_day_commission'] = json_decode($config['payback_day_commission'],true);
+//        }
+//        $all_static_month[$static_month]=array('month'=>$static_month,'config'=>$config,'sdate'=>$month_sdate,'edate'=>$month_edate);
         //end
-
 
         $month_stime = "$month_sdate 00:00:00";
         $month_etime = "$month_edate 23:59:59";
@@ -170,7 +166,7 @@ class SalaryController extends BaseController{
             $sale_data = array();
             $jt_sales = array();
             foreach ($res_wosale_data as $wdv){
-                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_etime){
+                if($wdv['pay_time']<=$month_etime){
                     $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
                 }else{
                     $jt_sales[$wdv['id']] = array('staff_id'=>$residenter_id,'add_month'=>$static_month,'sale_id'=>$wdv['id']);
@@ -411,7 +407,7 @@ class SalaryController extends BaseController{
             $res_wosale_data = $m_sale->getSaleStockRecordList('a.id,a.add_time,a.pay_time',$wo_where,'','');
             $sale_data = array();
             foreach ($res_wosale_data as $wdv){
-                if($wdv['pay_time']>=$month_stime && $wdv['pay_time']<=$month_etime){
+                if($wdv['pay_time']<=$month_etime){
                     $sale_data[$wdv['id']] = date('Y-m-d',strtotime($wdv['add_time']));
                 }
             }
