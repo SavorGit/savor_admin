@@ -71,17 +71,6 @@ class SalaryController extends BaseController{
         $month_sdate = date('Y-m-01',strtotime('-1 month'));
         $month_edate = date('Y-m-t',strtotime('-1 month'));
 
-        //暂时使用
-//        $static_month = date('Ym',strtotime('2024-03-01 15:00:12'));
-//        $month_sdate = date('Y-m-01',strtotime('2024-03-01 15:00:12'));
-//        $month_edate = date('Y-m-t',strtotime('2024-03-01 15:00:12'));
-//        $config = $m_staff_config->getInfo(array('add_month'=>$static_month));
-//        if(!empty($config)){
-//            $config['payback_day_commission'] = json_decode($config['payback_day_commission'],true);
-//        }
-//        $all_static_month[$static_month]=array('month'=>$static_month,'config'=>$config,'sdate'=>$month_sdate,'edate'=>$month_edate);
-        //end
-
         $month_stime = "$month_sdate 00:00:00";
         $month_etime = "$month_edate 23:59:59";
         $reward_config = $all_static_month[$static_month]['config'];
