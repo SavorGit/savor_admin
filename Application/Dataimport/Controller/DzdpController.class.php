@@ -1,8 +1,9 @@
 <?php
 //大中点评导入数据
-namespace Dataexport\Controller;
+namespace Dataimport\Controller;
+use Think\Controller;
 
-class DzdpController extends BaseController{
+class DzdpController extends Controller{
     public function exportCircle(){
         exit('已执行该脚本');
         set_time_limit(9000);
