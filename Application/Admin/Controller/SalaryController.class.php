@@ -49,18 +49,19 @@ class SalaryController extends BaseController {
     }
 
     public function addexcel(){
-        $cache_key = 'cronscript:salaryexcel';
-        $redis  =  \Common\Lib\SavorRedis::getInstance();
-        $redis->select(1);
-        $res_data = $redis->get($cache_key);
-        if(!empty($res_data)){
-            $now_time = time();
-            $diff_time = $now_time - $res_data;
-            $errMsg = "你上传的文件正在处理中，处理时间{$diff_time}秒，请稍后。";
-            $this->output($errMsg, 'salary/filelist', 3,0);
-        }
         $last_month = date('Ym',strtotime('-1 month'));
         if(IS_POST){
+            $cache_key = 'cronscript:salaryexcel';
+            $redis  =  \Common\Lib\SavorRedis::getInstance();
+            $redis->select(1);
+            $res_data = $redis->get($cache_key);
+            if(!empty($res_data)){
+                $now_time = time();
+                $diff_time = $now_time - $res_data;
+                $errMsg = "你上传的文件正在处理中，处理时间{$diff_time}秒，请稍后。";
+                $this->output($errMsg, 'salary/filelist', 2,0);
+            }
+
             $upload = new \Think\Upload();
             $upload->exts = array('xls','xlsx','csv');
             $upload->maxSize = 2097152;
