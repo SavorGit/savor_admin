@@ -44,6 +44,13 @@ class SalaryController extends BaseController {
                 array('name'=>'BD小组绩效','down_time'=>$acbd_team_down_time,'download_url'=>$acbd_team_download_url),
             );
         }
+        $is_up = 1;
+        $m_staff_saletask = new \Admin\Model\StaffPerformanceSaletaskModel();
+        $res_saletask = $m_staff_saletask->getAll('id',array('add_month'=>$static_month),0,1,'id desc');
+        if(!empty($res_saletask[0]['id'])){
+            $is_up = 0;
+        }
+        $this->assign('is_up',$is_up);
         $this->assign('datalist', $datalist);
         $this->display('filelist');
     }
@@ -83,13 +90,6 @@ class SalaryController extends BaseController {
                 $this->output('导入成功,开始处理数据', 'salary/filelist');
             }
         }else{
-            $is_up = 1;
-            $m_staff_saletask = new \Admin\Model\StaffPerformanceSaletaskModel();
-            $res_saletask = $m_staff_saletask->getAll('id',array('add_month'=>$last_month),0,1,'id desc');
-            if(!empty($res_saletask[0]['id'])){
-                $is_up = 0;
-            }
-            $this->assign('is_up',$is_up);
             $this->display();
         }
 
