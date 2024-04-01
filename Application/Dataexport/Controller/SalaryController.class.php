@@ -55,7 +55,7 @@ class SalaryController extends BaseController{
         }
         $all_static_month = array();
         $m_staff_config = new \Admin\Model\StaffPerformanceConfigModel();
-        for($i=6;$i<=1;$i--){
+        for($i=6;$i>=1;$i--){
             $static_month = date('Ym',strtotime("-$i month"));
             $month_sdate = date('Y-m-01',strtotime("-$i month"));
             $month_edate = date('Y-m-t',strtotime("-$i month"));
@@ -192,7 +192,7 @@ class SalaryController extends BaseController{
                         $now_pay_day = round((strtotime($prv['pay_time'])-strtotime($sale_data[$prv['sale_id']]))/86400);
                         $repay_day+= $now_pay_day*($prv['pay_money']/$total_pay_money);
                     }
-
+                    $repay_day = round($repay_day);
                     foreach ($reward_config['payback_day_commission'] as $rcv){
                         if($repay_day>=$rcv['min'] && $repay_day<=$rcv['max']){
                             $repay_coefficient = $rcv['percent']/100;
@@ -427,7 +427,7 @@ class SalaryController extends BaseController{
                         $now_pay_day = round((strtotime($prv['pay_time'])-strtotime($sale_data[$prv['sale_id']]))/86400);
                         $repay_day+= $now_pay_day*($prv['pay_money']/$total_pay_money);
                     }
-
+                    $repay_day = round($repay_day);
                     foreach ($reward_config['payback_day_commission'] as $rcv){
                         if($repay_day>=$rcv['min'] && $repay_day<=$rcv['max']){
                             $repay_coefficient = $rcv['percent']/100;
