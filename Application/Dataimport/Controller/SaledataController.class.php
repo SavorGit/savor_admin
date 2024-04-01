@@ -22,6 +22,8 @@ class SaledataController extends Controller{
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $m_hotel = new \Admin\Model\HotelModel();
         $m_staff = new \Admin\Model\Integral\StaffModel();
+        $m_salepayment = new \Admin\Model\FinanceSalePaymentModel();
+        $m_salerecord = new \Admin\Model\FinanceSalePaymentRecordModel();
         $all_stock_in_ids = $all_stock_out_ids = array();
         for ($row = 2; $row <= $highestRow; $row++) {
             $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
@@ -39,15 +41,12 @@ class SaledataController extends Controller{
                 $phptime = ($wo_time - 25569) * 86400 - (8 * 60 * 60);
                 $wo_time = date('Y-m-d H:i:s',$phptime);
             }
-            
+
             $fields = 'hotel.area_id,ext.maintainer_id,ext.residenter_id';
             $res_hotelext = $m_hotel->getHotelById($fields,array('hotel.id'=>$hotel_id));
             $area_id = $res_hotelext['area_id'];
             $maintainer_id = intval($res_hotelext['maintainer_id']);
             $residenter_id = intval($res_hotelext['residenter_id']);
-
-            $all_stock_in_ids[$area_id][$stock_in_id]=$stock_in_id;
-            $all_stock_out_ids[$area_id][$stock_out_id]=$stock_out_id;
 
             $res_indetail = $m_stock_detail->getInfo(array('stock_id'=>$stock_in_id));
             $goods_id = $res_indetail['goods_id'];
@@ -69,6 +68,10 @@ class SaledataController extends Controller{
             }else{
                 $op_openid = 'o9GS-4mTCZvkRCDRnkg77QqohMI4';//胡子凤
             }
+
+            $all_stock_in_ids[$stock_in_id]=$op_openid;
+            $all_stock_out_ids[$stock_out_id]=$op_openid;
+
             //入库
             $indata = array('stock_id'=>$stock_in_id,'stock_detail_id'=>$stock_detail_id,'goods_id'=>$goods_id,'batch_no'=>$batch_no,'idcode'=>$idcode,'avg_price'=>$now_avg_price,
                 'price'=>$price,'total_fee'=>$total_fee,'unit_id'=>$unit_id,'amount'=>$amount,'total_amount'=>$total_amount,'type'=>1,'op_openid'=>$op_openid
@@ -147,25 +150,55 @@ class SaledataController extends Controller{
                 'hotel_id'=>$hotel_id,'maintainer_id'=>$maintainer_id,'residenter_id'=>$residenter_id,'add_time'=>$wo_time,
                 'type'=>1,'area_id'=>$area_id,'sale_openid'=>$sale_openid);
             $sale_id = $m_sale->add($add_data);
-            echo "$sale_id,";
+
+            //收款
+            $nowdate = date('Ymd',strtotime($wo_time));
+            $where = array('DATE_FORMAT(add_time, "%Y%m%d")'=>$nowdate);
+            $res_salepayment = $m_salepayment->getAllData('count(id) as num',$where);
+            if($res_salepayment[0]['num']>0){
+                $number = $res_salepayment[0]['num']+1;
+            }else{
+                $number = 1;
+            }
+            $num_str = str_pad($number,4,'0',STR_PAD_LEFT);
+            $serial_number = "SKD-$nowdate-$num_str";
+            $payment_info = array('serial_number'=>$serial_number,'tax_rate'=>13,'pay_money'=>$settlement_price,
+                'pay_time'=>date('Y-m-d',strtotime($wo_time)),'type'=>1,'hotel_id'=>$hotel_id,'add_time'=>$wo_time);
+            $sale_payment_id = $m_salepayment->add($payment_info);
+            $payment_record_info = array('sale_id'=>$sale_id,'sale_payment_id'=>$sale_payment_id,'pay_money'=>$settlement_price,
+                'add_time'=>$wo_time);
+            $m_salerecord->add($payment_record_info);
+
+            //更新出库单收款
+            $up_sale = array('status'=>2,'sale_payment_id'=>$sale_payment_id,'ptype'=>1,'pay_time'=>$wo_time,'pay_money'=>$settlement_price);
+            $m_sale->updateData(array('id'=>$sale_id),$up_sale);
+
+            echo "icdoe:$idcode,sale_id:$sale_id";
+            exit;
         }
 
         exit;
         //入库单 所有商品入库完毕后
-//        foreach ($all_stock_in_ids as $k=>$v){
-//            $area_id = $k;
-//        }
-//        $rfields = 'sum(total_amount) as total_num,sum(total_fee) as total_fee';
-//        $rwhere = array('stock_id'=>$stock_in_id,'type'=>1,'dstatus'=>1);
-//        $res_stock_num = $m_stock_record->getALLDataList($rfields,$rwhere,'','','');
-//        $up_data = array('status'=>2,'op_openid'=>$op_openid);
-//        $up_data['amount'] = intval($res_stock_num[0]['total_num']);
-//        $up_data['total_fee'] = $res_stock_num[0]['total_fee']>0?$res_stock_num[0]['total_fee']:0;
-//        $up_data['total_money'] = $up_data['total_fee'];
-//        $m_stock->updateData(array('id'=>$stock_in_id),$up_data);
-//
-//        //出库单 领取,验收完毕
-//        $up_data = array('status'=>4,'receive_openid'=>$op_openid,'check_openid'=>$op_openid,'update_time'=>date('Y-m-d H:i:s'));
-//        $m_stock->updateData(array('id'=>$stock_out_id),$up_data);
+        foreach ($all_stock_in_ids as $k=>$v){
+            $stock_in_id = $k;
+            $op_openid = $v;
+
+            $rfields = 'sum(total_amount) as total_num,sum(total_fee) as total_fee';
+            $rwhere = array('stock_id'=>$stock_in_id,'type'=>1,'dstatus'=>1);
+            $res_stock_num = $m_stock_record->getALLDataList($rfields,$rwhere,'','','');
+            $up_data = array('status'=>2,'op_openid'=>$op_openid);
+            $up_data['amount'] = intval($res_stock_num[0]['total_num']);
+            $up_data['total_fee'] = $res_stock_num[0]['total_fee']>0?$res_stock_num[0]['total_fee']:0;
+            $up_data['total_money'] = $up_data['total_fee'];
+            $m_stock->updateData(array('id'=>$stock_in_id),$up_data);
+        }
+        //出库单 所有商品领取,验收完毕
+        foreach ($all_stock_out_ids as $k=>$v){
+            $stock_out_id = $k;
+            $op_openid = $v;
+            $up_data = array('status'=>4,'receive_openid'=>$op_openid,'check_openid'=>$op_openid,'update_time'=>date('Y-m-d H:i:s'));
+            $m_stock->updateData(array('id'=>$stock_out_id),$up_data);
+        }
+
     }
 }
