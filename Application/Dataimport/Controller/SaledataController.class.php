@@ -201,4 +201,31 @@ class SaledataController extends Controller{
         }
 
     }
+
+    public function salevoucher(){
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $fileds = 'id as sale_id,type,add_time';
+        $where = array('type'=>1,'ptype'=>1,'goods_id'=>array('in',C('DATA_GOODS_IDS')));
+        $where['push_u8_status2'] = 0;
+        $res_data = $m_sale->getDataList($fileds,$where,'id asc');
+        print_r($res_data);
+        exit;
+        
+        $map_push_type = array('1'=>89,'4'=>88);
+        foreach ($res_data as $v){
+            $sale_id = $v['sale_id'];
+            $type = $v['type'];
+            $push_type = $map_push_type[$type];
+
+            sendSmallappTopicMessage($sale_id,$push_type);
+
+            usleep(500000);
+
+            echo "sale_id:$sale_id,type:$type,add_time:{$v['add_time']} \r\n";
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "salevoucher end:$now_time \r\n";
+    }
+
+
 }
