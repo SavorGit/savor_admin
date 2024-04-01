@@ -515,6 +515,7 @@ class ExporthotelController extends BaseController{
             $v['sale_people_num'] = $sale_people_num;
 
             $salewhere = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+            $salewhere['a.goods_id'] = array('not in',C('DATA_GOODS_IDS'));
             $salewhere['record.add_time'] = array(array('egt',$start_time),array('elt',$end_time));
             $res_stock_record = $m_sale->alias('a')
                 ->field('count(a.id) as num')
