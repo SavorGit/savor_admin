@@ -69,7 +69,7 @@ $config = array(
         '谢冰蕾'=>'xie.binglei@littlehotspot.com',
         '曹捷'=>'cao.jie@littlehotspot.com',
         '肖雷'=>'xiao.lei@littlehotspot.com',
-        '谢云航'=>'xie.yunhang@littlehotspot.com',
+        '解云航'=>'xie.yunhang@littlehotspot.com',
     ),
     'TEAM_NAME'=>array(
         '曹捷'=>'cao.jie@littlehotspot.com',
@@ -96,7 +96,9 @@ $config = array(
         '陆莉'=>'lu.li@littlehotspot.com',
         '程长江'=>'cheng.changjiang@littlehotspot.com',
         '翁小虎'=>'weng.xiaohu@littlehotspot.com',
-        '赖桂华'=>'lai.guihua@littlehotspot.com'
+        '赖桂华'=>'lai.guihua@littlehotspot.com',
+        '高峰'=>'gao.feng@littlehotspot.com',
+
     ),
     'OPS_TASK_SOURCES'=>array(
         '1'=>array('id'=>1,'name'=>'渠道部'),
