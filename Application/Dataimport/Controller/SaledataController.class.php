@@ -202,15 +202,36 @@ class SaledataController extends Controller{
 
     }
 
+    //核销凭证推送
+    public function wovoucher(){
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $fileds = 'a.id as sale_id,a.add_time,record.wo_reason_type';
+        $where = array('a.type'=>1,'record.wo_status'=>2,'record.wo_reason_type'=>array('in','1,2'));
+        $where['a.goods_id'] = array('in',C('DATA_GOODS_IDS'));
+        $where['a.push_u8_status13'] = 0;
+
+        $res_data = $m_sale->getSaleStockRecordList($fileds,$where,'a.id asc','');
+        foreach ($res_data as $v){
+            $sale_id = $v['sale_id'];
+            $reason_type = $v['wo_reason_type'];
+            $push_type = intval(80+$reason_type);
+            sendSmallappTopicMessage($sale_id,$push_type);
+
+            usleep(500000);
+
+            echo "sale_id:$sale_id,wo_reason_type:$reason_type,add_time:{$v['add_time']} \r\n";
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "wovoucher end:$now_time \r\n";
+    }
+
+    //销售出库单已收款凭证推送
     public function salevoucher(){
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $fileds = 'id as sale_id,type,add_time';
         $where = array('type'=>1,'ptype'=>1,'goods_id'=>array('in',C('DATA_GOODS_IDS')));
         $where['push_u8_status2'] = 0;
         $res_data = $m_sale->getDataList($fileds,$where,'id asc');
-        print_r($res_data);
-        exit;
-        
         $map_push_type = array('1'=>89,'4'=>88);
         foreach ($res_data as $v){
             $sale_id = $v['sale_id'];
