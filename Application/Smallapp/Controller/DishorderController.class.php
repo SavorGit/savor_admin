@@ -464,7 +464,7 @@ class DishorderController extends BaseController {
                     $now_avg_price = $res_avg_price[0]['price']>0?$res_avg_price[0]['price']:0;
 
                     $sale_info = array('goods_id'=>$goods_id,'idcode'=>$all_idcodes,'area_id'=>$area_id,'order_id'=>$vinfo['id'],
-                        'maintainer_id'=>$maintainer_id,'sale_payment_id'=>0,'status'=>2,'ptype'=>1,'type'=>4,'num'=>$idcode_num,
+                        'maintainer_id'=>$maintainer_id,'status'=>2,'ptype'=>1,'type'=>4,'num'=>$idcode_num,
                         'cost_price'=>0,'settlement_price'=>$vinfo['total_fee'],'now_avg_price'=>$now_avg_price,'sale_payment_id'=>$sale_payment_id,
                         'add_time'=>$vinfo['add_time']);
                     $sale_id = $m_sale->add($sale_info);
