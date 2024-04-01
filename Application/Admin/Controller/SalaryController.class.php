@@ -87,6 +87,11 @@ class SalaryController extends BaseController {
                 system($shell);
                 $now_time = time();
                 $redis->set($cache_key,$now_time,86400);
+
+                $log_content = date("Y-m-d H:i:s").'[shell]'.$shell."\n";
+                $log_file_name = APP_PATH.'Runtime/Logs/'.'salary_'.date("Ymd").".log";
+                @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+
                 $this->output('导入成功,开始处理数据', 'salary/filelist');
             }
         }else{
