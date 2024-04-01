@@ -452,7 +452,25 @@ class HotelController extends BaseController {
 		}
 
 		$m_opuser_role = new \Admin\Model\OpuserroleModel();
-		$fields = 'a.user_id main_id,user.remark';
+		$m_opsstaff = new \Admin\Model\OpsstaffModel();
+		
+		$fields = 'user.id main_id,user.remark';
+		$mps = [];
+		//$mps['status'] = 1;
+		$mps['is_operrator'] = 1;
+		$user_info_yw = $m_opsstaff->alias('a')
+		           ->join('savor_sysuser user on a.sysuser_id=user.id','left')
+		           ->field($fields)
+		           ->where($mps)
+		           ->select();
+        $l_c = count($user_info_yw);
+        array_unshift($user_info_yw, array(
+            'main_id'=>0,
+            'remark'=>'无',
+        ));
+       
+		           
+	    $fields = 'a.user_id main_id,user.remark';
 		
 		$mps = [];
 		$mps['a.state'] = 1;
@@ -460,6 +478,9 @@ class HotelController extends BaseController {
 		$mps['a.role_id'] = array('in',array(1,3));
 		$mps['user.id'] = array('gt',0);
 		$user_info = $m_opuser_role->getAllRole($fields,$mps,'' );
+		
+		
+		
 		
 		$l_c = count($user_info);
 		$user_info[$l_c] = array(
@@ -609,6 +630,7 @@ class HotelController extends BaseController {
         $this->assign('food_style_list',$food_style_list);
         $this->assign('area',$area);
         $this->assign('pub_info',$user_info);
+        $this->assign('user_info_yw',$user_info_yw);
 		$this->assign('trainers',$trainers);
 		$this->assign('is_lablefiter',$is_lablefiter);
 		$this->display('add');

@@ -303,7 +303,7 @@
             </label>
             <div class="col-xs-12 col-sm-10">
                 <select name="responsible_maintainer_id" class="form-control bs-select"  data-live-search="true" data-container="body">
-                    <volist name="pub_info" id="responmaintainer">
+                    <volist name="user_info_yw" id="responmaintainer">
                         <option value="{$responmaintainer.main_id}" <if condition="$responmaintainer['main_id'] eq $vinfo['responsible_maintainer_id']">selected</if>>{$responmaintainer.remark}</option>
                     </volist>
                 </select>
