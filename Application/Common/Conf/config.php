@@ -68,7 +68,8 @@ $config = array(
         '吴琳'=>'wu.lin@littlehotspot.com',
         '谢冰蕾'=>'xie.binglei@littlehotspot.com',
         '曹捷'=>'cao.jie@littlehotspot.com',
-        '肖雷'=>'xiao.lei@littlehotspot.com'
+        '肖雷'=>'xiao.lei@littlehotspot.com',
+        '谢云航'=>'xie.yunhang@littlehotspot.com',
     ),
     'TEAM_NAME'=>array(
         '曹捷'=>'cao.jie@littlehotspot.com',
