@@ -5,7 +5,7 @@ use Think\Controller;
 class SaledataController extends Controller{
 
     public function addsale(){
-        $file_path = '/application_data/web/php/savor_admin/Public/content/测试033101.xlsx';
+        $file_path = '/application_data/web/php/savor_admin/Public/content/正式1200瓶0402.xlsx';
 //        $file_path = SITE_TP_PATH.'/Public/uploads/'.$file_name;
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
@@ -41,12 +41,14 @@ class SaledataController extends Controller{
                 $phptime = ($wo_time - 25569) * 86400 - (8 * 60 * 60);
                 $wo_time = date('Y-m-d H:i:s',$phptime);
             }
-
             $fields = 'hotel.area_id,ext.maintainer_id,ext.residenter_id';
             $res_hotelext = $m_hotel->getHotelById($fields,array('hotel.id'=>$hotel_id));
             $area_id = $res_hotelext['area_id'];
             $maintainer_id = intval($res_hotelext['maintainer_id']);
             $residenter_id = intval($res_hotelext['residenter_id']);
+
+            echo "check  $idcode,$area_id,$maintainer_id,$residenter_id,$wo_time \r\n";
+            continue;
 
             $res_indetail = $m_stock_detail->getInfo(array('stock_id'=>$stock_in_id));
             $goods_id = $res_indetail['goods_id'];
@@ -71,6 +73,7 @@ class SaledataController extends Controller{
 
             $all_stock_in_ids[$stock_in_id]=$op_openid;
             $all_stock_out_ids[$stock_out_id]=$op_openid;
+            continue;
 
             //入库
             $indata = array('stock_id'=>$stock_in_id,'stock_detail_id'=>$stock_detail_id,'goods_id'=>$goods_id,'batch_no'=>$batch_no,'idcode'=>$idcode,'avg_price'=>$now_avg_price,
@@ -117,7 +120,6 @@ class SaledataController extends Controller{
 
             //核销
             $res_staff = $m_staff->getMerchantStaffList('a.openid',array('m.hotel_id'=>$hotel_id,'m.status'=>1,'a.status'=>1));
-            $staffs = array();
             $sale_openid = '';
             if(!empty($res_staff)){
                 $staffs = $res_staff;
@@ -173,11 +175,9 @@ class SaledataController extends Controller{
             $up_sale = array('status'=>2,'sale_payment_id'=>$sale_payment_id,'ptype'=>1,'pay_time'=>$wo_time,'pay_money'=>$settlement_price);
             $m_sale->updateData(array('id'=>$sale_id),$up_sale);
 
-            echo "icdoe:$idcode,sale_id:$sale_id";
-            exit;
+            echo "icdoe:$idcode \r\n";
         }
 
-        exit;
         //入库单 所有商品入库完毕后
         foreach ($all_stock_in_ids as $k=>$v){
             $stock_in_id = $k;
@@ -185,12 +185,13 @@ class SaledataController extends Controller{
 
             $rfields = 'sum(total_amount) as total_num,sum(total_fee) as total_fee';
             $rwhere = array('stock_id'=>$stock_in_id,'type'=>1,'dstatus'=>1);
-            $res_stock_num = $m_stock_record->getALLDataList($rfields,$rwhere,'','','');
+            $res_stock_num = $m_stock_record->getAllData($rfields,$rwhere);
             $up_data = array('status'=>2,'op_openid'=>$op_openid);
             $up_data['amount'] = intval($res_stock_num[0]['total_num']);
             $up_data['total_fee'] = $res_stock_num[0]['total_fee']>0?$res_stock_num[0]['total_fee']:0;
             $up_data['total_money'] = $up_data['total_fee'];
             $m_stock->updateData(array('id'=>$stock_in_id),$up_data);
+            echo "stock_in_id:$stock_in_id,openid:$op_openid \r\n";
         }
         //出库单 所有商品领取,验收完毕
         foreach ($all_stock_out_ids as $k=>$v){
@@ -198,6 +199,7 @@ class SaledataController extends Controller{
             $op_openid = $v;
             $up_data = array('status'=>4,'receive_openid'=>$op_openid,'check_openid'=>$op_openid,'update_time'=>date('Y-m-d H:i:s'));
             $m_stock->updateData(array('id'=>$stock_out_id),$up_data);
+            echo "stock_out_id:$stock_out_id,openid:$op_openid \r\n";
         }
 
     }
@@ -209,6 +211,7 @@ class SaledataController extends Controller{
         $where = array('a.type'=>1,'record.wo_status'=>2,'record.wo_reason_type'=>array('in','1,2'));
         $where['a.goods_id'] = array('in',C('DATA_GOODS_IDS'));
         $where['a.push_u8_status13'] = 0;
+        $where['a.hotel_id'] = 1375;
 
         $res_data = $m_sale->getSaleStockRecordList($fileds,$where,'a.id asc','');
         foreach ($res_data as $v){
@@ -231,6 +234,8 @@ class SaledataController extends Controller{
         $fileds = 'id as sale_id,type,add_time';
         $where = array('type'=>1,'ptype'=>1,'goods_id'=>array('in',C('DATA_GOODS_IDS')));
         $where['push_u8_status2'] = 0;
+        $where['hotel_id'] = 1375;
+
         $res_data = $m_sale->getDataList($fileds,$where,'id asc');
         $map_push_type = array('1'=>89,'4'=>88);
         foreach ($res_data as $v){
