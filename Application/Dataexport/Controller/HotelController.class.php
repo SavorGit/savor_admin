@@ -2,7 +2,65 @@
 namespace Dataexport\Controller;
 
 class HotelController extends BaseController{
-
+    public function hotelInfoList(){
+        
+        $fields = 'area.region_name city_name, count.region_name count_name,circle.name circle_name,
+                   case a.state
+                   when "1" then "正常"
+                   when "2" then "冻结"
+                   end as state,
+                   a.id hotel_id,a.name hotel_name,a.addr,susigner.remark signer,su.remark residenter,
+                   case ext.is_salehotel
+                   when "1" then "是"
+                   when "0" then "否"
+                   end as is_salehotel,ext.contract_expiretime';
+        $where = [];
+        $where['a.state'] = array('in',array('1','2'));
+        $where['a.flag']  = 0;
+        $where['a.htype'] = 10;
+        $m_hotel = new \Admin\Model\HotelModel();
+        $hotel_list =   $m_hotel->alias('a')
+                                ->join('savor_hotel_ext ext on a.id=ext.hotel_id','left')
+                                ->join('savor_area_info area on a.area_id=area.id','left')
+                                ->join('savor_area_info as count on a.county_id = count.id','left')
+                                ->join('savor_business_circle as circle on a.business_circle_id = circle.id','left')
+                                ->join('savor_sysuser su on ext.residenter_id=su.id','left')
+                                ->join('savor_sysuser susigner on ext.signer_id=susigner.id','left')
+                                ->field($fields)
+                                ->where($where)
+                                ->select();
+        //echo $m_hotel->getLastSql();
+        $m_box = new \Admin\Model\BoxModel();
+        foreach($hotel_list as $key=>$v){
+            $map = [];
+            $map['hotel.id'] = $v['hotel_id'];
+            $map['a.flag']   = 0;
+            $map['a.state']  = 1;
+            $ret = $m_box->alias('a')
+                  ->join('savor_room room on a.room_id=room.id','left')
+                  ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+                  ->where($map)->count();
+            $hotel_list[$key]['box_num'] = $ret;
+        }
+        $cell = array(
+            array('city_name','城市'),
+            array('count_name','区域'),
+            array('circle_name','商圈'),
+            array('state','酒楼状态'),
+            
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('addr','地址'),
+            
+            array('signer','签约人'),
+            array('residenter','驻店人'),
+            array('is_salehotel','售酒餐厅'),
+            array('box_num','设备数量'),
+            array('contract_expiretime','合同到期时间'),
+        );
+        $filename = '酒楼信息表';
+        $this->exportToExcel($cell,$hotel_list,$filename,1);
+    }
     public function hotellist(){
         $area_id = I('get.aid',0,'intval');
 
