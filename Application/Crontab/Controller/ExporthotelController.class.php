@@ -543,6 +543,7 @@ class ExporthotelController extends BaseController{
             $v['xdvisit_num'] = intval($res_xdvisit[0]['num']);
 
             $salewhere = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+            $salewhere['a.goods_id'] = array('not in',C('DATA_GOODS_IDS'));
             $salewhere['record.add_time'] = array(array('egt',$month_2_stime),array('elt',$month_2_etime));
             $res_stock_record = $m_sale->alias('a')
                 ->field('count(a.id) as num')
@@ -575,6 +576,7 @@ class ExporthotelController extends BaseController{
 
             $qksale_where = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'record.wo_status'=>2);
             $qksale_where['a.ptype'] = array('in','0,2');
+            $qksale_where['a.goods_id'] = array('not in',C('DATA_GOODS_IDS'));
             $res_sale_qk = $m_sale->alias('a')
                 ->field('sum(a.settlement_price-a.pay_money) as money')
                 ->join('savor_finance_stock_record record on a.stock_record_id=record.id','left')
