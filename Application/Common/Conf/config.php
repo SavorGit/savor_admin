@@ -99,6 +99,7 @@ $config = array(
         '翁小虎'=>'weng.xiaohu@littlehotspot.com',
         '赖桂华'=>'lai.guihua@littlehotspot.com',
         '高峰'=>'gao.feng@littlehotspot.com',
+        '陈灿锐'=>'chen.canrui@littlehotspot.com',
 
     ),
     'OPS_TASK_SOURCES'=>array(
