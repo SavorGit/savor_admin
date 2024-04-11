@@ -49,6 +49,23 @@ class AliyunOCR{
         return $result;
     }
 
+    public function RecognizeGeneral($url){
+        //文档地址：https://help.aliyun.com/document_detail/442282.html?spm=a2c4g.442265.0.0.2c0733c30eG3kv
+        $this->data = array(
+            'Format' => 'json',
+            'Version' => '2021-07-07',
+            'AccessKeyId' => $this->accessKeyId,
+            'SignatureVersion' => '1.0',
+            'SignatureMethod' => 'HMAC-SHA1',
+            'SignatureNonce'=> uniqid(),
+            'Timestamp' => date('Y-m-d\TH:i:s\Z'),
+            'Action' => 'RecognizeGeneral',
+            'Url' => $url,
+        );
+        $result = $this->http_get();
+        return $result;
+    }
+
     private function http_get(){
         $this->data['Signature'] = $this->computeSignature($this->data, $this->accessKeySecret);
         $ch = curl_init();

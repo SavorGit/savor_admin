@@ -3747,9 +3747,9 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
     public function ocr(){
         //阿里云文档 请求参数 https://help.aliyun.com/document_detail/442282.html?spm=a2c4g.442265.0.0.2c0733c30eG3kv
-        $url = 'https://oss.littlehotspot.com/forscreen/resource/1686835293235.jpg';
+        $url = 'https://oss.littlehotspot.com/WeChat/WeChatSale/WechatIMG28741.jpg';
         $ali_ocr = new \Common\Lib\AliyunOCR();
-        $res_ocr = $ali_ocr->recognizeShoppingReceipt($url);
+        $res_ocr = $ali_ocr->RecognizeGeneral($url);
         $res_data = json_decode($res_ocr['Data'],true);
         print_r($res_data);
     }
