@@ -479,7 +479,7 @@ class ExporthotelController extends BaseController{
 
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.business_circle_id,circle.name as circle_name,
-            ext.residenter_id,residenter.remark as residenter_name,ext.department_name,ext.team_name,ext.bdm_name
+            ext.residenter_id,residenter.remark as residenter_name,ext.department_name,ext.team_name,ext.bdm_name,ext.sale_last_time
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
             left join savor_area_info as area on a.area_id=area.id
             left join savor_business_circle as circle on a.business_circle_id = circle.id
@@ -490,6 +490,14 @@ class ExporthotelController extends BaseController{
         $datalist = array();
         foreach ($result as $v){
             $hotel_id = $v['hotel_id'];
+            $no_sell_day = '';
+            $sale_last_time = '';
+            if($v['sale_last_time']!='0000-00-00 00:00:00'){
+                $sale_last_time = $v['sale_last_time'];
+                $no_sell_day = round((time()-strtotime($sale_last_time))/86400);
+            }
+            $v['no_sell_day'] = $no_sell_day;
+            $v['sale_last_time'] = $sale_last_time;
             $res_room = $m_room->getRoomByCondition('count(room.id) as num',array('hotel.id'=>$v['hotel_id'],'room.state'=>1,'room.flag'=>0));
             $v['room_num'] = intval($res_room[0]['num']);
 
@@ -624,6 +632,8 @@ class ExporthotelController extends BaseController{
             array('dz_mobile','店长手机'),
             array('sale_num','本月销量'),
             array('open_sale_num','本月开瓶核销量'),
+            array('no_sell_day','多少天未售酒'),
+            array('sale_last_time','最后一次售酒时间'),
             array('zdvisit_num','驻店次数'),
             array('xdvisit_num','巡店次数'),
             array('month_2_sale_num','前月销量'),
