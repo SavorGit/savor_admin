@@ -1109,6 +1109,8 @@ function rare_words($asc=''){
         -3122=>array('word'=>"笪",'first_char'=>'D'),
         -9823=>array('word'=>"佟",'first_char'=>'T'),
         -6234=>array('word'=>"禤",'first_char'=>'X'),
+        -3589=>array('word'=>"覃",'first_char'=>'Q'),
+        -9481=>array('word'=>"邝",'first_char'=>'K'),
     );
     if(array_key_exists($asc, $rare_arr) && $rare_arr[$asc]['first_char']){
         return $rare_arr[$asc]['first_char'] ;
