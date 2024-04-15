@@ -4523,7 +4523,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
     function firstname() {
         // 假设姓氏在名字中的位置为第一个字
-        $str = '禤筱睛';
+        $str = '邝志鹏';
 
         if(empty($str)){return '';}
         $fchar=ord($str{0});
