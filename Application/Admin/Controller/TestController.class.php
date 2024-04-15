@@ -4521,7 +4521,24 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
+    function firstname() {
+        // 假设姓氏在名字中的位置为第一个字
+        $str = '禤筱睛';
+
+        if(empty($str)){return '';}
+        $fchar=ord($str{0});
+        if($fchar>=ord('A')&&$fchar<=ord('z')) return strtoupper($str{0});
+        $s1=iconv('UTF-8','gb2312',$str);
+        $s2=iconv('gb2312','UTF-8',$s1);
+        $s=$s2==$str?$s1:$str;
+        $asc=ord($s{0})*256+ord($s{1})-65536;
+        echo $asc;
+    }
+
+
+
     public function upsalepaytime(){
+        exit;
         $sql = "select a.id as sale_id,a.sale_payment_id,p.pay_time from savor_finance_sale as a left join savor_finance_sale_payment as p on a.sale_payment_id=p.id
         where a.ptype=1 and a.type=1 order by a.id desc ";
         $res = M()->query($sql);
