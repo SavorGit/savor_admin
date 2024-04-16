@@ -6,7 +6,7 @@ class StockController extends Controller{
 
     public function expirerecycle(){
         $diff_time = time() - 86400*60;
-        $where = array('type'=>7,'wo_status'=>2,'recycle_status'=>1);
+        $where = array('type'=>7,'wo_status'=>2,'recycle_status'=>array('in','1,4'));
         $where['UNIX_TIMESTAMP(add_time)'] = array('elt',$diff_time);
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $m_stock_record->updateData($where,array('recycle_status'=>7));
