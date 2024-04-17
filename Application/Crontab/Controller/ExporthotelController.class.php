@@ -773,6 +773,82 @@ class ExporthotelController extends BaseController{
         echo "sellhoteldata end:$now_time \r\n";
     }
 
+    public function idcodelist(){
+        $test_hotel_ids = join(',',C('TEST_HOTEL'));
+        $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.county_id,county.region_name as country_name,
+            ext.residenter_id,residenter.remark as residenter_name,ext.team_name
+            from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
+            left join savor_area_info as area on a.area_id=area.id
+            left join savor_area_info as county on a.county_id = county.id
+            left join savor_sysuser as residenter on ext.residenter_id=residenter.id
+            where a.state=1 and a.flag=0 and ext.is_salehotel_stock=1 and a.id not in ($test_hotel_ids)
+            order by a.area_id asc";
+        $result = M()->query($sql);
+        $m_idcode = new \Admin\Model\FinanceIdcodeModel();
+        $datalist = array();
+        foreach ($result as $v){
+            $hotel_id = $v['hotel_id'];
+            $rwhere = array('a.hotel_id'=>$hotel_id,'a.type'=>array('in','2,4,5'),'a.io_type'=>22);
+            $res_idcodes = $m_idcode->alias('a')
+                ->field('a.goods_id,goods.name as goods_name,a.idcode,wcode.winecode')
+                ->join('savor_finance_goods goods on a.goods_id=goods.id','left')
+                ->join('savor_finance_winecode wcode on a.idcode=wcode.idcode','left')
+                ->where($rwhere)
+                ->select();
+            foreach ($res_idcodes as $iv){
+                if(!empty($iv['winecode'])){
+                    continue;
+                }
+                $datalist[]=array('area_name'=>$v['area_name'],'country_name'=>$v['country_name'],
+                    'hotel_id'=>$hotel_id,'hotel_name'=>$v['hotel_name'],'team_name'=>$v['team_name'],'residenter_name'=>$v['residenter_name'],
+                    'goods_name'=>$iv['goods_name'],'idcode'=>$iv['idcode']
+                );
+            }
+        }
+
+        $cell = array(
+            array('area_name','城市'),
+            array('country_name','区域'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('team_name','小组'),
+            array('residenter_name','驻店人'),
+            array('goods_name','酒水名称'),
+            array('idcode','唯一识别码'),
+        );
+        $filename = '酒楼未绑定酒商码表';
+        $file_path = $this->exportToExcel($cell,$datalist,$filename,2);
+        $now_file_path = SITE_TP_PATH .$file_path;
+        $now_date = date('Y-m-d');
+        $title = $now_date.'日'.$filename;
+        $body = '导出'.$title.'详情见附件';
+        $mail_config = C('SEND_MAIL_CONF');
+        $mail_config = $mail_config['littlehotspot'];
+        $ma_auto = new MailAuto();
+        $mail = new \Mail\PHPMailer();
+        $mail->CharSet = "UTF-8";
+        $mail->IsSMTP();
+        $mail->Host = $mail_config['host'];
+        $mail->SMTPAuth = true;
+        $mail->Username = $mail_config['username'];
+        $mail->Password = $mail_config['password'];
+        $mail->Port = 465;
+        $mail->From = $mail_config['username'];
+        $mail->FromName = $title;
+        $mail->IsHTML(true);
+
+        $mail->Subject = $title;
+        $mail->Body = $body;
+        $mail->AddAddress("zheng.wei@littlehotspot.com");
+        $mail->AddAddress("liu.bin@littlehotspot.com");
+        $mail->AddAddress("jiang.gongjing@littlehotspot.com");
+        $mail->AddAttachment($now_file_path); // 添加附件
+        if ($mail->Send()) {
+            echo "email send ok \r\n";
+        } else {
+            echo "email send fail \r\n";
+        }
+    }
 
     
 }
