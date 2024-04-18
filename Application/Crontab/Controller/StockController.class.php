@@ -16,6 +16,9 @@ class StockController extends Controller{
     }
 
     public function idcode(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "idcode start:$now_time \r\n";
+
         $last_time = time() - 3600*8;
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
@@ -54,9 +57,10 @@ class StockController extends Controller{
             }else{
                 $m_idcode->add($add_data);
             }
-            echo "idcode:$idcode,type:{$add_data['type']} \r\n";
+            echo "idcode:$idcode,type:{$add_data['type']}   ";
 
         }
-
+        $now_time = date('Y-m-d H:i:s');
+        echo "idcode end:$now_time \r\n";
     }
 }
