@@ -720,6 +720,9 @@ class ExporthotelController extends BaseController{
         foreach ($bdm_datas as $k=>$v){
             if(isset($email_map[$k])){
                 $email = $email_map[$k];
+                if(empty($email)){
+                    continue;
+                }
             }else{
                 continue;
             }
@@ -748,6 +751,9 @@ class ExporthotelController extends BaseController{
         foreach ($bd_datas as $k=>$v){
             if(isset($email_map[$k])){
                 $email = $email_map[$k];
+                if(empty($email)){
+                    continue;
+                }
             }else{
                 continue;
             }
@@ -819,6 +825,9 @@ class ExporthotelController extends BaseController{
         $filename = '酒楼未绑定酒商码表';
         $file_path = $this->exportToExcel($cell,$datalist,$filename,2);
         $now_file_path = SITE_TP_PATH .$file_path;
+        echo $now_file_path;
+        exit;
+
         $now_date = date('Y-m-d');
         $title = $now_date.'日'.$filename;
         $body = '导出'.$title.'详情见附件';
