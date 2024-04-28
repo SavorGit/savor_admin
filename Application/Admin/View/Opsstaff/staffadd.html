@@ -52,24 +52,6 @@
 					</div>
 				</div>
 			</div>
-			
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">是否运维：</label>
-				<div class="col-xs-12 col-sm-10">
-					<div class="inline-radio-container">
-							<label class="radio-inline">
-								<input type="radio" name="is_operrator"  value='0' <if condition="$vinfo['is_operrator'] eq 0 ">checked</if>>
-								<span>否</span>
-							</label>
-							
-							<label class="radio-inline">
-								<input type="radio" name="is_operrator"  value='1' <if condition="$vinfo['is_operrator'] eq 1 ">checked</if>>
-								<span>是</span>
-							</label>
-						
-					</div>
-				</div>
-			</div>
 
 			<div class="form-group row" id="select_area" <if condition="$vinfo.is_show_area eq 0"> style="display: none;"</if> >
 				<label class="col-xs-12 col-sm-2 control-label">权限-酒楼区域：</label>
@@ -113,7 +95,7 @@
 
 	$("input[name='hscope']").click(function() {
 		var id = $(this).attr("id");
-		if (id==2 || id==4 || id==6){
+		if (id==2 || id==4 || id==6 || id==8){
 			$("#select_area").show();
 		}else{
 			$("#select_area").hide();

@@ -94,7 +94,9 @@ class OpsstaffController extends BaseController {
                 $tinfo = array('id'=>$v['id'],'name'=>$v['remark'],'selected_str'=>$selected_str);
                 $sysusers[]=$tinfo;
             }
-            $hotel_scopes = array('1'=>'全国','2'=>'城市','3'=>'个人','4'=>'城市+个人','5'=>'全国财务','6'=>'城市财务');
+            $hotel_scopes = array('1'=>'全国','2'=>'城市','3'=>'个人','4'=>'城市+个人','5'=>'全国财务','6'=>'城市财务',
+                '7'=>'库管财务','8'=>'运维主管','9'=>'运维人员'
+            );
             $this->assign('hotel_scopes', $hotel_scopes);
             $this->assign('areas', $area_arr);
             $this->assign('sysusers',$sysusers);
@@ -109,7 +111,6 @@ class OpsstaffController extends BaseController {
             $hotel_area_id = I('post.hotel_area_id');
         	$status = I('post.status',1,'intval');
         	$is_attendance = I('post.is_attendance',1,'intval');
-        	$is_operrator = I('post.is_operrator',0,'intval');
         	if(empty($area_id) || ($hscope==2 && empty($hotel_area_id))){
         		$this->output('缺少必要参数!', 'opsstaff/staffadd', 2, 0);
         	}
@@ -117,6 +118,10 @@ class OpsstaffController extends BaseController {
         	    if(!in_array($area_id,$hotel_area_id)){
                     $this->output('请勾选上自己所在的城市', 'opsstaff/staffadd', 2, 0);
                 }
+            }
+        	$is_operrator = 0;
+        	if(in_array($hscope,array(8,9))){
+                $is_operrator = 1;
             }
         	$data = array('sysuser_id'=>$sysuser_id,'area_id'=>$area_id,'job'=>$job,'mobile'=>$mobile,'status'=>$status,
         	    'hotel_role_type'=>$hscope,'is_operrator'=>$is_operrator,'is_attendance'=>$is_attendance);
