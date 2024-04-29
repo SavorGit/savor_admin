@@ -795,6 +795,7 @@ class ExporthotelController extends BaseController{
         foreach ($result as $v){
             $hotel_id = $v['hotel_id'];
             $rwhere = array('a.hotel_id'=>$hotel_id,'a.type'=>array('in','2,4,5'),'a.io_type'=>22);
+            $rwhere['a.goods_id'] = array('not in',C('DATA_GOODS_IDS'));
             $res_idcodes = $m_idcode->alias('a')
                 ->field('a.goods_id,goods.name as goods_name,a.idcode,wcode.winecode')
                 ->join('savor_finance_goods goods on a.goods_id=goods.id','left')
