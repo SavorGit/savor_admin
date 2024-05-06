@@ -263,18 +263,16 @@
 
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-            小组：
+            BD：
         </label>
         <div class="col-xs-12 col-sm-10">
-            <select name="team_name" class="form-control bs-select class-filter" data-live-search="true" data-container="body">
-                <option value="">请选择</option>
-                <volist name=":C('TEAM_NAME')" id="tm_name">
-                    <option value="{$key}" <if condition="$key eq $vinfo['team_name']">selected</if>>{$key}</option>
+            <select name="bd_name" class="form-control bs-select" title="请选择..." data-style="btn-success btn-sm"  data-live-search="true" data-container="body">
+                <volist name="pub_info" id="bdnameinfo">
+                    <option value="{$bdnameinfo.remark}" <if condition="$bdnameinfo['remark'] eq $vinfo['bd_name']">selected</if>>{$bdnameinfo.remark}</option><br>
                 </volist>
             </select>
         </div>
     </div>
-
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
             BDM：
@@ -282,8 +280,22 @@
         <div class="col-xs-12 col-sm-10">
             <select name="bdm_name" class="form-control bs-select class-filter" data-live-search="true" data-container="body">
                 <option value="">请选择</option>
-                <volist name=":C('BDM_NAME')" id="bd_name">
+                <volist name=":C('BDM_NAME')" id="tm_name">
                     <option value="{$key}" <if condition="$key eq $vinfo['bdm_name']">selected</if>>{$key}</option>
+                </volist>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+            BDD：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <select name="bdd_name" class="form-control bs-select class-filter" data-live-search="true" data-container="body">
+                <option value="">请选择</option>
+                <volist name=":C('BDD_NAME')" id="bdd_name">
+                    <option value="{$key}" <if condition="$key eq $vinfo['bdd_name']">selected</if>>{$key}</option>
                 </volist>
             </select>
         </div>

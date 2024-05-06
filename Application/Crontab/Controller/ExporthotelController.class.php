@@ -364,7 +364,7 @@ class ExporthotelController extends BaseController{
         $where = array('dg.status'=>1,'dg.type'=>43,'a.hotel_price'=>array('gt',0),
             'a.update_time'=>array(array('egt',$start_time),array('elt',$end_time)));
         $where['h.id'] = array('not in',C('TEST_HOTEL'));
-        $fields = 'a.hotel_id,h.name as hotel_name,area.region_name as area_name,ext.department_name,ext.team_name,
+        $fields = 'a.hotel_id,h.name as hotel_name,area.region_name as area_name,ext.department_name,ext.bdm_name,
         ext.bdm_name,a.goods_id,dg.name as goods_name,a.hotel_price,a.update_time,dg.price';
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         $datalist = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.hotel_id desc');
@@ -374,7 +374,7 @@ class ExporthotelController extends BaseController{
             array('hotel_name','酒楼名称'),
             array('area_name','城市'),
             array('department_name','部门'),
-            array('team_name','小组'),
+            array('bdm_name','BDM'),
             array('area_name','城市'),
             array('goods_id','酒水ID'),
             array('goods_name','酒水名称'),
@@ -479,7 +479,7 @@ class ExporthotelController extends BaseController{
 
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.business_circle_id,circle.name as circle_name,
-            ext.residenter_id,residenter.remark as residenter_name,ext.department_name,ext.team_name,ext.bdm_name,ext.sale_last_time
+            ext.residenter_id,residenter.remark as residenter_name,ext.department_name,ext.bdd_name,ext.bdm_name,ext.bd_name,ext.sale_last_time
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
             left join savor_area_info as area on a.area_id=area.id
             left join savor_business_circle as circle on a.business_circle_id = circle.id
@@ -643,9 +643,9 @@ class ExporthotelController extends BaseController{
             $cell[]=array("sale_week{$wk}_num","{$wk}周销量");
         }
         $cell[]=array('department_name','部门');
+        $cell[]=array('bd_name','BD');
         $cell[]=array('bdm_name','BDM');
-        $cell[]=array('team_name','BD');
-        $cell[]=array('residenter_name','AC');
+        $cell[]=array('bdd_name','BDD');
         $cell[]=array('is_parity','是否平价');
         $cell[]=array('is_shareprofit_str','是否分润');
         $cell[]=array('qk_money','总欠款');
@@ -708,8 +708,8 @@ class ExporthotelController extends BaseController{
             if(!empty($v['bdm_name'])){
                 $bdm_datas[$v['bdm_name']][]=$v;
             }
-            if(!empty($v['team_name'])){
-                $bd_datas[$v['team_name']][]=$v;
+            if(!empty($v['bd_name']) && !empty($v['residenter_name']) && $v['bd_name']==$v['residenter_name']){
+                $bd_datas[$v['residenter_id']][]=$v;
             }
         }
 
@@ -745,18 +745,16 @@ class ExporthotelController extends BaseController{
         }
 
         $now_time = date('Y-m-d H:i:s');
-        echo "bd(team_name): send,$now_time \r\n";
+        echo "bd: send,$now_time \r\n";
 
-        $email_map = C('TEAM_NAME');
+        $m_sysuser = new \Admin\Model\UserModel();
         foreach ($bd_datas as $k=>$v){
-            if(isset($email_map[$k])){
-                $email = $email_map[$k];
-                if(empty($email)){
-                    continue;
-                }
-            }else{
+            $res_bduser = $m_sysuser->getUserInfo($k);
+            if(empty($res_bduser['email'])){
                 continue;
             }
+            $email = $res_bduser['email'];
+
             $now_filename = $k.$filename;
             $datalist = $v;
             $file_path = $this->exportToExcel($cell,$datalist,$now_filename,2);
@@ -782,7 +780,7 @@ class ExporthotelController extends BaseController{
     public function idcodelist(){
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.county_id,county.region_name as country_name,
-            ext.residenter_id,residenter.remark as residenter_name,ext.team_name
+            ext.residenter_id,residenter.remark as residenter_name,ext.bdm_name
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
             left join savor_area_info as area on a.area_id=area.id
             left join savor_area_info as county on a.county_id = county.id
@@ -807,7 +805,7 @@ class ExporthotelController extends BaseController{
                     continue;
                 }
                 $datalist[]=array('area_name'=>$v['area_name'],'country_name'=>$v['country_name'],
-                    'hotel_id'=>$hotel_id,'hotel_name'=>$v['hotel_name'],'team_name'=>$v['team_name'],'residenter_name'=>$v['residenter_name'],
+                    'hotel_id'=>$hotel_id,'hotel_name'=>$v['hotel_name'],'bdm_name'=>$v['bdm_name'],'residenter_name'=>$v['residenter_name'],
                     'goods_name'=>$iv['goods_name'],'idcode'=>$iv['idcode']
                 );
             }
@@ -818,7 +816,7 @@ class ExporthotelController extends BaseController{
             array('country_name','区域'),
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
-            array('team_name','小组'),
+            array('bdm_name','BDM'),
             array('residenter_name','驻店人'),
             array('goods_name','酒水名称'),
             array('idcode','唯一识别码'),
