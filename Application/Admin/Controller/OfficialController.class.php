@@ -36,12 +36,12 @@ class officialController extends Controller {
         
         foreach($list as $keyd=>$v){
             $tmp = array();
-            $sql ="select count(a.id) nums from savor_box a
+            /*$sql ="select count(a.id) nums from savor_box a
                    left join savor_room b  on a.room_id=b.id
                    left join savor_hotel c on b.hotel_id=c.id where c.id=".$v['id'];
             $ret =  M()->query($sql);
-            $ret = $ret[0];
-            if(!empty($v['gps']) && $ret['nums']){
+            $ret = $ret[0];*/
+            if(!empty($v['gps'])){
                 $gps_arr = explode(',', $v['gps']);
                 $tmp['id'] = $v['id'];
                 $tmp['name'] = $v['name'];

@@ -30,6 +30,7 @@ class HotelController extends BaseController{
                                 ->where($where)
                                 ->select();
         //echo $m_hotel->getLastSql();
+        $m_contract_hotel = new \Admin\Model\ContracthotelModel();
         $m_box = new \Admin\Model\BoxModel();
         foreach($hotel_list as $key=>$v){
             $map = [];
@@ -41,6 +42,36 @@ class HotelController extends BaseController{
                   ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
                   ->where($map)->count();
             $hotel_list[$key]['box_num'] = $ret;
+            
+            
+            $map = [];
+            $map['a.hotel_id'] = $v['hotel_id'];
+            $map['c.type'] = 20;
+            $proxy_info = $m_contract_hotel->alias('a')
+                                       ->join('savor_finance_contract c on a.contract_id=c.id','left')
+                                       ->field('contract_stime,contract_etime')
+                                       ->where($map)->find();
+            
+            if(!empty($proxy_info['contract_etime'])){
+                $hotel_list[$key]['proxy_time'] = $proxy_info['contract_etime'];
+            }else {
+                $hotel_list[$key]['proxy_time'] = '';
+            }                           
+            
+            $map = [];
+            $map['a.hotel_id'] = $v['hotel_id'];
+            $map['c.type']     = 10;
+            
+            $hotel_c_info = $m_contract_hotel->alias('a')
+                                             ->join('savor_finance_contract c on a.contract_id=c.id','left')
+                                             ->field('contract_stime,contract_etime')
+                                             ->where($map)->find();
+            if(!empty($hotel_c_info['contract_etime'])){
+                $hotel_list[$key]['hotel_c_time'] = $hotel_c_info['contract_etime'];
+            }else {
+                $hotel_list[$key]['hotel_c_time'] = '';
+            }
+            
         }
         $cell = array(
             array('city_name','城市'),
@@ -57,6 +88,8 @@ class HotelController extends BaseController{
             array('is_salehotel','售酒餐厅'),
             array('box_num','设备数量'),
             array('contract_expiretime','合同到期时间'),
+            array('proxy_time','商品代销合同有效期'),
+            array('hotel_c_time','酒楼合同有效期'),
         );
         $filename = '酒楼信息表';
         $this->exportToExcel($cell,$hotel_list,$filename,1);
