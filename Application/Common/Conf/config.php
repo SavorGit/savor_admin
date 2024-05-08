@@ -63,20 +63,14 @@ $config = array(
     'TEST_HOTEL'=>array(7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925),
     'MAX_ADS_LOCATION_NUMS'=>50,
     'DEPARTMENT_NAME'=>array('北京一部','北京二部','广州一部','广州二部','上海一部','佛山一部'),
-    'BDM_NAME'=>array(
-        '孙子佳'=>'sun.zijia@littlehotspot.com',
-        '吴琳'=>'wu.lin@littlehotspot.com',
-        '谢冰蕾'=>'xie.binglei@littlehotspot.com',
-        '曹捷'=>'cao.jie@littlehotspot.com',
-        '肖雷'=>'xiao.lei@littlehotspot.com',
+    'BDD_NAME'=>array(
         '解云航'=>'',
         '刘磊'=>'',
-        '苏小娜'=>'su.xiaona@littlehotspot.com',
     ),
-    'TEAM_NAME'=>array(
+    'BDM_NAME'=>array(
         '曹捷'=>'cao.jie@littlehotspot.com',
         '吴琳'=>'wu.lin@littlehotspot.com',
-        '谢冰蕾'=>'xie.binglei@littlehotspot.com',
+        '苏小娜'=>'su.xiaona@littlehotspot.com',
         '肖雷'=>'xiao.lei@littlehotspot.com',
         '辛立娟'=>'xin.lijuan@littlehotspot.com',
         '卢琼'=>'lu.qiong@littlehotspot.com',
@@ -103,7 +97,7 @@ $config = array(
         '陈灿锐'=>'chen.canrui@littlehotspot.com',
         '刘雅暄'=>'liu.yaxuan@littlehotspot.com',
         '刘磊'=>'',
-
+        '解云航'=>'',
     ),
     'OPS_TASK_SOURCES'=>array(
         '1'=>array('id'=>1,'name'=>'渠道部'),
