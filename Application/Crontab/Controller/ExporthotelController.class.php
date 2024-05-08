@@ -765,9 +765,9 @@ class ExporthotelController extends BaseController{
             $mail->AddAddress($email);
             $mail->AddAttachment($now_file_path); // 添加附件
             if ($mail->Send()) {
-                echo "email: $email,name:$k send ok \r\n";
+                echo "email: $email,name:{$res_bduser['remark']} send ok \r\n";
             } else {
-                echo "email: $email,name:$k send fail \r\n";
+                echo "email: $email,name:{$res_bduser['remark']} send fail \r\n";
             }
             $mail->ClearAddresses();
             $mail->ClearAttachments();
