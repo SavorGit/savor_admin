@@ -468,20 +468,13 @@ class HotelController extends BaseController {
             'main_id'=>0,
             'remark'=>'无',
         ));
-       
-		           
 	    $fields = 'a.user_id main_id,user.remark';
-		
 		$mps = [];
 		$mps['a.state'] = 1;
 		$mps['user.status'] = 1;
 		$mps['a.role_id'] = array('in',array(1,3));
 		$mps['user.id'] = array('gt',0);
 		$user_info = $m_opuser_role->getAllRole($fields,$mps,'' );
-		
-		
-		
-		
 		$l_c = count($user_info);
 		$user_info[$l_c] = array(
 			'main_id'=>0,
@@ -508,6 +501,7 @@ class HotelController extends BaseController {
 			$vinfo['is_annualmeeting'] = $main_info['is_annualmeeting'];
 			$vinfo['is_salestat'] = $main_info['is_salestat'];
 			$vinfo['is_salehotel'] = $main_info['is_salehotel'];
+			$vinfo['is_have_group'] = $main_info['is_have_group'];
 			$vinfo['is_goods_leftpop_wind'] = $main_info['is_goods_leftpop_wind'];
 			$vinfo['is_goods_roll_content'] = $main_info['is_goods_roll_content'];
 			if($main_info['sale_start_date']=='0000-00-00'){
@@ -793,6 +787,7 @@ class HotelController extends BaseController {
         $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
         $is_salestat = I('post.is_salestat',0,'intval');
         $is_salehotel = I('post.is_salehotel',0,'intval');
+        $is_have_group = I('post.is_have_group',0,'intval');
         $residenter_id = I('post.residenter_id',0,'intval');
         $responsible_maintainer_id = I('post.responsible_maintainer_id',0,'intval');
         $signer_id = I('post.signer_id',0,'intval');
@@ -971,6 +966,7 @@ class HotelController extends BaseController {
         $data['is_annualmeeting'] = $is_annualmeeting;
         $data['is_salestat'] = $is_salestat;
         $data['is_salehotel'] = $is_salehotel;
+        $data['is_have_group'] = $is_have_group;
         $data['is_goods_leftpop_wind'] = $is_goods_leftpop_wind;
         $data['is_goods_roll_content'] = $is_goods_roll_content;
         $data['is_new'] = $is_new;
