@@ -824,8 +824,6 @@ class ExporthotelController extends BaseController{
         $filename = '酒楼未绑定酒商码表';
         $file_path = $this->exportToExcel($cell,$datalist,$filename,2);
         $now_file_path = SITE_TP_PATH .$file_path;
-        echo $now_file_path;
-        exit;
 
         $now_date = date('Y-m-d');
         $title = $now_date.'日'.$filename;
@@ -849,7 +847,7 @@ class ExporthotelController extends BaseController{
         $mail->Body = $body;
         $mail->AddAddress("zheng.wei@littlehotspot.com");
         $mail->AddAddress("liu.bin@littlehotspot.com");
-        $mail->AddAddress("jiang.gongjing@littlehotspot.com");
+//        $mail->AddAddress("jiang.gongjing@littlehotspot.com");
         $mail->AddAttachment($now_file_path); // 添加附件
         if ($mail->Send()) {
             echo "email send ok \r\n";
