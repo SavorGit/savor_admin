@@ -780,11 +780,12 @@ class ExporthotelController extends BaseController{
     public function idcodelist(){
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.county_id,county.region_name as country_name,
-            ext.residenter_id,residenter.remark as residenter_name,ext.bdm_name
+            ext.residenter_id,residenter.remark as residenter_name,ext.bdm_name,responsible_maintainer.remark as responsible_maintainer_name,
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
             left join savor_area_info as area on a.area_id=area.id
             left join savor_area_info as county on a.county_id = county.id
             left join savor_sysuser as residenter on ext.residenter_id=residenter.id
+            left join savor_sysuser as responsible_maintainer on ext.responsible_maintainer_id=responsible_maintainer.id
             where a.state=1 and a.flag=0 and ext.is_salehotel_stock=1 and a.id not in ($test_hotel_ids)
             order by a.area_id asc";
         $result = M()->query($sql);
@@ -804,8 +805,13 @@ class ExporthotelController extends BaseController{
                 if(!empty($iv['winecode'])){
                     continue;
                 }
-                $datalist[]=array('area_name'=>$v['area_name'],'country_name'=>$v['country_name'],
-                    'hotel_id'=>$hotel_id,'hotel_name'=>$v['hotel_name'],'bdm_name'=>$v['bdm_name'],'residenter_name'=>$v['residenter_name'],
+                $responsible_maintainer_name = $v['responsible_maintainer_name'];
+                if(empty($responsible_maintainer_name)){
+                    $responsible_maintainer_name = '';
+                }
+
+                $datalist[]=array('area_name'=>$v['area_name'],'country_name'=>$v['country_name'],'hotel_id'=>$hotel_id,'hotel_name'=>$v['hotel_name'],
+                    'bdm_name'=>$v['bdm_name'],'residenter_name'=>$v['residenter_name'],'responsible_maintainer_name'=>$responsible_maintainer_name,
                     'goods_name'=>$iv['goods_name'],'idcode'=>$iv['idcode']
                 );
             }
@@ -818,6 +824,7 @@ class ExporthotelController extends BaseController{
             array('hotel_name','酒楼名称'),
             array('bdm_name','BDM'),
             array('residenter_name','驻店人'),
+            array('responsible_maintainer_name','运维负责人'),
             array('goods_name','酒水名称'),
             array('idcode','唯一识别码'),
         );
@@ -846,7 +853,7 @@ class ExporthotelController extends BaseController{
         $mail->Subject = $title;
         $mail->Body = $body;
         $mail->AddAddress("zheng.wei@littlehotspot.com");
-        $mail->AddAddress("liu.bin@littlehotspot.com");
+//        $mail->AddAddress("liu.bin@littlehotspot.com");
 //        $mail->AddAddress("jiang.gongjing@littlehotspot.com");
         $mail->AddAttachment($now_file_path); // 添加附件
         if ($mail->Send()) {
