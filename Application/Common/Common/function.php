@@ -1011,8 +1011,11 @@ function getFirstCharter($str){
     if(empty($str)){return '';}
     $fchar=ord($str{0});
     if($fchar>=ord('A')&&$fchar<=ord('z')) return strtoupper($str{0});
-    $s1=iconv('UTF-8','gb2312',$str);
-    $s2=iconv('gb2312','UTF-8',$s1);
+    //$s1=iconv('UTF-8','gb2312',$str);
+    //$s2=iconv('gb2312','UTF-8',$s1);
+    $s1 = mb_convert_encoding($str,'gb2312','UTF-8');
+    $s2 = mb_convert_encoding($s1, 'UTF-8','gb2312');
+    
     $s=$s2==$str?$s1:$str;
     $asc=ord($s{0})*256+ord($s{1})-65536;
     if($asc =='-9004') return 'M';
