@@ -780,7 +780,7 @@ class ExporthotelController extends BaseController{
     public function idcodelist(){
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.county_id,county.region_name as country_name,
-            ext.residenter_id,residenter.remark as residenter_name,ext.bdm_name,responsible_maintainer.remark as responsible_maintainer_name,
+            ext.residenter_id,residenter.remark as residenter_name,ext.bdm_name,responsible_maintainer.remark as responsible_maintainer_name
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
             left join savor_area_info as area on a.area_id=area.id
             left join savor_area_info as county on a.county_id = county.id
