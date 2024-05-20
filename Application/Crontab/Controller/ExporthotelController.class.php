@@ -700,7 +700,7 @@ class ExporthotelController extends BaseController{
         $mail->ClearAttachments();
 
         $now_time = date('Y-m-d H:i:s');
-        echo "email: 9num send,$now_time \r\n";
+        echo "email: 10num send,$now_time \r\n";
 
         $bdm_datas = array();
         $bd_datas = array();
