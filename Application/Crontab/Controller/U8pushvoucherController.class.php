@@ -18,7 +18,7 @@ class U8pushvoucherController extends Controller{
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $fileds = 'a.id as sale_id,a.add_time,record.wo_reason_type';
         $where = array('a.type'=>1,'record.wo_status'=>2,'record.wo_reason_type'=>array('in','1,2'));
-        $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $where['record.wo_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $where['a.push_u8_status13'] = 0;
         $where['a.hotel_id'] = array('not in',C('TEST_HOTEL'));
 
