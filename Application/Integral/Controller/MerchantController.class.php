@@ -59,7 +59,6 @@ class MerchantController extends BaseController {
             $datalist[$k]['creater'] = $user[$sysuser_id];
             $datalist[$k]['maintainer'] = $user[$maintaineru_id];
             $filter = array('merchant_id'=>$v['id'],'status'=>1);
-            $filter['parent_id'] = array('gt',0);
             $res_staff_num = $m_staff->getRow('count(id) as num',$filter);
             $datalist[$k]['staff_num'] = $res_staff_num['num'];
         }
@@ -641,7 +640,7 @@ class MerchantController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $where = array('a.merchant_id'=>$merchant_id,'a.parent_id'=>array('gt',0));
+        $where = array('a.merchant_id'=>$merchant_id);
         if(!empty($keyword)){
             $where['u.nickName'] = array('like',"%$keyword%");
         }
