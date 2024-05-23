@@ -14,123 +14,7 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
-    
-    public function spider(){
-        vendor("PHPExcel.PHPExcel.IOFactory");
-        vendor("PHPExcel.PHPExcel");
-        ini_set("display_errors", "On");//打开错误提示
-        ini_set("error_reporting",E_ALL);//显示所有错误
-        header("Content-Type: text/html; charset=utf-8");
-        
-        $header = $this->header();
-        
-        $id = I('id');
-        $page = I('page',1);
-        
-        
-        $header[] = 'Referer: https://item.jd.com/'.$id.'.html';
-        
-        //设置浏览器信息
-        $header[] = 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36';
-        
-        $url = 'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId='.$id.'&score=0&sortType=5&page='.$page.'&pageSize=1000&isShadowSku=0&rid=0&fold=1';
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        //为防止爬取多次禁用Ip，可用代理ip
-        //            curl_setopt($ch, CURLOPT_PROXY,'88.198.50.103'); //代理服务器地址
-        //            curl_setopt($ch, CURLOPT_PROXYPORT, '8080'); //代理服务器端口
-        
-        $output = curl_exec($ch);
-        curl_close($ch);
-        $output=str_replace('fetchJSON_comment98(','',$output);
-        $output=str_replace('});','}',$output);
-        $encode = mb_detect_encoding($output, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
-        if($encode == 'UTF-8'){
-            echo $encode;
-        }else{
-            $output = mb_convert_encoding($output, 'UTF-8', $encode);
-        }
-        //print_r($output);exit;
-        $result = json_decode($output, true);
-        //print_r($result);exit;
-        $pjs = [];
-        foreach($result['comments'] as $key=>$v){
-            $tmp['content'] =  trim($v['content']);
-            $pjs[] = $tmp;
-        }
-        $cell = array(
-            array('content',' '),
-            
-        );
-        //print_r($pjs);exit;
-        $filename = '评价语';
-        $fileName = $filename.'_'.date('YmdHis');
-        
-        $cellNum = count($cell);
-        $dataNum = count($pjs);
-        
-        $objPHPExcel = new \PHPExcel();
-        $cellName = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ');
-        
-        for ($i = 0; $i < $cellNum; $i++) {
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i] . '1', $cell[$i][1]);
-        }
-        for ($i = 0; $i < $dataNum; $i++) {
-            for ($j = 0; $j < $cellNum; $j++) {
-                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j] . ($i + 2), $pjs[$i][$cell[$j][0]]);
-            }
-        }
-        header('pragma:public');
-        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $fileName . '.xls"');
-        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $objWriter->save('php://output');
-    }
-    
-    
-    //此函数提供了国内的IP地址
-    public static function header(){
-        $ip_long = array(
-            array('607649792', '608174079'), //36.56.0.0-36.63.255.255
-            array('1038614528', '1039007743'), //61.232.0.0-61.237.255.255
-            array('1783627776', '1784676351'), //106.80.0.0-106.95.255.255
-            array('2035023872', '2035154943'), //121.76.0.0-121.77.255.255
-            array('2078801920', '2079064063'), //123.232.0.0-123.235.255.255
-            array('-1950089216', '-1948778497'), //139.196.0.0-139.215.255.255
-            array('-1425539072', '-1425014785'), //171.8.0.0-171.15.255.255
-            array('-1236271104', '-1235419137'), //182.80.0.0-182.92.255.255
-            array('-770113536', '-768606209'), //210.25.0.0-210.47.255.255
-            array('-569376768', '-564133889'), //222.16.0.0-222.95.255.255
-        );
-        $rand_key = mt_rand(0, 9);
-        $ip= long2ip(mt_rand($ip_long[$rand_key][0], $ip_long[$rand_key][1]));
-        
-        $headers['CLIENT-IP'] =$ip;
-        $headers['X-FORWARDED-FOR'] =$ip;
-        $headers["VIA"] = $ip;
-        $headers["REMOTE_ADDR"] = $ip;
-        
-        //        $header[] = 'Referer: https://item.jd.com/'.$goods_id.'.html';
-        
-        $headerArr = array();
-        foreach($headers as $n => $v ) {
-            $headerArr[] = $n .': ' . $v;
-        }
-        return $headerArr;
-    }
-    public function getRedisInfo(){
-        $redis = SavorRedis::getInstance();
-        $redis->select(15);
-        $key = 'savor_room_13309';
-        $info = $redis->get($key);
-        $info = json_decode($info,true);
-        print_r($info);
-    }
+
     public function updatemaintainer(){
         //$path = "D:\\upmant.xlsx";
         exit;
@@ -799,212 +683,6 @@ class TestController extends Controller {
         $redis->select(10);
     }
 
-    /*
-     * 针对某个城市开启某个聚屏广告位
-     */
-    public function genPolyadsboxHotelInfoCache(){
-        $sql ="select box.* ,hotel.id hotel_id,hotel.area_id from savor_box box 
-               left join savor_room  room on box.room_id=room.id
-               left join savor_hotel hotel on room.hotel_id = hotel.id
-               where 1 and hotel.hotel_box_type in(2,3,6)
-               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-               ";
-        $data = M()->query($sql);
-        $redis = SavorRedis::getInstance();
-        $redis->select(15);
-        $flag = 0;
-        foreach($data as $key=>$v){
-            $rt = false;
-            $tpmedia_ids = '';
-            $tpmedia_id_arr = explode(',',$v['tpmedia_id']);
-            if(empty($tpmedia_id_arr)){
-                $tpmedia_id_arr = array();
-            }
-            if($v['area_id']==246 && !in_array($v['hotel_id'],array(830,829,828,823))){
-                $tpmedia_ids = 6;
-                $sql =  "update savor_box set tpmedia_id='{$tpmedia_ids}' where id=".$v['id']." limit 1";
-                $rt = M()->execute($sql);
-//                if(!in_array(6,$tpmedia_id_arr)){
-//                    $tpmedia_id_arr[] = 6;
-//                    $tpmedia_ids = join(',',$tpmedia_id_arr);
-//                    $sql =  "update savor_box set tpmedia_id='{$tpmedia_ids}' where id=".$v['id']." limit 1";
-//                    $rt = M()->execute($sql);
-//                }
-            }else{
-                $position_6 = array_search(6,$tpmedia_id_arr);
-                if($position_6){
-                    unset($tpmedia_id_arr[$position_6]);
-                    $tpmedia_ids = join(',',$tpmedia_id_arr);
-                    $sql =  "update savor_box set tpmedia_id='{$tpmedia_ids}' where id=".$v['id']." limit 1";
-                    $rt = M()->execute($sql);
-                }
-            }
-            if($rt){
-                $box_info = array();
-                $box_id = $v['id'];
-                $box_info['id']      = $v['id'];
-                $box_info['room_id'] = $v['room_id'];
-                $box_info['name']    = $v['name'];
-                $box_info['mac']     = $v['mac'];
-                $box_info['switch_time'] = $v['switch_time'];
-                $box_info['volum']   = $v['volum'];
-                $box_info['tag']     = $v['tag'];
-                $box_info['device_token'] = $v['device_token'];
-                $box_info['state']   = $v['state'];
-                $box_info['flag']    = $v['flag'];
-                $box_info['create_time'] = $v['create_time'];
-                $box_info['update_time'] = $v['update_time'];
-                $box_info['adv_mach']    = $v['adv_mach'];
-
-                if($tpmedia_ids){
-                    $box_info['tpmedia_id']  = $tpmedia_ids;
-                }
-
-                $box_info['qrcode_type'] = 2;
-                $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
-                $box_info['is_4g']       = $v['is_4g'];
-                $box_info['box_type']    = $v['box_type'];
-                $box_info['wifi_name']   = $v['wifi_name'];
-                $box_info['wifi_password']=$v['wifi_password'];
-                $box_info['wifi_mac']    = $v['wifi_mac'];
-                $box_info['is_open_simple'] = $v['is_open_simple'];
-                $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
-                $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
-                $redis->set($box_cache_key, json_encode($box_info));
-                $flag++;
-            }
-        }
-        echo $flag;
-    }
-
-    /**
-     * @去掉某些酒楼版位的易售广告
-     */
-    public function removePolyadsboxHotelInfoCache(){
-        exit();
-        $sql ="select box.* ,hotel.id hotel_id,hotel.area_id from savor_box box
-               left join savor_room  room on box.room_id=room.id
-               left join savor_hotel hotel on room.hotel_id = hotel.id
-               where 1 and hotel.hotel_box_type in(2,3,6)
-               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-               and hotel.id in(680,199,464,431,435,206,461,463,460,243,470,867,434,433,618,349,631,352,354,356,351,359,845,482) and FIND_IN_SET('6', box.tpmedia_id);";
-        $data = M()->query($sql);
-        $redis = SavorRedis::getInstance();
-        $redis->select(15);
-        $flag = 0;
-        foreach($data as $key=>$v){
-            $rt = false;
-            $tpmedia_ids = '';
-            $tpmedia_id_arr = explode(',',$v['tpmedia_id']);
-            if(empty($tpmedia_id_arr)){
-                $tpmedia_id_arr = array();
-            }
-            $position_6 = array_search(6,$tpmedia_id_arr);
-            
-            if($position_6 >=0){
-                    unset($tpmedia_id_arr[$position_6]);
-                    $tpmedia_ids = join(',',$tpmedia_id_arr);
-                    
-                    $sql =  "update savor_box set tpmedia_id='{$tpmedia_ids}' where id=".$v['id']." limit 1";
-                    $rt = M()->execute($sql);
-            }
-            
-            if($rt){
-                $box_info = array();
-                $box_id = $v['id'];
-                $box_info['id']      = $v['id'];
-                $box_info['room_id'] = $v['room_id'];
-                $box_info['name']    = $v['name'];
-                $box_info['mac']     = $v['mac'];
-                $box_info['switch_time'] = $v['switch_time'];
-                $box_info['volum']   = $v['volum'];
-                $box_info['tag']     = $v['tag'];
-                $box_info['device_token'] = $v['device_token'];
-                $box_info['state']   = $v['state'];
-                $box_info['flag']    = $v['flag'];
-                $box_info['create_time'] = $v['create_time'];
-                $box_info['update_time'] = $v['update_time'];
-                $box_info['adv_mach']    = $v['adv_mach'];
-            
-                if($tpmedia_ids){
-                    $box_info['tpmedia_id']  = $tpmedia_ids;
-                }
-            
-                $box_info['qrcode_type'] = $v['qrcode_type'];
-                $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
-                $box_info['is_4g']       = $v['is_4g'];
-                $box_info['box_type']    = $v['box_type'];
-                $box_info['wifi_name']   = $v['wifi_name'];
-                $box_info['wifi_password']=$v['wifi_password'];
-                $box_info['wifi_mac']    = $v['wifi_mac'];
-                $box_info['is_open_simple'] = $v['is_open_simple'];
-                $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
-                $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
-                $redis->set($box_cache_key, json_encode($box_info));
-                $flag++;
-            }
-        }
-        echo $flag;exit;
-    }
-
-    public function genHotelInfoCache(){
-        //'848','679','833','827','315','340','601','392','421','418'  第一批
-        //'258','267','273','327','328','766','818','618','445','601','690','676','293','266','60','837','839','795','9','85','89','555','18','46','549','678','685','28','116','129','896','147','552','742','878','177','223','833','186','827','34','563','763','238'
-        //199 464 431 435 206 461 463 460 243 470 867 434 433   第三批 关闭聚屏广告
-        //网络版版位 展示二维码
-        $sql ="select box.* ,hotel.id hotel_id from savor_box box 
-               left join savor_room  room on box.room_id=room.id
-               left join savor_hotel hotel on room.hotel_id = hotel.id
-               where 1 and hotel.hotel_box_type in(2,3,6)
-               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-               ";
-        $data = M()->query($sql);
-        //print_r($data);exit;
-        $redis = SavorRedis::getInstance();
-        $redis->select(15);
-        $flag = 0;
-        foreach($data as $key=>$v){
-//            $sql =  "update savor_box set tpmedia_id='1,2,3,4,5,6' where id=".$v['id']." limit 1";
-            $sql  = "update savor_box set qrcode_type=2 where id=".$v['id']." limit 1";
-            
-            $rt = M()->execute($sql);
-            if($rt){
-                $box_info = array();
-                $box_id = $v['id'];
-                $box_info['id']      = $v['id'];
-                $box_info['room_id'] = $v['room_id'];
-                $box_info['name']    = $v['name'];
-                $box_info['mac']     = $v['mac'];
-                $box_info['switch_time'] = $v['switch_time'];
-                $box_info['volum']   = $v['volum'];
-                $box_info['tag']     = $v['tag'];
-                $box_info['device_token'] = $v['device_token'];
-                $box_info['state']   = $v['state'];
-                $box_info['flag']    = $v['flag'];
-                $box_info['create_time'] = $v['create_time'];
-                $box_info['update_time'] = $v['update_time'];
-                $box_info['adv_mach']    = $v['adv_mach'];
-                $box_info['tpmedia_id']  = $v['tpmedia_id'];
-                $box_info['qrcode_type'] = 2;
-                $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
-                $box_info['is_4g']       = $v['is_4g'];
-                $box_info['box_type']    = $v['box_type'];
-                $box_info['wifi_name']   = $v['wifi_name'];
-                $box_info['wifi_password']=$v['wifi_password'];
-                $box_info['wifi_mac']    = $v['wifi_mac'];
-                $box_info['is_open_simple'] = $v['is_open_simple'];
-                $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
-                $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
-                $redis->set($box_cache_key, json_encode($box_info));
-                $flag++;
-            }
-            
-            
-        }
-        echo $flag;
-        
-    }
-
     public function openZmtmpid(){
         exit(1);
         $m_box = new \Admin\Model\BoxModel();
@@ -1354,91 +1032,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         echo 'ok';
     }
 
-    //生成好友关系
-    public function smallappFriends(){
-        exit('非法进入');
-        $hour = date('H');
-        //$hour =14;
-        if($hour==14){
-            $start_time = date('Y-m-d')." 11:00:00";
-            $end_time   = date('Y-m-d')." 14:00:00";
-        }else{
-            $start_time = date('Y-m-d')." 17:00:00";
-            $end_time   = date('Y-m-d')." 23:00:00";
-        }
-        $sql = "select box_mac from savor_smallapp_forscreen_record where create_time>='".$start_time."'
-                and create_time<='".$end_time."' and mobile_brand !='devtools' group by box_mac";
-        $forscreen_box_arr = M()->query($sql);
-        $sql ="select box_mac from savor_smallapp_turntable_log where create_time>='".$start_time."'
-                and create_time<='".$end_time."' group by box_mac";
-        $turntable_box_arr = M()->query($sql);
-        $box_list = array_merge($forscreen_box_arr,$turntable_box_arr);
-        $ret = assoc_unique($box_list, 'box_mac');
-        $box_list = array_keys($ret);
-        $m_user = new \Admin\Model\Smallapp\UserModel();
-        foreach($box_list as $v){
-            $sql ="select openid from savor_smallapp_forscreen_record where box_mac='".$v."' 
-                   and  create_time>='".$start_time."'
-                   and create_time<='".$end_time."' and mobile_brand !='devtools' 
-                   group by openid";
-            //echo $sql;exit;
-            $forscreen_openid_arr = M()->query($sql);  //投屏用户
-            $sql ="select openid from savor_smallapp_turntable_log where box_mac='".$v."'
-                   and  create_time>='".$start_time."'
-                   and create_time<='".$end_time."' group by openid";
-            $turntab_openid_arr = M()->query($sql);
-            $sql ="select a.openid from savor_smallapp_turntable_detail a 
-                   left join savor_smallapp_turntable_log b on a.activity_id = b.id
-                   where b.box_mac='".$v."'
-                   and  a.create_time>='".$start_time."'and a.create_time<='".$end_time."'
-                   group by openid";
-            $turntab_detail_openid_arr = M()->query($sql);
-            $openid_list = array_merge($forscreen_openid_arr,$turntab_openid_arr,$turntab_detail_openid_arr);
-            
-            $nums = count($openid_list);
-            if($nums<=1) continue;
-            $openid_list = assoc_unique($openid_list, 'openid');
-            $openid_list = array_keys($openid_list);
-            if(count($openid_list)<=1) continue;
-            $m_friend = new \Admin\Model\Smallapp\FriendModel();
-            $f_arr = array();
-            $flag=0;
-            foreach($openid_list as $ov){
-                $sql ="select count(id) as nums from savor_smallapp_user where openid='".$ov."' limit 1";
-                $ret = M()->query($sql);
-                $user_nums = $ret[0]['nums'];
-                if(empty($user_nums)){
-                    $sql =" insert into savor_smallapp_user(`openid`) values('".$ov."')";
-                    M()->execute($sql);
-                }
-                foreach($openid_list as $fv){
-                    if($ov!=$fv){
-                        $sql ="select status from savor_smallapp_friend 
-                               where openid='".$ov."' and f_openid='".$fv."'";
-                        $ret = M()->query($sql);
-                        if(empty($ret)){
-                            
-                            $f_arr[$flag]['openid'] = $ov;
-                            $f_arr[$flag]['f_openid'] = $fv;
-                            $f_arr[$flag]['type'] = 1;
-                            $f_arr[$flag]['status'] = 1;
-                            $flag++;
-                            
-                        }else {
-                            if($ret[0]['status'] ==0){
-                                $where = array();
-                                $where['openid'] = $ov;
-                                $where['f_openid']= $fv;
-                                $m_friend->updateInfo($where, array('status'=>1));
-                            }
-                        }
-                    }
-                }
-            }
-            $m_friend->addInfo($f_arr,2);
-        }
-        echo "ok";
-    }
     public function hotelredis(){
         $redis = SavorRedis::getInstance();
         $redis->select(15);
@@ -1456,60 +1049,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
                where box.mac='".$box_mac."' and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
         $data = M()->query($sql);
         print_r($data);
-    }
-    public function testredis(){
-        $redis = SavorRedis::getInstance();
-        $redis->select(15);
-        $sql ="select * from savor_hotel 
-               
-               ";
-        $data = M()->query($sql);
-        $data = array();
-        foreach($data as $key=>$v){
-            $tmp = $redis->get('savor_hotel_'.$v['id']);
-            if($tmp){
-                $hotel_info = json_decode($tmp,true);
-                if($v['name'] != $hotel_info['name']){
-                    echo $v['name'].'savor_hotel_'.$v['id'].$hotel_info['name']."<br>";
-                }
-            }
-        }
-        $sql ="select * from savor_hotel_ext ";
-        $data = M()->query($sql);
-        $data = array();
-        foreach($data as $key=>$v){
-            $tmp = $redis->get('savor_hotel_ext_'.$v['hotel_id']);
-            if($tmp){
-                $hotel_ext_info = json_decode($tmp,true);
-                if($v['mac_addr']!=$hotel_ext_info['mac_addr']){
-                    echo $v['hotel_id']."<br>";
-                }
-            }
-        }
-        $sql ="select * from savor_room";
-        $data = M()->query($sql);
-        $data = array();
-        foreach($data as $key=>$v){
-            $tmp = $redis->get('savor_room_'.$v['id']);
-            if($tmp){
-                $room_info = json_decode($tmp,true);
-                if($v['name']!=$room_info['name']){
-                    echo $v['id']."<br>";
-                }
-            }
-        }
-        $sql ="select * from savor_box ";
-        $data = M()->query($sql);
-        foreach($data as $key=>$v){
-            $tmp = $redis->get('savor_box_'.$v['id']);
-            if($tmp){
-                $box_info = json_decode($tmp,true);
-                if($v['name']!=$box_info['name']){
-                    echo $v['id'];
-                }
-            }
-        }
-        echo "ok";
     }
 
     public function helpcontent(){
@@ -1658,65 +1197,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         echo 'ok';
     }
 
-    public function laimao(){
-        exit;
-        $goods_id = 127;//赖茅
-        //$all_hotel_ids = array(883);
-        $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=145 ";
-        $zt_list = M()->query($sql);
-        $all_hotel_ids = array_column($zt_list,'hotel_id');
-        //print_r($all_hotel_ids);exit;
-        $m_sysconfig = new \Admin\Model\SysConfigModel();
-        $res_config = $m_sysconfig->getAllconfig();
-        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-        $m_merchant = new \Admin\Model\Integral\MerchantModel();
-        $m_staff = new \Admin\Model\Integral\StaffModel();
-        $redis  =  \Common\Lib\SavorRedis::getInstance();
-        foreach ($all_hotel_ids as $hotel_id){
-            $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
-            $staff_num = 0;
-            if(!empty($res_merchant)){
-                $res_staff = $m_staff->getDataList('openid',array('merchant_id'=>$res_merchant['id'],'status'=>1),'id desc');
-                if(!empty($res_staff)){
-                    $staff_num = count($res_staff);
-                    foreach ($res_staff as $stav){
-                        $openid = $stav['openid'];
-                        $data = array('hotel_id'=>$hotel_id,'openid'=>$openid,'goods_id'=>$goods_id,'type'=>2);
-                        $res_hotelgoods = $m_hotelgoods->getInfo($data);
-                        if(empty($res_hotelgoods)){
-                            $m_hotelgoods->addData($data);
-                        }
-                    }
-                }
-            }
-            $redis->select(14);
-            $cache_key = C('SAPP_SALE').'activitygoods:loopplay:'.$hotel_id;
-            $res_cache = $redis->get($cache_key);
-            if(!empty($res_cache)){
-                $data = json_decode($res_cache,true);
-            }else{
-                $data = array();
-            }
-            if($res_config['activity_adv_playtype']==1){
-                $data = array();
-            }
-            if(!array_key_exists($goods_id,$data)){
-                $data_num = count($data);
-                if($data_num>4){
-                    $data = array_slice($data,0,4);
-                }
-                $data[$goods_id] = $goods_id;
-                $program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM').":$hotel_id";
-                $period = getMillisecond();
-                $period_data = array('period'=>$period);
-                $redis->set($program_key,json_encode($period_data));
-            }
-            $redis->set($cache_key,json_encode($data));
-
-            echo "hotel_id:$hotel_id staff_num:$staff_num ok \r\n";
-        }
-    }
-
     public function getfileinfo(){
         $forscreen_id = I('get.fid',0,'intval');
         $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
@@ -1810,57 +1290,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         $res = var_export($md5_data,true);
         $log_file_name = '/application_data/web/php/savor_admin/Public/content/'.'publicmd5_'.date("YmdHis").".log";
         @file_put_contents($log_file_name, $res, FILE_APPEND);
-    }
-
-    public function upmd5(){
-        exit;
-        require_once '/application_data/web/php/savor_admin/Public/content/publicmd5_20191218.php';
-        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
-
-        $accessKeyId = C('OSS_ACCESS_ID');
-        $accessKeySecret = C('OSS_ACCESS_KEY');
-        $endpoint = C('OSS_HOST');
-        $bucket = C('OSS_BUCKET');
-        $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
-        $aliyun->setBucket($bucket);
-        $error = array();
-        foreach ($publicmd5 as $k=>$v){
-            $forscreen_id = $v['forscreen_id'];
-            $res_forscreen = $m_forscreen->getInfo(array('forscreen_id'=>$forscreen_id,'resource_type'=>2));
-            if(!empty($res_forscreen)){
-                $id = $res_forscreen['id'];
-                $oss_filesize = $v['oss_size'];
-                $imgs = json_decode($res_forscreen['imgs'],true);
-                $oss_addr = $imgs[0];
-
-                $range = '0-199';
-                $bengin_info = $aliyun->getObject($oss_addr,$range);
-                $last_range = $oss_filesize-199;
-                $last_size = $oss_filesize-1;
-                $last_range = $last_size - 199;
-                $last_range = $last_range.'-'.$last_size;
-                $end_info = $aliyun->getObject($oss_addr,$last_range);
-                $file_str = md5($bengin_info).md5($end_info);
-                $fileinfo = strtoupper($file_str);
-                $md5_file = md5($fileinfo);
-
-                $where = array('id'=>$id);
-                $data = array('resource_size'=>$oss_filesize);
-                if(!empty($bengin_info) && !empty($end_info)){
-                    $data['md5_file'] = $md5_file;
-                }else{
-                    $error[]=$v;
-                }
-                $res = $m_forscreen->updateInfo($where,$data);
-                if($res){
-                    echo "$k==$id md5_file=$md5_file \r\n";
-                }else{
-                    echo "$k==$id ok \r\n";
-                }
-            }
-        }
-        echo "finish \r\n";
-        echo json_encode($error);
     }
 
     public function hotelpy(){
@@ -2231,226 +1660,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         $m_forscreen->syncForscreendata();
         echo "end_time:".date('Y-m-d H:i:s')."\r\n";
     }
-
-    public function hotelassess(){
-        $m_statichotelassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
-        $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
-        $res_data = $m_statichotelassess->getDataList('*',array(),'id asc');
-        $config = $m_statichotelassess->assessConfig();
-
-        foreach ($res_data as $v){
-            $time_date = strtotime($v['date']);
-            $hotel_id = $v['hotel_id'];
-            $data = array();
-            /*
-            $data['operation_assess'] = 1;
-            if($v['fault_rate']>$config[$v['hotel_level']]['fault_rate']){
-                $data['operation_assess'] = 2;
-            }
-            $data['channel_assess'] = 1;
-            if($v['zxrate']<$config[$v['hotel_level']]['zxrate']){
-                $data['channel_assess'] = 2;
-            }
-            $data['data_assess'] = 1;
-            if($v['fjrate']<$config[$v['hotel_level']]['fjrate']){
-                $data['data_assess'] = 2;
-            }
-            $data['saledata_assess'] = 1;
-            if($v['fjsalerate']<$config[$v['hotel_level']]['fjsalerate']){
-                $data['saledata_assess'] = 2;
-            }
-            $data['all_assess'] = 1;
-            if($data['operation_assess']==2 || $data['channel_assess']==2 || $data['data_assess']==2 || $data['saledata_assess']==2){
-                $data['all_assess'] = 2;
-            }
-            $res = $m_statichotelassess->updateData(array('id'=>$v['id']),$data);
-            if($res){
-                echo "id:{$v['id']}--{$v['date']} ok \r\n";
-            }else{
-                echo "id:{$v['id']}--{$v['date']} fail \r\n";
-            }
-            */
-
-            $res_hoteldata = $m_statichotelbasicdata->getInfo(array('static_date'=>date('Y-m-d',$time_date),'hotel_id'=>$hotel_id));
-            $zxnum = $wlnum = $user_zxhdnum = $sale_zxhdnum = $zxhdnum = 0;
-            if(!empty($res_hoteldata)){
-                $wlnum = $res_hoteldata['wlnum'];
-                $zxnum = $res_hoteldata['lunch_zxnum'] + $res_hoteldata['dinner_zxnum'];
-                $user_zxhdnum = $res_hoteldata['user_lunch_zxhdnum'] + $res_hoteldata['user_dinner_zxhdnum'];
-                $sale_zxhdnum = $res_hoteldata['sale_lunch_zxhdnum'] + $res_hoteldata['sale_dinner_zxhdnum'];
-                $zxhdnum = $res_hoteldata['lunch_zxhdnum'] + $res_hoteldata['dinner_zxhdnum'];
-            }
-            $data = array();
-            $data['zxnum'] = $zxnum;
-            $data['wlnum'] = $wlnum;
-            $data['user_zxhdnum'] = $user_zxhdnum;
-            $data['sale_zxhdnum'] = $sale_zxhdnum;
-            $data['zxhdnum'] = $zxhdnum;
-
-            $zxrate = 0;
-            if($zxnum && $wlnum){
-                $total_wlnum = $wlnum * 2;
-                $zxrate = sprintf("%.2f",$zxnum/$total_wlnum);
-            }
-            $data['zxrate'] = $zxrate;
-            $data['channel_assess'] = 1;
-            if($data['zxrate']<$config[$v['hotel_level']]['zxrate']){
-                $data['channel_assess'] = 2;
-            }
-            $fjrate = 0;
-            if($user_zxhdnum && $zxhdnum){
-                $fjrate = sprintf("%.2f",$user_zxhdnum/$zxhdnum);
-            }
-
-            $data['fjrate'] = $fjrate;
-            $data['data_assess'] = 1;
-            if($data['fjrate']<$config[$v['hotel_level']]['fjrate']){
-                $data['data_assess'] = 2;
-            }
-            $fjsalerate = 0;
-            if($sale_zxhdnum && $zxhdnum){
-                $fjsalerate = sprintf("%.2f",$sale_zxhdnum/$zxhdnum);
-            }
-            $data['fjsalerate'] = $fjsalerate;
-            $data['saledata_assess'] = 1;
-            if($data['fjsalerate']<$config[$v['hotel_level']]['fjsalerate']){
-                $data['saledata_assess'] = 2;
-            }
-            $data['all_assess'] = 1;
-            if($data['operation_assess']==2 || $data['channel_assess']==2 || $data['data_assess']==2 || $data['saledata_assess']==2){
-                $data['all_assess'] = 2;
-            }
-            $res = $m_statichotelassess->updateData(array('id'=>$v['id']),$data);
-            if($res){
-                echo "id:{$v['id']}--{$v['date']} ok \r\n";
-            }else{
-                echo "id:{$v['id']}--{$v['date']} fail \r\n";
-            }
-
-        }
-    }
-
-    public function hotelbasicdata(){
-        $scan_qrcode_types = C('SCAN_QRCODE_TYPES');
-        $all_hotel_types = C('heart_hotel_box_type');
-        $where = array();
-        $where['static_date'] = array(array('EGT','2022-01-01'),array('ELT','2022-01-12'));
-        $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
-        $res_data = $m_statichotelbasicdata->getDataList('id,hotel_id,static_date',$where,'id asc');
-        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-        $m_qrcodelog = new \Admin\Model\Smallapp\QrcodeLogModel();
-        $m_smallapp_iforscreen_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
-
-        $m_heartlog = new \Admin\Model\HeartAllLogModel();
-        foreach ($res_data as $v){
-            $hotel_id = $v['hotel_id'];
-            $time_date = strtotime($v['static_date']);
-            $date = date('Ymd',$time_date);
-            $start_time = date('Y-m-d 00:00:00',$time_date);
-            $end_time = date('Y-m-d 23:59:59',$time_date);
-
-            /*
-            $room_heart_num = $m_heartlog->getHotelAllHeart($date,$hotel_id,1);
-            $room_meal_heart_num = $m_heartlog->getHotelMealHeart($date,$hotel_id,1);
-
-            $lunch_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,1);
-            $dinner_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,1);
-
-            $user_lunch_zxhdnum = $v['user_lunch_zxhdnum'];
-            $user_dinner_zxhdnum = $v['user_dinner_zxhdnum'];
-
-            $user_lunch_cvr = $user_dinner_cvr = 0;
-            if($user_lunch_zxhdnum && $lunch_zxhdnum){
-                $user_lunch_cvr = sprintf("%.2f",$user_lunch_zxhdnum/$lunch_zxhdnum);
-            }
-            if($user_dinner_zxhdnum && $dinner_zxhdnum){
-                $user_dinner_cvr = sprintf("%.2f",$user_dinner_zxhdnum/$dinner_zxhdnum);
-            }
-
-            $sale_lunch_zxhdnum = $v['sale_lunch_zxhdnum'];
-            $sale_dinner_zxhdnum = $v['sale_dinner_zxhdnum'];
-
-            $sale_lunch_cvr = $sale_dinner_cvr = 0;
-            if($sale_lunch_zxhdnum && $lunch_zxhdnum){
-                $sale_lunch_cvr = sprintf("%.2f",$sale_lunch_zxhdnum/$lunch_zxhdnum);
-            }
-            if($sale_dinner_zxhdnum && $dinner_zxhdnum){
-                $sale_dinner_cvr = sprintf("%.2f",$sale_dinner_zxhdnum/$dinner_zxhdnum);
-            }
-
-            $lunch_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,0);
-            $dinner_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,0);
-            $zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,0,0);
-
-            $wlnum = $v['wlnum'];
-            $lunch_zxrate = $dinner_zxrate = $zxrate = 0;
-            if($lunch_zxnum && $wlnum){
-                $lunch_zxrate = sprintf("%.2f",$lunch_zxnum/$wlnum);
-            }
-            if($dinner_zxnum && $wlnum){
-                $dinner_zxrate = sprintf("%.2f",$dinner_zxnum/$wlnum);
-            }
-            if($zxnum && $wlnum){
-                $zxrate = sprintf("%.2f",$zxnum/$wlnum);
-            }
-
-            $interact_sale_signnum = $m_smallapp_forscreen_record->getSaleSignForscreenNumByHotelId($hotel_id,$time_date);
-
-            $data = array(
-                'lunch_zxhdnum'=>$lunch_zxhdnum,'user_lunch_cvr'=>$user_lunch_cvr,'dinner_zxhdnum'=>$dinner_zxhdnum,'user_dinner_cvr'=>$user_dinner_cvr,
-                'sale_lunch_cvr'=>$sale_lunch_cvr,'sale_dinner_cvr'=>$sale_dinner_cvr,'lunch_zxnum'=>$lunch_zxnum,'dinner_zxnum'=>$dinner_zxnum,
-                'lunch_zxrate'=>$lunch_zxrate,'dinner_zxrate'=>$dinner_zxrate,'zxnum'=>$zxnum,'zxrate'=>$zxrate,
-                'interact_sale_signnum'=>$interact_sale_signnum,
-            );
-            $data = array('room_heart_num'=>$room_heart_num,'room_meal_heart_num'=>$room_meal_heart_num);
-            */
-            //餐厅扫码数
-//            $fields = "count(a.id) as num";
-//            $restaurantqrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-//            $restaurantqrcode_where['a.type'] = array('in',$scan_qrcode_types);
-//            $restaurantqrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
-//            $restaurantqrcode_where['_string'] = 'a.openid in(select invalidid from savor_smallapp_forscreen_invalidlist where type=2)';
-//            $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$restaurantqrcode_where);
-//            $restaurant_scancode_num = intval($res_qrcode[0]['num']);
-//
-//            $fields = "count(DISTINCT(a.openid)) as num";
-//            $res_userqrcode = $m_qrcodelog->getScanqrcodeNum($fields,$restaurantqrcode_where);
-//            $restaurant_user_num = intval($res_userqrcode[0]['num']);
-//
-//            $restaurant_interact_standard_num = 0;
-//            $iforscreen_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0,'a.is_valid'=>1);
-//            $iforscreen_where['a.mobile_brand'] = array('neq','devtools');
-//            $iforscreen_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
-//            $iforscreen_where['a.small_app_id'] = array('in',array(1,2,11));//小程序ID 1普通版,2极简版,5销售端,11 h5互动游戏
-//            $fields = 'count(a.id) as fnum';
-//            $res_iforscreen = $m_smallapp_iforscreen_record->getWhere($fields,$iforscreen_where,'','');
-//            if(!empty($res_iforscreen)){
-//                $restaurant_interact_standard_num = $res_iforscreen[0]['fnum'];
-//            }
-            $restaurant_user_lunch_zxhdnum = $restaurant_user_dinner_zxhdnum = 0;
-            $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,1,1);
-            if(!empty($res_iforscreen_box)){
-                $restaurant_user_lunch_zxhdnum = count($res_iforscreen_box);
-            }
-            $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,2,1);
-            if(!empty($res_iforscreen_box)){
-                $restaurant_user_dinner_zxhdnum = count($res_iforscreen_box);
-            }
-            $data = array(
-//                'restaurant_user_num'=>$restaurant_user_num,'restaurant_scancode_num'=>$restaurant_scancode_num,'restaurant_interact_standard_num'=>$restaurant_interact_standard_num,
-                'restaurant_user_lunch_zxhdnum'=>$restaurant_user_lunch_zxhdnum,'restaurant_user_dinner_zxhdnum'=>$restaurant_user_dinner_zxhdnum,
-            );
-            $res = $m_statichotelbasicdata->updateData(array('id'=>$v['id']),$data);
-            if($res){
-                echo "id:{$v['id']}--{$v['static_date']} ok \r\n";
-            }else{
-                echo "id:{$v['id']}--{$v['static_date']} fail \r\n";
-            }
-        }
-    }
-
-
-
 
     public function assessmoney(){
         $model = M();
@@ -4419,8 +3628,8 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         return $weeks;
     }
 
-    public function uphotelbdm(){
-        $file_path = '/application_data/web/php/savor_admin/Public/content/hotel022901.xlsx';
+    public function uphotelbddm(){
+        $file_path = '/application_data/web/php/savor_admin/Public/content/hotelbddm0505.xlsx';
 
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
@@ -4433,13 +3642,20 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $m_sysuser = new \Admin\Model\UserModel();
         for ($row = 2; $row<=$highestRow; $row++){
             $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
             $hotel_id = intval($rowData[0][0]);
-            $department_name = trim($rowData[0][1]);
-            $team_name = trim($rowData[0][2]);
-            $bdm_name = trim($rowData[0][3]);
-            $m_hotel_ext->updateData(array('hotel_id'=>$hotel_id),array('department_name'=>$department_name,'team_name'=>$team_name,'bdm_name'=>$bdm_name));
+            $bd_name = trim($rowData[0][1]);
+            $bdm_name = trim($rowData[0][2]);
+            $bdd_name = trim($rowData[0][3]);
+            $res_user = $m_sysuser->getUserData('id',array('remark'=>$bd_name,'status'=>1));
+            $user_id = intval($res_user[0]['id']);
+            $updata = array('bd_name'=>$bd_name,'bdm_name'=>$bdm_name,'bdd_name'=>$bdd_name);
+            if($user_id>0){
+                $updata['residenter_id'] = $user_id;
+            }
+            $m_hotel_ext->updateData(array('hotel_id'=>$hotel_id),$updata);
 
             echo "hotel_id:$hotel_id ok \r\n";
 
@@ -4535,20 +3751,45 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo $asc;
     }
 
+    public function uphotelmaintainer(){
+        $file_path = '/application_data/web/php/savor_admin/Public/content/运维认领汇总.xlsx';
 
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
 
-    public function upsalepaytime(){
-        exit;
-        $sql = "select a.id as sale_id,a.sale_payment_id,p.pay_time from savor_finance_sale as a left join savor_finance_sale_payment as p on a.sale_payment_id=p.id
-        where a.ptype=1 and a.type=1 order by a.id desc ";
-        $res = M()->query($sql);
-        $m_sale = new \Admin\Model\FinanceSaleModel();
-        foreach ($res as $v){
-            $sale_id = $v['sale_id'];
-            $m_sale->updateData(array('id'=>$sale_id),array('pay_time'=>"{$v['pay_time']} 00:00:00"));
-            echo "sale_id:$sale_id \r\n";
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $m_sysuser = new \Admin\Model\UserModel();
+        for ($row = 2; $row<=$highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            $hotel_id = intval($rowData[0][0]);
+            $ac_name = trim($rowData[0][1]);
+
+            $res_user = $m_sysuser->getUserData('id',array('remark'=>$ac_name,'status'=>1));
+            $responsible_maintainer_id = $res_user[0]['id'];
+
+            $m_hotel_ext->updateData(array('hotel_id'=>$hotel_id),
+                array('responsible_maintainer_id'=>$responsible_maintainer_id)
+            );
+
+            echo "hotel_id:$hotel_id ok \r\n";
         }
+    }
 
+    public function uphotelawardopenid(){
+        $sql = "select openid,merchant_id from savor_integral_merchant_staff where status=1 and level=1 order by id desc";
+        $res = M()->query($sql);
+        $m_merchant = new \Admin\Model\Integral\MerchantModel();
+        foreach ($res as $v){
+            $m_merchant->updateData(array('id'=>$v['merchant_id']),array('award_openid'=>$v['openid']));
+            echo 'merchant_id:'.$v['merchant_id']." \r\n";
+        }
     }
 
 }
