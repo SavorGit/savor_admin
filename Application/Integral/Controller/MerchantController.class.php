@@ -502,6 +502,18 @@ class MerchantController extends BaseController {
                 $all_shareprofit_types[$k]['values'] = $values;
             }
         }
+        $award_openid = $merchant_info['award_openid'];
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $where = array('a.merchant_id'=>$merchant_id,'a.status'=>1);
+        $fileds = 'a.openid,user.nickName,user.mobile';
+        $staff_list = $m_staff->getMerchantStaff($fileds,$where);
+        foreach ($staff_list as $k=>$v){
+            $is_select = '';
+            if($v['openid']==$award_openid){
+                $is_select = 'selected';
+            }
+            $staff_list[$k]['is_select'] = $is_select;
+        }
 
         $this->assign('is_modify_name',$is_modify_name);
         $this->assign('is_modify_job',$is_modify_job);
@@ -509,6 +521,7 @@ class MerchantController extends BaseController {
         $this->assign('smodels',$smodels);
         $this->assign('merchant_info',$merchant_info);
         $this->assign('shareprofit_types',$all_shareprofit_types);
+        $this->assign('staff_list',$staff_list);
         $this->display();
     }
 
@@ -526,6 +539,7 @@ class MerchantController extends BaseController {
         $is_integral = I('is_integral',1,'intval');
         $is_shareprofit = I('is_shareprofit',1,'intval');
         $shareprofit_config = I('shareprofit_config','');
+        $award_openid = I('award_openid','');
 
         if($is_integral==0 && $is_shareprofit==1){
             $this->output('请勿同时开启分润和积分发放给商家操作', 'merchant/merchantadd',2,0);
@@ -564,7 +578,7 @@ class MerchantController extends BaseController {
         $userinfo = session('sysUserInfo');
         $sysuser_id = $userinfo['id'];
         $add_info = array('service_model_id'=>$service_model_id,'channel_id'=>$channel_id,'rate_groupid'=>$rate_groupid,
-            'cash_rate'=>$cash_rate,'recharge_rate'=>$recharge_rate,'name'=>$name,'job'=>$job,'mobile'=>$mobile,
+            'cash_rate'=>$cash_rate,'recharge_rate'=>$recharge_rate,'name'=>$name,'job'=>$job,'mobile'=>$mobile,'award_openid'=>$award_openid,
             'status'=>$status,'is_integral'=>$is_integral,'is_shareprofit'=>$is_shareprofit,'shareprofit_config'=>json_encode($shareprofit_config),
             'sysuser_id'=>$sysuser_id);
         if(empty($merchant_info['shareprofit_config'])){

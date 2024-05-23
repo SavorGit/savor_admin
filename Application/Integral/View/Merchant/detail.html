@@ -57,7 +57,7 @@
 					<textarea id="value_service" type="textInput" class="form-control" readonly></textarea>
 				</div>
 			</div>
-
+			<!--
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
 					选择渠道商:
@@ -97,7 +97,7 @@
 					<input name="recharge_rate" type="text" value="{$merchant_info.recharge_rate}" class="form-control" required />
 				</div>
 			</div>
-
+			-->
 			<div class="form-group row ">
 				<label class="col-xs-12 col-sm-2 control-label">管理员姓名：</label>
 				<div class="col-xs-12 col-sm-10">
@@ -126,6 +126,18 @@
 				<div class="col-xs-12 col-sm-10">
 					<input type="hidden" name="status" value="2">
 					<input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="正常" data-off-text="冻结" <if condition="$merchant_info.status eq 1" >checked</if>>
+				</div>
+			</div>
+
+			<div class="form-group row" id="choose_hotel">
+				<label class="col-xs-12 col-sm-2 control-label">选择激励人：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="award_openid" class="form-control bs-select class-filter" data-live-search="true" >
+						<option name="award_openid" value="">请选择</option>
+						<volist name="staff_list" id="stinfo">
+							<option name="award_openid" value="{$stinfo.openid}" {$stinfo.is_select}> {$stinfo.nickname}({$stinfo.mobile})</option>
+						</volist>
+					</select>
 				</div>
 			</div>
 
