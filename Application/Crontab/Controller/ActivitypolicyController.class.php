@@ -27,12 +27,12 @@ class ActivitypolicyController extends Controller{
         echo "outmonthawardhoteldata start:$now_time \r\n";
 
         $model = M();
-        $sql = "select recycle_month from savor_finance_recycle_month where is_calculate=0 group by recycle_month";
+        $sql = "select DATE_FORMAT(confirm_recycle_audit_time,'%Y%m') as recycle_month from savor_finance_recycle_month where is_calculate=0 group by recycle_month";
         $res_edit_recycle = $model->query($sql);
         foreach ($res_edit_recycle as $v){
             $recycle_month = $v['recycle_month'];
             $all_ids = array();
-            $sql_month = "select id,stock_record_id from savor_finance_recycle_month where is_calculate=0 and recycle_month=$recycle_month order by id desc";
+            $sql_month = "select id,stock_record_id from savor_finance_recycle_month where is_calculate=0 and DATE_FORMAT(confirm_recycle_audit_time,'%Y%m')=$recycle_month order by id desc";
             $res_month = $model->query($sql_month);
             foreach ($res_month as $mv){
                 $all_ids[$v['id']]=$mv['stock_record_id'];
