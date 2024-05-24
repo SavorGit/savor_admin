@@ -34,8 +34,8 @@ class FinanceSaleModel extends BaseModel{
                 $res_one_billday = $this->query($sql_one_billday);
                 $bill_days = intval($res_one_billday[0]['bill_days']);
             }
+            echo "hotel_id:$hotel_id,now_date:$now_date,bill_days:$bill_days \r\n";
             if($bill_days==0){
-                echo "hotel_id:$hotel_id,bill_days:$bill_days error\r\n";
                 continue;
             }
             $diff_time = time() - 86400*$bill_days;
