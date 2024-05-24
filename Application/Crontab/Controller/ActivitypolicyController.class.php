@@ -13,7 +13,7 @@ class ActivitypolicyController extends Controller{
         $sql_record="select a.hotel_id,a.area_id,a.goods_id,sum(a.num) as sale_num from savor_finance_sale as a 
             left join savor_finance_stock_record as record on a.stock_record_id=record.id 
             where a.type=1 and record.wo_reason_type=1 and record.wo_status=2 and record.recycle_status=2 
-            and record.recycle_audit_time>='$start_time' and record.recycle_audit_time<='$end_time' 
+            and record.add_time>='$start_time' and record.add_time<='$end_time' 
             group by a.hotel_id,a.goods_id";
         $model = M();
         $record_list = $model->query($sql_record);
@@ -26,28 +26,29 @@ class ActivitypolicyController extends Controller{
         $now_time = date('Y-m-d H:i:s');
         echo "outmonthawardhoteldata start:$now_time \r\n";
 
+        $start_time = date('Y-m-01 00:00:00',strtotime('-1 month'));
+        $end_time = date('Y-m-d 23:59:59',strtotime('-1 month'));
+        $pre_month = date('Ym',strtotime('-1 month'));
         $model = M();
-        $sql = "select DATE_FORMAT(confirm_recycle_audit_time,'%Y%m') as recycle_month from savor_finance_recycle_month where is_calculate=0 group by recycle_month";
-        $res_edit_recycle = $model->query($sql);
-        foreach ($res_edit_recycle as $v){
-            $recycle_month = $v['recycle_month'];
-            $all_ids = array();
-            $sql_month = "select id,stock_record_id from savor_finance_recycle_month where is_calculate=0 and DATE_FORMAT(confirm_recycle_audit_time,'%Y%m')=$recycle_month order by id desc";
-            $res_month = $model->query($sql_month);
-            foreach ($res_month as $mv){
-                $all_ids[$v['id']]=$mv['stock_record_id'];
-            }
-            $stock_record_ids_str = explode(',',array_values($all_ids));
-            $sql_record = "select a.hotel_id,a.area_id,a.goods_id,sum(a.num) as sale_num from savor_finance_sale as a 
+        $sql = "select hotel_id from savor_finance_award_hoteldata where is_confirm=1 and static_date={$pre_month} order by id desc";
+        $res_confirm_hotels = $model->query($sql);
+        $confirm_hotels = array();
+        foreach ($res_confirm_hotels as $v){
+            $confirm_hotels[]=$v['hotel_id'];
+        }
+        $where_confirm_hotels = '';
+        if(!empty($confirm_hotels)){
+            $confirm_hotel_str = join(',',$confirm_hotels);
+            $where_confirm_hotels = "and a.hotel_id not in ($confirm_hotel_str)";
+        }
+        $sql_record="select a.hotel_id,a.area_id,a.goods_id,sum(a.num) as sale_num from savor_finance_sale as a 
             left join savor_finance_stock_record as record on a.stock_record_id=record.id 
             where a.type=1 and record.wo_reason_type=1 and record.wo_status=2 and record.recycle_status=2 
-            and record.id in ($stock_record_ids_str) group by a.hotel_id,a.goods_id";
-            $record_list = $model->query($sql_record);
-            $this->handle_award_hoteldata($record_list,$recycle_month);
-            $up_ids_str = join(',',array_keys($all_ids));
-            $sql_up_month_data = "update savor_finance_recycle_month set is_calculate=1 where id in ($up_ids_str)";
-            $model->execute($sql_up_month_data);
-        }
+            and record.add_time>='$start_time' and record.add_time<='$end_time' {$where_confirm_hotels}
+            group by a.hotel_id,a.goods_id";
+        $model = M();
+        $record_list = $model->query($sql_record);
+        $this->handle_award_hoteldata($record_list,$pre_month);
         $now_time = date('Y-m-d H:i:s');
         echo "awardhoteldata end:$now_time \r\n";
     }
@@ -67,7 +68,7 @@ class ActivitypolicyController extends Controller{
             $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
             $award_openid = $res_merchant['award_openid'];
 
-            $res_award_data = $m_award_hoteldata->getInfo(array('static_date'=>$static_date,'hotel_id'=>$hotel_id));
+            $res_award_data = $m_award_hoteldata->getInfo(array('hotel_id'=>$hotel_id,'static_date'=>$static_date));
             if(!empty($res_award_data)){
                 $award_data_id = $res_award_data['id'];
                 if($res_award_data['is_confirm']==1){
