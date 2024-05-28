@@ -13,7 +13,7 @@ class ActivitypolicyController extends Controller{
         $sql_record="select a.hotel_id,a.area_id,a.goods_id,sum(a.num) as sale_num from savor_finance_sale as a 
             left join savor_finance_stock_record as record on a.stock_record_id=record.id 
             where a.type=1 and record.wo_reason_type=1 and record.wo_status=2 and record.recycle_status=2 
-            and record.add_time>='$start_time' and record.add_time<='$end_time' 
+            and record.add_time>='$start_time' and record.add_time<='$end_time'
             group by a.hotel_id,a.goods_id";
         $model = M();
         $record_list = $model->query($sql_record);
@@ -68,7 +68,7 @@ class ActivitypolicyController extends Controller{
             $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
             $award_openid = $res_merchant['award_openid'];
 
-            $res_award_data = $m_award_hoteldata->getInfo(array('hotel_id'=>$hotel_id,'static_date'=>$static_date));
+            $res_award_data = $m_award_hoteldata->getInfo(array('static_date'=>$static_date,'hotel_id'=>$hotel_id));
             if(!empty($res_award_data)){
                 $award_data_id = $res_award_data['id'];
                 if($res_award_data['is_confirm']==1){
@@ -81,6 +81,7 @@ class ActivitypolicyController extends Controller{
             $num = $integral = 0;
             $step_num = $step_integral = 0;
             $dp_policy_id = $jt_policy_id = 0;
+            $real_step_num = 0;
             foreach ($v as $hv){
                 $area_id = $hv['area_id'];
                 $goods_id = $hv['goods_id'];
@@ -118,6 +119,7 @@ class ActivitypolicyController extends Controller{
                     $res_policy_goods2 = $m_hotel->query($sql_policy_goods2);
                     if(!empty($res_policy_goods2[0]['goods_id'])){
                         $goods_step_num = round($sale_num*$res_policy_goods2[0]['coefficient']);
+                        $real_step_num+=$goods_step_num;
                         $goods_step_integral = 0;
                         $integral_config = json_decode($res_policy2[0]['integral_config'],true);
                         foreach ($integral_config as $icv){
@@ -146,13 +148,12 @@ class ActivitypolicyController extends Controller{
             }
             $qk_data = $m_sale->getqkmoney($hotel_id,0,1);
             $cqqk_money = $qk_data['cqqk_money'];
-
-            $award_data = array('hotel_id'=>$hotel_id,'num'=>$num,'award_openid'=>$award_openid,'integral'=>$integral,'step_num'=>$step_num,'step_integral'=>$step_integral,
+            $award_data = array('hotel_id'=>$hotel_id,'num'=>$num,'award_openid'=>$award_openid,'integral'=>$integral,'step_num'=>$step_num,'step_integral'=>$step_integral,'real_step_num'=>$real_step_num,
                 'dp_policy_id'=>$dp_policy_id,'jt_policy_id'=>$jt_policy_id,'bill_day'=>$bill_day,'overdue_money'=>$cqqk_money,'status'=>3,'static_date'=>$static_date);
             if($award_data_id){
+                $award_data['update_time'] = date('Y-m-d H:i:s');
                 $m_award_hoteldata->updateData(array('id'=>$award_data_id),$award_data);
             }else{
-                $award_data['update_time'] = date('Y-m-d H:i:s');
                 $hfield = 'hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,ext.bd_name,ext.bdm_name';
                 $res_hotel = $m_hotel->getHotelById($hfield,array('hotel.id'=>$hotel_id));
                 $award_data['hotel_name'] = $res_hotel['hotel_name'];
@@ -160,8 +161,8 @@ class ActivitypolicyController extends Controller{
                 $award_data['area_name'] = $res_hotel['area_name'];
                 $award_data['bd_name'] = $res_hotel['bd_name'];
                 $award_data['bdm_name'] = $res_hotel['bdm_name'];
+                $m_award_hoteldata->add($award_data);
             }
-            $m_award_hoteldata->add($award_data);
         }
 
     }
