@@ -3792,4 +3792,22 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
+    public function upwinecode(){
+        $codes = "585d0157e0c7d214,4ec495e41c3eb658,49b81ed9ddd0b3e6";
+        $all_codes = explode(',',$codes);
+        $m_winecode = new \Admin\Model\FinanceWinecodeModel();
+        foreach ($all_codes as $v){
+            $now_code = $v;
+            $sql_code = "select goods_id from savor_finance_stock_record where idcode='$now_code' order by id desc limit 0,1";
+            $res_code = M()->query($sql_code);
+            $goods_id = intval($res_code[0]['goods_id']);
+            $add_data = array('goods_id'=>$goods_id,'idcode'=>$now_code,'winecode'=>'hy20240527');
+
+            $m_winecode->add($add_data);
+            echo "code:$now_code \r\n";
+        }
+
+
+    }
+
 }
