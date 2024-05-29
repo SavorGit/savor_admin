@@ -10,9 +10,12 @@ class ActivitypolicyController extends Controller{
 
         $start_time = date('Y-m-01 00:00:00');
         $end_time = date('Y-m-d 23:59:59');
+        $data_goods_ids = join(',',C('DATA_GOODS_IDS'));
+        $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql_record="select a.hotel_id,a.area_id,a.goods_id,sum(a.num) as sale_num from savor_finance_sale as a 
             left join savor_finance_stock_record as record on a.stock_record_id=record.id 
             where a.type=1 and record.wo_reason_type=1 and record.wo_status=2 and record.recycle_status=2 
+            and a.goods_id not in ($data_goods_ids) and a.hotel_id not in ($test_hotel_ids)
             and record.add_time>='$start_time' and record.add_time<='$end_time'
             group by a.hotel_id,a.goods_id";
         $model = M();
@@ -29,6 +32,8 @@ class ActivitypolicyController extends Controller{
         $start_time = date('Y-m-01 00:00:00',strtotime('-1 month'));
         $end_time = date('Y-m-d 23:59:59',strtotime('-1 month'));
         $pre_month = date('Ym',strtotime('-1 month'));
+        $data_goods_ids = join(',',C('DATA_GOODS_IDS'));
+        $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $model = M();
         $sql = "select hotel_id from savor_finance_award_hoteldata where is_confirm=1 and static_date={$pre_month} order by id desc";
         $res_confirm_hotels = $model->query($sql);
@@ -44,6 +49,7 @@ class ActivitypolicyController extends Controller{
         $sql_record="select a.hotel_id,a.area_id,a.goods_id,sum(a.num) as sale_num from savor_finance_sale as a 
             left join savor_finance_stock_record as record on a.stock_record_id=record.id 
             where a.type=1 and record.wo_reason_type=1 and record.wo_status=2 and record.recycle_status=2 
+            and a.goods_id not in ($data_goods_ids) and a.hotel_id not in ($test_hotel_ids)  
             and record.add_time>='$start_time' and record.add_time<='$end_time' {$where_confirm_hotels}
             group by a.hotel_id,a.goods_id";
         $model = M();
