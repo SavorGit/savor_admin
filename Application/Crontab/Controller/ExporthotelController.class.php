@@ -473,6 +473,7 @@ class ExporthotelController extends BaseController{
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         $m_hotelstaff_data = new \Admin\Model\Smallapp\StaticHotelstaffdataModel();
+        $m_award_hoteldata = new \Admin\Model\FinanceAwardHoteldataModel();
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(9);
         $cache_key = C('FINANCE_HOTELSTOCK');
@@ -500,7 +501,16 @@ class ExporthotelController extends BaseController{
             $v['sale_last_time'] = $sale_last_time;
             $res_room = $m_room->getRoomByCondition('count(room.id) as num',array('hotel.id'=>$v['hotel_id'],'room.state'=>1,'room.flag'=>0));
             $v['room_num'] = intval($res_room[0]['num']);
-
+            $res_award_data = $m_award_hoteldata->getInfo(array('static_date'=>date('Ym'),'hotel_id'=>$hotel_id));
+            $award_confirm_str = '';
+            if(!empty($res_award_data)){
+                if($res_award_data['is_confirm']==1){
+                    $award_confirm_str = '是';
+                }else{
+                    $award_confirm_str = '否';
+                }
+            }
+            $v['award_confirm_str'] = $award_confirm_str;
             $res_merchant = $m_merchant->getMerchants('a.id,a.name,a.mobile,a.is_shareprofit',array('a.hotel_id'=>$hotel_id,'a.status'=>1),'');
             $is_shareprofit_str = '';
             $dz_name = $dz_mobile = '';
@@ -646,6 +656,7 @@ class ExporthotelController extends BaseController{
         $cell[]=array('bd_name','BD');
         $cell[]=array('bdm_name','BDM');
         $cell[]=array('bdd_name','BDD');
+        $cell[]=array('award_confirm_str','是否确认活动激励');
         $cell[]=array('is_parity','是否平价');
         $cell[]=array('is_shareprofit_str','是否分润');
         $cell[]=array('qk_money','总欠款');
