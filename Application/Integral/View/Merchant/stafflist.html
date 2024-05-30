@@ -51,12 +51,16 @@
               <td data-title="用户端openid">{$dinfo.openid}</td>
               <td data-title="手机号码">{$dinfo.mobile}</td>
               <td data-title="状态">
-                <if condition="$dinfo['status'] eq 1">
-                  <a data-tip="正常" target="ajaxTodo" href="{$host_url}/integral/merchant/editstaffstatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                  <i class="fa fa-toggle-on"></i></span></a>
+                <if condition="$dinfo.level eq 1">
+                  {$dinfo.status_str}
                 <else/>
-                  <a data-tip="禁用" target="ajaxTodo" href="{$host_url}/integral/merchant/editstaffstatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                  <if condition="$dinfo['status'] eq 1">
+                    <a data-tip="正常" target="ajaxTodo" href="{$host_url}/integral/merchant/editstaffstatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                  <i class="fa fa-toggle-on"></i></span></a>
+                    <else/>
+                    <a data-tip="禁用" target="ajaxTodo" href="{$host_url}/integral/merchant/editstaffstatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-off"></i></span></a>
+                  </if>
                 </if>
               </td>
               <td data-title="添加时间">{$dinfo.add_time}</td>
