@@ -94,7 +94,7 @@ $config = array(
 //        '赖桂华'=>'lai.guihua@littlehotspot.com',
         '高峰'=>'gao.feng@littlehotspot.com',
 //        '陈灿锐'=>'chen.canrui@littlehotspot.com',
-        '刘雅暄'=>'liu.yaxuan@littlehotspot.com',
+//        '刘雅暄'=>'liu.yaxuan@littlehotspot.com',
         '刘磊'=>'',
         '解云航'=>'',
     ),
