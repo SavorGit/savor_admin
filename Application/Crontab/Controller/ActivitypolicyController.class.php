@@ -30,7 +30,7 @@ class ActivitypolicyController extends Controller{
         echo "outmonthawardhoteldata start:$now_time \r\n";
 
         $start_time = date('Y-m-01 00:00:00',strtotime('-1 month'));
-        $end_time = date('Y-m-d 23:59:59',strtotime('-1 month'));
+        $end_time = date('Y-m-t 23:59:59',strtotime('-1 month'));
         $pre_month = date('Ym',strtotime('-1 month'));
         $data_goods_ids = join(',',C('DATA_GOODS_IDS'));
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
