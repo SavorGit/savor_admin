@@ -72,7 +72,7 @@ class ActivitypolicyController extends Controller{
         foreach ($all_hotel_data as $k=>$v){
             $hotel_id = $k;
             $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
-            $award_openid = $res_merchant['award_openid'];
+            $award_openid = !empty($res_merchant['award_openid'])?$res_merchant['award_openid']:'';
 
             $res_award_data = $m_award_hoteldata->getInfo(array('static_date'=>$static_date,'hotel_id'=>$hotel_id));
             if(!empty($res_award_data)){
@@ -143,7 +143,10 @@ class ActivitypolicyController extends Controller{
                     }
                 }
             }
-
+            if($num==0 && $step_num==0){
+                echo "hotel_id:$hotel_id,num:$num,step_num:$step_num \r\n";
+                continue;
+            }
             $sql_bill_day = "select a.bill_days,h.hotel_id from savor_finance_contract as a 
                 left join savor_finance_contract_hotel as h on a.id=h.contract_id
                 where a.type=20 and a.status=1 and a.contract_etime>='$now_date' and h.hotel_id=$hotel_id order by a.id desc limit 0,1";
