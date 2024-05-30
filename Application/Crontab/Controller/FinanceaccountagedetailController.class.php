@@ -5,7 +5,7 @@ use Think\Controller;
 class FinanceaccountagedetailController extends Controller{
     
     public function accountageDetail(){
-        
+        ini_set("memory_limit", "18018M");
         $end_date = date('Y-m-d',strtotime('-1 day'));
         $m_accountage_detail = new \Admin\Model\FinanceDataAccountageDetailModel();
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
