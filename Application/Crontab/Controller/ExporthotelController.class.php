@@ -693,14 +693,13 @@ class ExporthotelController extends BaseController{
         $mail->Body = $body;
         $mail->AddAddress("liu.bin@littlehotspot.com");
         $mail->AddAddress("alex.liu@littlehotspot.com");
-        $mail->AddAddress("xie.yunhang@littlehotspot.com");
         $mail->AddAddress("hu.shunhua@littlehotspot.com");
-        $mail->AddAddress("jiang.gongjing@littlehotspot.com");
         $mail->AddAddress("ma.feng@littlehotspot.com");
         $mail->AddAddress("he.yongrui@littlehotspot.com");
-        $mail->AddAddress("pang.mengying@littlehotspot.com");
         $mail->AddAddress("zhao.cuiyan@littlehotspot.com");
         $mail->AddAddress("zhang.lijuan@littlehotspot.com");
+        $mail->AddAddress("zheng.wei@littlehotspot.com");
+        $mail->AddAddress("huang.yong@littlehotspot.com");
         $mail->AddAttachment($now_file_path); // 添加附件
         if ($mail->Send()) {
             echo "email: 10num send ok \r\n";
