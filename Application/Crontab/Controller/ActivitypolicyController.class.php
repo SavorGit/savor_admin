@@ -88,15 +88,21 @@ class ActivitypolicyController extends Controller{
             $step_num = $step_integral = 0;
             $dp_policy_id = $jt_policy_id = 0;
             $real_step_num = 0;
+            $area_id = $v[0]['area_id'];
+
+            //单瓶激励
+            $sql_award_1 = "select a.policy_id from savor_finance_activity_policy_hotel as a left join savor_finance_activity_policy as ap on 
+                a.policy_id=ap.id where a.area_id={$area_id} and a.hotel_id in ({$hotel_id},0) and ap.type=1 and ap.status=1 order by a.policy_id desc limit 0,1";
+            $res_policy1 = $m_hotel->query($sql_award_1);
+
+            //开瓶阶梯激励
+            $sql_award_2 = "select a.policy_id,ap.integral_config from savor_finance_activity_policy_hotel as a left join savor_finance_activity_policy as ap on 
+                a.policy_id=ap.id where a.area_id={$area_id} and a.hotel_id in ({$hotel_id},0) and ap.type=2 and ap.status=1 order by a.policy_id desc limit 0,1";
+            $res_policy2 = $m_hotel->query($sql_award_2);
             foreach ($v as $hv){
-                $area_id = $hv['area_id'];
                 $goods_id = $hv['goods_id'];
                 $sale_num = $hv['sale_num'];
 
-                //单瓶激励
-                $sql_award_1 = "select a.policy_id from savor_finance_activity_policy_hotel as a left join savor_finance_activity_policy as ap on 
-                a.policy_id=ap.id where a.area_id={$area_id} and a.hotel_id in ({$hotel_id},0) and ap.type=1 and ap.status=1 order by a.policy_id desc limit 0,1";
-                $res_policy1 = $m_hotel->query($sql_award_1);
                 if(!empty($res_policy1[0]['policy_id'])){
                     $policy_id1 = $res_policy1[0]['policy_id'];
                     $dp_policy_id = $policy_id1;
@@ -114,35 +120,32 @@ class ActivitypolicyController extends Controller{
                     }
                 }
 
-                //开瓶阶梯激励
-                $sql_award_2 = "select a.policy_id,ap.integral_config from savor_finance_activity_policy_hotel as a left join savor_finance_activity_policy as ap on 
-                a.policy_id=ap.id where a.area_id={$area_id} and a.hotel_id in ({$hotel_id},0) and ap.type=2 and ap.status=1 order by a.policy_id desc limit 0,1";
-                $res_policy2 = $m_hotel->query($sql_award_2);
                 if(!empty($res_policy2[0]['policy_id'])){
                     $policy_id2 = $res_policy2[0]['policy_id'];
                     $jt_policy_id = $policy_id2;
                     $sql_policy_goods2 = "select goods_id,coefficient,integral from savor_finance_activity_policy_goods where policy_id={$policy_id2} and goods_id={$goods_id}";
                     $res_policy_goods2 = $m_hotel->query($sql_policy_goods2);
                     if(!empty($res_policy_goods2[0]['goods_id'])){
-                        $goods_step_num = round($sale_num*$res_policy_goods2[0]['coefficient']);
+                        $goods_step_num = $sale_num*$res_policy_goods2[0]['coefficient'];
                         $real_step_num+=$goods_step_num;
-                        $goods_step_integral = 0;
-                        $integral_config = json_decode($res_policy2[0]['integral_config'],true);
-                        foreach ($integral_config as $icv){
-                            if($goods_step_num>=$icv['n']){
-                                $goods_step_integral+=$icv['i'];
-                            }
-                        }
+                        $step_num+=$goods_step_num;
                         echo "hotel_id:$hotel_id,goods_id:$goods_id,calculate:goods_step_num=$sale_num*{$res_policy_goods2[0]['coefficient']} \r\n";
-                        if($goods_step_integral>0){
-                            $step_num+=$goods_step_num;
-                            $step_integral+=$goods_step_integral;
-
-                            echo "hotel_id:$hotel_id,goods_id:$goods_id,calculate:goods_step_integral={$goods_step_integral} \r\n";
-                        }
                     }
                 }
             }
+
+            if(!empty($res_policy2[0]['policy_id'])){
+                $real_step_num = round($real_step_num);
+                $step_num = round($step_num);
+                $integral_config = json_decode($res_policy2[0]['integral_config'],true);
+                foreach ($integral_config as $icv){
+                    if($step_num>=$icv['n']){
+                        $step_integral+=$icv['i'];
+                    }
+                }
+                echo "hotel_id:$hotel_id,calculate:goods_step_num=$step_num,step_integral=$step_integral \r\n";
+            }
+
             if($num==0 && $step_num==0){
                 echo "hotel_id:$hotel_id,num:$num,step_num:$step_num \r\n";
                 continue;
