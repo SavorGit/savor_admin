@@ -3629,7 +3629,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function uphotelbddm(){
-        $file_path = '/application_data/web/php/savor_admin/Public/content/hotelbddm0505.xlsx';
+        $file_path = '/application_data/web/php/savor_admin/Public/content/hotelbddm0603.xls';
 
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");

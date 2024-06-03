@@ -197,7 +197,7 @@ where merchant.status=1 and hotel.id not in(7,883) group by hotel.id ";
     }
 
     public function exchangemoney(){
-        $money = I('money',500,'intval');
+        $money = I('money',1,'intval');
         $start_time = date('Y-m-01 00:00:00',strtotime('-1 month'));
         $end_time = date('Y-m-31 23:59:59',strtotime('-1 month'));
 
@@ -226,7 +226,7 @@ where merchant.status=1 and hotel.id not in(7,883) group by hotel.id ";
             array('hotel_name','酒楼名称'),
             array('month','月份'),
         );
-        $filename = '兑换金额大于500的用户';
+        $filename = '兑换金额大于'.$money.'的用户';
         $this->exportToExcel($cell,$datalist,$filename,1);
     }
 
