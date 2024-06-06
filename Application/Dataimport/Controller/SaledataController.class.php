@@ -5,7 +5,7 @@ use Think\Controller;
 class SaledataController extends Controller{
 
     public function addsale(){
-        $file_path = '/application_data/web/php/savor_admin/Public/content/正式1200瓶0402.xlsx';
+        $file_path = '/application_data/web/php/savor_admin/Public/content/正式360瓶0606.xlsx';
 //        $file_path = SITE_TP_PATH.'/Public/uploads/'.$file_name;
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
@@ -30,7 +30,7 @@ class SaledataController extends Controller{
 
             $hotel_id = intval($rowData[0][0]);
             $idcode = $rowData[0][2];
-            $stock_in_id = intval($rowData[0][3]);
+            $stock_in_record_id = intval($rowData[0][3]);
             $stock_out_id = intval($rowData[0][4]);
             $wo_time = $rowData[0][5];
             $settlement_price = $rowData[0][6];
@@ -48,7 +48,10 @@ class SaledataController extends Controller{
             $residenter_id = intval($res_hotelext['residenter_id']);
 
             echo "check  $idcode,$area_id,$maintainer_id,$residenter_id,$wo_time \r\n";
-            continue;
+//            continue;
+
+            $res_instock = $m_stock_record->getInfo(array('id'=>$stock_in_record_id));
+            $stock_in_id = $res_instock['stock_id'];
 
             $res_indetail = $m_stock_detail->getInfo(array('stock_id'=>$stock_in_id));
             $goods_id = $res_indetail['goods_id'];
@@ -73,15 +76,15 @@ class SaledataController extends Controller{
 
             $all_stock_in_ids[$stock_in_id]=$op_openid;
             $all_stock_out_ids[$stock_out_id]=$op_openid;
-            continue;
+//            continue;
 
             //入库
             $indata = array('stock_id'=>$stock_in_id,'stock_detail_id'=>$stock_detail_id,'goods_id'=>$goods_id,'batch_no'=>$batch_no,'idcode'=>$idcode,'avg_price'=>$now_avg_price,
                 'price'=>$price,'total_fee'=>$total_fee,'unit_id'=>$unit_id,'amount'=>$amount,'total_amount'=>$total_amount,'type'=>1,'op_openid'=>$op_openid
             );
-            $m_stock_record->add($indata);
-            $m_stock_detail->where(array('id'=>$stock_detail_id))->setInc('amount',1);
-            $m_stock_detail->where(array('id'=>$stock_detail_id))->setInc('total_amount',1);
+//            $m_stock_record->add($indata);
+//            $m_stock_detail->where(array('id'=>$stock_detail_id))->setInc('amount',1);
+//            $m_stock_detail->where(array('id'=>$stock_detail_id))->setInc('total_amount',1);
 
             $outdata = $indata;
             $batch_no = getMillisecond();
@@ -153,6 +156,7 @@ class SaledataController extends Controller{
                 'type'=>1,'area_id'=>$area_id,'sale_openid'=>$sale_openid);
             $sale_id = $m_sale->add($add_data);
 
+            /*
             //收款
             $nowdate = date('Ymd',strtotime($wo_time));
             $where = array('DATE_FORMAT(add_time, "%Y%m%d")'=>$nowdate);
@@ -174,6 +178,7 @@ class SaledataController extends Controller{
             //更新出库单收款
             $up_sale = array('status'=>2,'sale_payment_id'=>$sale_payment_id,'ptype'=>1,'pay_time'=>$wo_time,'pay_money'=>$settlement_price);
             $m_sale->updateData(array('id'=>$sale_id),$up_sale);
+            */
 
             echo "icdoe:$idcode \r\n";
         }
@@ -211,7 +216,7 @@ class SaledataController extends Controller{
         $where = array('a.type'=>1,'record.wo_status'=>2,'record.wo_reason_type'=>array('in','1,2'));
         $where['a.goods_id'] = array('in',C('DATA_GOODS_IDS'));
         $where['a.push_u8_status13'] = 0;
-        $where['a.hotel_id'] = 1375;
+//        $where['a.hotel_id'] = 1375;
 
         $res_data = $m_sale->getSaleStockRecordList($fileds,$where,'a.id asc','');
         foreach ($res_data as $v){
@@ -220,7 +225,7 @@ class SaledataController extends Controller{
             $push_type = intval(80+$reason_type);
             sendSmallappTopicMessage($sale_id,$push_type);
 
-            usleep(500000);
+            usleep(800000);
 
             echo "sale_id:$sale_id,wo_reason_type:$reason_type,add_time:{$v['add_time']} \r\n";
         }
