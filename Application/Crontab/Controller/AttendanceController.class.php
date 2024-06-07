@@ -13,8 +13,8 @@ class AttendanceController extends Controller{
         }
 
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
-        $start = '2024-05-01';
-        $end = '2024-05-31';
+        $start = '2024-06-01';
+        $end = '2024-06-06';
         $all_dates = $m_statistics->getDates($start,$end);
         foreach ($all_dates as $v){
             $static_date = $v;
@@ -47,7 +47,7 @@ class AttendanceController extends Controller{
                 $ops_staff_name = $sv['ops_uname'];
                 $ops_staff_id = $sv['ops_staff_id'];
 
-                if(!in_array($job,array('驻店销售','驻店主管','渠道开发'))){
+                if(!in_array($job,array('驻店销售','驻店主管','渠道开发','BDM'))){
                     continue;
                 }
                 $belate_status = 0;
@@ -80,6 +80,7 @@ class AttendanceController extends Controller{
                         $res_hotel = $m_hotel->getOne($first_clock_hotel_id);
                         $first_clock_hotel_name = $res_hotel['name'];
                     }
+                    /*
                     $clock_in_time = $clock_out_time = '';
                     if($job=='驻店销售' || $job=='驻店主管'){
                         $clock_in_time = "$static_date 10:30:00";
@@ -88,6 +89,10 @@ class AttendanceController extends Controller{
                         $clock_in_time = "$static_date 10:30:00";
                         $clock_out_time = "$static_date 19:00:00";
                     }
+                    */
+                    $clock_in_time = "$static_date 10:30:00";
+                    $clock_out_time = "$static_date 19:00:00";
+
                     $start_clock_time = $salerecord_info['min_signin_time'];
                     $end_clock_time = $salerecord_info['max_signout_time'];
                     if(!empty($clock_in_time)){
@@ -114,8 +119,6 @@ class AttendanceController extends Controller{
             echo "static_date:$static_date ok \r\n";
 
         }
-
-
     }
 
     public function statopssalerecord(){
@@ -127,8 +130,8 @@ class AttendanceController extends Controller{
         }
 
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
-        $start = '2024-05-01';
-        $end = '2024-05-31';
+        $start = '2024-06-01';
+        $end = '2024-06-06';
         $all_dates = $m_statistics->getDates($start,$end);
         foreach ($all_dates as $v){
             $static_date = $v;
@@ -219,7 +222,6 @@ class AttendanceController extends Controller{
             echo "static_date:$static_date ok \r\n";
 
         }
-
 
     }
 }
