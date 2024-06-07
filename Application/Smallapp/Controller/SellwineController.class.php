@@ -280,7 +280,7 @@ class SellwineController extends BaseController {
         }
 //        $where['h.id'] = array('not in',C('TEST_HOTEL'));
         $start  = ($page-1) * $size;
-        $fields = 'a.hotel_id,h.name as hotel_name,area.region_name as area_name,ext.department_name,ext.team_name,
+        $fields = 'a.hotel_id,h.name as hotel_name,area.region_name as area_name,ext.department_name,ext.bdm_name,
         a.goods_id,dg.name as goods_name,a.hotel_price,a.update_time,dg.price';
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         $result = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.hotel_id desc', $start,$size);
