@@ -693,6 +693,7 @@ class ExporthotelController extends BaseController{
         $mail->Body = $body;
         $mail->AddAddress("liu.bin@littlehotspot.com");
         $mail->AddAddress("alex.liu@littlehotspot.com");
+        $mail->AddAddress("xie.yunhang@littlehotspot.com");
         $mail->AddAddress("hu.shunhua@littlehotspot.com");
         $mail->AddAddress("ma.feng@littlehotspot.com");
         $mail->AddAddress("he.yongrui@littlehotspot.com");
@@ -703,9 +704,9 @@ class ExporthotelController extends BaseController{
         $mail->AddAddress("qu.ajuan@littlehotspot.com");
         $mail->AddAttachment($now_file_path); // 添加附件
         if ($mail->Send()) {
-            echo "email: 10num send ok \r\n";
+            echo "email: 11num send ok \r\n";
         } else {
-            echo "email: 10num send fail \r\n";
+            echo "email: 11num send fail \r\n";
         }
         $mail->ClearAddresses();
         $mail->ClearAttachments();
