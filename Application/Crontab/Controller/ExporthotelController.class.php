@@ -406,7 +406,6 @@ class ExporthotelController extends BaseController{
         $mail->Subject = $title;
         $mail->Body = $body;
         $mail->AddAddress("liu.bin@littlehotspot.com");
-        $mail->AddAddress("jiang.gongjing@littlehotspot.com");
         $mail->AddAttachment($now_file_path); // 添加附件
         if($mail->Send()) {
             echo "email: liu.bin@littlehotspot.com send ok \r\n";
