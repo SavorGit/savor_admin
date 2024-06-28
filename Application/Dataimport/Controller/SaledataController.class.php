@@ -5,7 +5,7 @@ use Think\Controller;
 class SaledataController extends Controller{
 
     public function addsale(){
-        $file_path = '/application_data/web/php/savor_admin/Public/content/正式360瓶0606.xlsx';
+        $file_path = '/application_data/web/php/savor_admin/Public/content/202406-180瓶.xlsx';
 //        $file_path = SITE_TP_PATH.'/Public/uploads/'.$file_name;
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
@@ -48,7 +48,7 @@ class SaledataController extends Controller{
             $residenter_id = intval($res_hotelext['residenter_id']);
 
             echo "check  $idcode,$area_id,$maintainer_id,$residenter_id,$wo_time \r\n";
-//            continue;
+            continue;
 
             $res_instock = $m_stock_record->getInfo(array('id'=>$stock_in_record_id));
             $stock_in_id = $res_instock['stock_id'];
@@ -69,7 +69,7 @@ class SaledataController extends Controller{
             $stock_detail_id = $res_indetail['id'];
             $batch_no = getMillisecond();
             if($area_id==1){
-                $op_openid = 'o9GS-4lU4v_wQclbeoHosBZQ1UMc';//徐寅
+                $op_openid = 'o9GS-4mCTCsy3EHI8ubCfvfzE4O8';//王丹
             }else{
                 $op_openid = 'o9GS-4mTCZvkRCDRnkg77QqohMI4';//胡子凤
             }
