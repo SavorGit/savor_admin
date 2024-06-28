@@ -966,12 +966,12 @@ class HotelController extends BaseController {
         }else{
             $data['sale_end_date'] = '0000-00-00';
         }
-        $now_date = date('Y-m-d');
-        $max_zz_data = date('Y-m-15');
-        if($now_date>$max_zz_data){
-            $this->error('请在每个月15号前设置扎账时间');
-        }
         if(!empty($zz_date)){
+            $now_date = date('Y-m-d');
+            $max_zz_data = date('Y-m-15');
+            if($now_date>$max_zz_data){
+                $this->error('请在每个月15号前设置扎账时间');
+            }
             $data['zz_date'] = $zz_date;
         }else{
             $data['zz_date'] = '0000-00-00';
