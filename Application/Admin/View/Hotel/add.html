@@ -331,6 +331,19 @@
             </div>
         </div>
 
+        <div class="form-group row send_time">
+            <label class="col-xs-12 col-sm-2 control-label">扎账日期(每月15号前设置)：</label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="input-group date form_datetime" data-date="{$vinfo.zz_date}" data-ymd="true">
+                    <input name="zz_date" type="text" size="16" class="form-control date" placeholder="扎账日期" value="{$vinfo.zz_date}">
+                    <span class="input-group-btn">
+                        <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                        <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
                 是否培训过：

@@ -510,8 +510,12 @@ class HotelController extends BaseController {
             if($main_info['sale_end_date']=='0000-00-00'){
                 $main_info['sale_end_date']='';
             }
+            if($main_info['zz_date']=='0000-00-00'){
+                $main_info['zz_date']='';
+            }
 			$vinfo['sale_start_date'] = $main_info['sale_start_date'];
 			$vinfo['sale_end_date'] = $main_info['sale_end_date'];
+			$vinfo['zz_date'] = $main_info['zz_date'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
 			$vinfo['signer_id'] = $main_info['signer_id'];
 			$vinfo['residenter_id'] = $main_info['residenter_id'];
@@ -799,6 +803,7 @@ class HotelController extends BaseController {
         $jd_custom_no = I('post.jd_custom_no','','trim');
         $sale_start_date = I('post.sale_start_date','');
         $sale_end_date = I('post.sale_end_date','');
+        $zz_date = I('post.zz_date','');
         $department_name = I('post.department_name','');
         $bd_name = I('post.bd_name','');
         $bdm_name = I('post.bdm_name','');
@@ -961,6 +966,17 @@ class HotelController extends BaseController {
         }else{
             $data['sale_end_date'] = '0000-00-00';
         }
+        $now_date = date('Y-m-d');
+        $max_zz_data = date('Y-m-15');
+        if($now_date>$max_zz_data){
+            $this->error('请在每个月15号前设置扎账时间');
+        }
+        if(!empty($zz_date)){
+            $data['zz_date'] = $zz_date;
+        }else{
+            $data['zz_date'] = '0000-00-00';
+        }
+
         $data['is_comment'] = $is_comment;
         $data['is_reward'] = $is_reward;
         $data['is_annualmeeting'] = $is_annualmeeting;
