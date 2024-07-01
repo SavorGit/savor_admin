@@ -141,6 +141,7 @@ class ActivitypolicyController extends Controller{
         if(!empty($res_confirm_hotels)){
             $m_award_hoteldata = new \Admin\Model\FinanceAwardHoteldataModel();
             $m_userintegral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+            $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
             $m_sale = new \Admin\Model\FinanceSaleModel();
             foreach ($res_confirm_hotels as $v){
                 $static_date = $v['static_date'];
@@ -151,8 +152,25 @@ class ActivitypolicyController extends Controller{
                 $cqqk_money = intval($qk_data['cqqk_money']);
                 if($cqqk_money==0 && !empty($v['award_openid'])){
                     $integral_status = 1;
-                    $m_award_hoteldata->updateData(array('id'=>$v['id']),array('status'=>$integral_status,'update_time'=>date('Y-m-d H:i:s')));
-                    $m_userintegral_record->confirmActivityAward($v,$integral_status);
+                    $m_award_hoteldata->updateData(array('id'=>$v['id']),array('overdue_money'=>0,'status'=>$integral_status,'update_time'=>date('Y-m-d H:i:s')));
+
+                    $rwhere = array('jdorder_id'=>$v['id'],'type'=>array('in','26,27'),'status'=>2);
+                    $res_recordinfo = $m_userintegral_record->getAll('id,openid,integral,hotel_id,status',$rwhere,0,2,'id desc');
+                    if(!empty($res_recordinfo[0]['id'])){
+                        foreach ($res_recordinfo as $rv){
+                            $record_id = $rv['id'];
+                            $m_userintegral_record->updateData(array('id'=>$record_id),array('status'=>1,'integral_time'=>date('Y-m-d H:i:s')));
+                            $now_integral = $rv['integral'];
+                            $res_integral = $m_userintegral->getInfo(array('openid'=>$rv['openid']));
+                            if(!empty($res_integral)){
+                                $userintegral = $res_integral['integral']+$now_integral;
+                                $m_userintegral->updateData(array('id'=>$res_integral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+                            }else{
+                                $m_userintegral->add(array('openid'=>$rv['openid'],'integral'=>$now_integral));
+                            }
+                            echo "id:{$v['id']},record_id:{$record_id},hotel_id:{$v['hotel_id']},static_date:$static_date,integral:$now_integral  \r\n";
+                        }
+                    }
                 }
             }
         }
