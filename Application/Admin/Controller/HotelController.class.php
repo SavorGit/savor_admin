@@ -968,11 +968,18 @@ class HotelController extends BaseController {
         }
         if(!empty($zz_date)){
             $now_date = date('Y-m-d');
-            $max_zz_data = date('Y-m-15');
-            if($now_date>$max_zz_data){
+            $max_data = date('Y-m-15');
+            if($now_date>$max_data){
                 $this->error('请在每个月15号前设置扎账时间');
             }
-            $data['zz_date'] = $zz_date;
+            $min_zz_date = date('Y-m-01');
+            $max_zz_date = date('Y-m-t');
+            if($zz_date>=$min_zz_date && $zz_date<=$max_zz_date){
+                $data['zz_date'] = $zz_date;
+            }else{
+                $this->error('请设置当月扎账时间');
+            }
+
         }else{
             $data['zz_date'] = '0000-00-00';
         }
