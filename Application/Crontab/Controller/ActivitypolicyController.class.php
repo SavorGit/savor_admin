@@ -59,6 +59,107 @@ class ActivitypolicyController extends Controller{
         echo "awardhoteldata end:$now_time \r\n";
     }
 
+    public function zzhoteldata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "zzhoteldata start:$now_time \r\n";
+
+        $pre_month = date('Ym',strtotime('-1 month'));
+        $now_month = date('Y-m');
+        $now_date = date('Y-m-d');
+        $model = M();
+        $sql = "select a.id,a.hotel_id,a.hotel_name,a.integral,a.step_integral,a.award_openid,a.overdue_money,ext.zz_date,su.mobile from savor_finance_award_hoteldata as a 
+        left join savor_hotel_ext as ext on a.hotel_id=ext.hotel_id left join savor_smallapp_user as su on a.award_openid=su.openid
+        where a.is_confirm=0 and a.static_date={$pre_month} order by a.id desc";
+        $res_noconfirm_hotels = $model->query($sql);
+        if(!empty($res_noconfirm_hotels)){
+            $m_award_hoteldata = new \Admin\Model\FinanceAwardHoteldataModel();
+            $m_userintegral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+            $m_sys_config = new \Admin\Model\SysConfigModel();
+            $res_config = $m_sys_config->getOne('zz_day');
+            $zz_day = sprintf("%02d", $res_config['config_value']);
+            $sys_zz_date = date('Y-m').'-'.$zz_day;
+            $emsms = new \Common\Lib\EmayMessage();
+            foreach ($res_noconfirm_hotels as $v){
+                $all_integral = $v['step_integral']+$v['integral'];
+                if($v['zz_date']=='0000-00-00'){
+                    $zz_date = $sys_zz_date;
+                }else{
+                    $zz_month = date('Y-m',strtotime($v['zz_date']));
+                    if($now_month==$zz_month){
+                        $zz_date = $v['zz_date'];
+                    }else{
+                        $zz_date = $sys_zz_date;
+                    }
+                }
+                $zz_month = date('Y-m',strtotime($zz_date));
+                if($now_month==$zz_month){
+                    $zz_day = date('d',strtotime($zz_date));
+                    $diff_day = (strtotime($zz_date) - strtotime($now_date))/86400;
+                    if($all_integral>0 && $diff_day>0 && $diff_day<=2){
+                        $mobile = $v['mobile'];
+                        if(!empty($mobile)){
+                            $content = "{$v['hotel_name']}（餐厅）上月的活动激励将于本月{$zz_day}号23点后进行自动确认，请及时前往小热点销售端进行核对";
+                            $emsms->sendSMS($content,$mobile);
+
+                            echo "id:{$v['id']},hotel_id:{$v['hotel_id']},mobile:{$mobile} sendsms  \r\n";
+                        }
+                    }
+                    if($now_date>=$zz_date){
+                        $id = $v['id'];
+                        if(empty($v['award_openid'])){
+                            $integral_status = 3;
+                        }else{
+                            if($v['overdue_money']>0){
+                                $integral_status = 2;
+                            }else{
+                                $integral_status = 1;
+                            }
+                        }
+                        $m_award_hoteldata->updateData(array('id'=>$id),array('status'=>$integral_status,'is_confirm'=>1,'confirm_time'=>date('Y-m-d H:i:s')));
+                        if($integral_status!=3){
+                            $m_userintegral_record->confirmActivityAward($v,$integral_status);
+                        }
+
+                        echo "id:{$id},hotel_id:{$v['hotel_id']},status:$integral_status,date:$now_date>=$zz_date  \r\n";
+                    }
+                }
+            }
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "zzhoteldata end:$now_time \r\n";
+    }
+
+    public function thawintegral(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "thawintegral start:$now_time \r\n";
+
+        $model = M();
+        $sql = "select a.id,a.hotel_id,a.hotel_name,a.integral,a.step_integral,a.award_openid,a.overdue_money,a.static_date,ext.zz_date,su.mobile from savor_finance_award_hoteldata as a 
+        left join savor_hotel_ext as ext on a.hotel_id=ext.hotel_id left join savor_smallapp_user as su on a.award_openid=su.openid
+        where a.is_confirm=1 and a.status=2 order by a.id desc";
+        $res_confirm_hotels = $model->query($sql);
+        if(!empty($res_confirm_hotels)){
+            $m_award_hoteldata = new \Admin\Model\FinanceAwardHoteldataModel();
+            $m_userintegral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+            $m_sale = new \Admin\Model\FinanceSaleModel();
+            foreach ($res_confirm_hotels as $v){
+                $static_date = $v['static_date'];
+                $month_number = strtotime($static_date.'01');
+                $stime = date('Y-m-01 00:00:00',$month_number);
+                $etime = date('Y-m-t 23:59:59',$month_number);
+                $qk_data = $m_sale->getqkmoney($v['hotel_id'],0,1,$stime,$etime);
+                $cqqk_money = intval($qk_data['cqqk_money']);
+                if($cqqk_money==0 && !empty($v['award_openid'])){
+                    $integral_status = 1;
+                    $m_award_hoteldata->updateData(array('id'=>$v['id']),array('status'=>$integral_status,'update_time'=>date('Y-m-d H:i:s')));
+                    $m_userintegral_record->confirmActivityAward($v,$integral_status);
+                }
+            }
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "thawintegral end:$now_time \r\n";
+    }
+
     private function handle_award_hoteldata($record_list,$static_date){
         $now_date = date('Y-m-d');
         $all_hotel_data = array();
@@ -158,7 +259,10 @@ class ActivitypolicyController extends Controller{
             if(!empty($res_bill_day[0]['bill_days'])){
                 $bill_day = $res_bill_day[0]['bill_days'];
             }
-            $qk_data = $m_sale->getqkmoney($hotel_id,0,1);
+            $month_number = strtotime($static_date.'01');
+            $stime = date('Y-m-01 00:00:00',$month_number);
+            $etime = date('Y-m-t 23:59:59',$month_number);
+            $qk_data = $m_sale->getqkmoney($hotel_id,0,1,$stime,$etime);
             $cqqk_money = $qk_data['cqqk_money'];
             $award_data = array('hotel_id'=>$hotel_id,'num'=>$num,'award_openid'=>$award_openid,'integral'=>$integral,'step_num'=>$step_num,'step_integral'=>$step_integral,'real_step_num'=>$real_step_num,
                 'dp_policy_id'=>$dp_policy_id,'jt_policy_id'=>$jt_policy_id,'bill_day'=>$bill_day,'overdue_money'=>$cqqk_money,'status'=>3,'static_date'=>$static_date);

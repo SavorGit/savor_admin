@@ -46,8 +46,11 @@ class FinanceSaleModel extends BaseModel{
         }
     }
 
-    public function getqkmoney($hotel_id,$is_qk_money=1,$is_cqqk_money=1){
+    public function getqkmoney($hotel_id,$is_qk_money=1,$is_cqqk_money=1,$stime='',$etime=''){
         $qksale_where = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+        if(!empty($stime) && !empty($etime)){
+            $qksale_where['a.add_time'] = array(array('egt',$stime),array('elt',$etime));
+        }
         $qksale_where['a.ptype'] = array('in','0,2');
         $qksale_where['a.goods_id'] = array('not in',C('DATA_GOODS_IDS'));
         $qk_money = $cqqk_money = 0;
