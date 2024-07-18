@@ -967,14 +967,17 @@ class HotelController extends BaseController {
             $data['sale_end_date'] = '0000-00-00';
         }
         if(!empty($zz_date)){
-            $now_date = date('Y-m-d');
-            $max_data = date('Y-m-15');
-            if($now_date>$max_data){
-                $this->error('请在每个月15号前设置扎账时间');
-            }
             $min_zz_date = date('Y-m-01');
             $max_zz_date = date('Y-m-t');
             if($zz_date>=$min_zz_date && $zz_date<=$max_zz_date){
+                $res_zzdata = $hextModel->getOneData('zz_date', array('hotel_id'=>$hotel_id));
+                if($res_zzdata['zz_date']!=$zz_date){
+                    $now_date = date('Y-m-d');
+                    $max_data = date('Y-m-15');
+                    if($now_date>$max_data){
+                        $this->error('请在每个月15号前设置扎账时间');
+                    }
+                }
                 $data['zz_date'] = $zz_date;
             }else{
                 $this->error('请设置当月扎账时间');
