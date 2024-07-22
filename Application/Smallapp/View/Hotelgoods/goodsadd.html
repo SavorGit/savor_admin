@@ -24,19 +24,19 @@
 				</div>
 			</div>
 
-			<div class="form-group row" id="goods_price">
-				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="price" type="text" value="{$vinfo.price}" class="form-control"/>
-				</div>
-			</div>
+<!--			<div class="form-group row" id="goods_price">-->
+<!--				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>-->
+<!--				<div class="col-xs-12 col-sm-10">-->
+<!--					<input name="price" type="text" value="{$vinfo.price}" class="form-control"/>-->
+<!--				</div>-->
+<!--			</div>-->
 
-			<div class="form-group row" id="sale_line_price">
-				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
-				</div>
-			</div>
+<!--			<div class="form-group row" id="sale_line_price">-->
+<!--				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>-->
+<!--				<div class="col-xs-12 col-sm-10">-->
+<!--					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />-->
+<!--				</div>-->
+<!--			</div>-->
 
 			<div class="form-group row" id="sale_amount">
 				<label class="col-xs-12 col-sm-2 control-label">库存数量：</label>
@@ -45,15 +45,15 @@
 				</div>
 			</div>
 
-			<div class="form-group row" >
-				<label class="col-xs-12 col-sm-2 control-label">是否为秒杀商品：</label>
-				<div class="col-xs-12 col-sm-10">
-					<select name="is_seckill" id="goods_seckill" class="form-control bs-select" title="请选择">
-						<option value="0" <if condition="$vinfo.is_seckill eq 0">selected</if> >否</option>
-						<option value="1" <if condition="$vinfo.is_seckill eq 1">selected</if> >是</option>
-					</select>
-				</div>
-			</div>
+<!--			<div class="form-group row" >-->
+<!--				<label class="col-xs-12 col-sm-2 control-label">是否为秒杀商品：</label>-->
+<!--				<div class="col-xs-12 col-sm-10">-->
+<!--					<select name="is_seckill" id="goods_seckill" class="form-control bs-select" title="请选择">-->
+<!--						<option value="0" <if condition="$vinfo.is_seckill eq 0">selected</if> >否</option>-->
+<!--						<option value="1" <if condition="$vinfo.is_seckill eq 1">selected</if> >是</option>-->
+<!--					</select>-->
+<!--				</div>-->
+<!--			</div>-->
 
 		<div class="form-group row">
 			<label class="col-xs-12 col-sm-2 control-label">
@@ -274,18 +274,18 @@
 			</div>
 		</div>
 
-		<div class="form-group row">
-			<label class="col-xs-12 col-sm-2 control-label">
-				酒水类型:
-			</label>
-			<div class="col-xs-12 col-sm-10">
-				<select name="wine_type" class="form-control bs-select" title="请选择..." data-size="20" required>
-					<volist name=":C('GOODS_WINE_TYPES')" id="wtype">
-						<option value="{$key}" <if condition="$vinfo['wine_type'] eq $key"> selected </if> > {$wtype}</option>
-					</volist>
-				</select>
-			</div>
-		</div>
+<!--		<div class="form-group row">-->
+<!--			<label class="col-xs-12 col-sm-2 control-label">-->
+<!--				酒水类型:-->
+<!--			</label>-->
+<!--			<div class="col-xs-12 col-sm-10">-->
+<!--				<select name="wine_type" class="form-control bs-select" title="请选择..." data-size="20" required>-->
+<!--					<volist name=":C('GOODS_WINE_TYPES')" id="wtype">-->
+<!--						<option value="{$key}" <if condition="$vinfo['wine_type'] eq $key"> selected </if> > {$wtype}</option>-->
+<!--					</volist>-->
+<!--				</select>-->
+<!--			</div>-->
+<!--		</div>-->
 
 		<div class="form-group row">
 			<label class="col-xs-12 col-sm-2 control-label">选择库存商品：</label>
@@ -300,15 +300,15 @@
 		</div>
 
 
-		<div class="form-group row" >
-			<label class="col-xs-12 col-sm-2 control-label">是否开启酒水抽奖活动：</label>
-			<div class="col-xs-12 col-sm-10">
-				<select name="is_lottery" class="form-control bs-select" title="请选择">
-					<option value="0" <if condition="$vinfo.is_lottery eq 0">selected</if> >否</option>
-					<option value="1" <if condition="$vinfo.is_lottery eq 1">selected</if> >是</option>
-				</select>
-			</div>
-		</div>
+<!--		<div class="form-group row" >-->
+<!--			<label class="col-xs-12 col-sm-2 control-label">是否开启酒水抽奖活动：</label>-->
+<!--			<div class="col-xs-12 col-sm-10">-->
+<!--				<select name="is_lottery" class="form-control bs-select" title="请选择">-->
+<!--					<option value="0" <if condition="$vinfo.is_lottery eq 0">selected</if> >否</option>-->
+<!--					<option value="1" <if condition="$vinfo.is_lottery eq 1">selected</if> >是</option>-->
+<!--				</select>-->
+<!--			</div>-->
+<!--		</div>-->
 
 		<div class="form-group row" id="goods_onoffline">
 			<label class="col-xs-12 col-sm-2 control-label">

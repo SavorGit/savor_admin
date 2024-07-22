@@ -66,20 +66,21 @@ class HotelgoodsController extends BaseController {
             }else{
                 $flagstr = '';
             }
+            /*
             $is_seckill_str = '否';
             if($v['is_seckill']==1){
                 $is_seckill_str = '是';
             }
-
             $fields = "count(DISTINCT hotel_id) as num";
             $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'type'=>1),'id desc');
             $hotels = intval($res_hotelgoods['num']);
             $datalist[$k]['hotels'] = $hotels;
+            $datalist[$k]['is_seckill_str'] = $is_seckill_str;
+            */
             $datalist[$k]['typestr']=$goods_types[$v['type']];
             $datalist[$k]['flagstr'] = $flagstr;
             $datalist[$k]['image'] = $image;
             $datalist[$k]['statusstr'] = $goods_status[$v['status']];
-            $datalist[$k]['is_seckill_str'] = $is_seckill_str;
             $datalist[$k]['finance_goods_name'] = $finance_goods[$v['finance_goods_id']]['name'];
         }
         $this->assign('status',$status);

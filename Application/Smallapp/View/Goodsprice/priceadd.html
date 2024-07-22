@@ -1,0 +1,69 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+    <form method="post" action="{$host_url}/smallapp/goodsprice/priceadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input type="hidden" name="id" value="{$dinfo.id}">
+        <input type="hidden" name="goods_id" value="{$goods_id}">
+        <div class="pageFormContent modal-body">
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    名称：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" class="form-control" name="name" minlength="1" maxlength="100" value="{$dinfo.name}" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">价格：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="price" type="number" value="{$dinfo.price}" class="form-control" min="0" max="200000" required/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    政策类型：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="type" class="form-control bs-select" >
+                        <volist name=":C('TEMPLATE_TYPES')" id="ttinfo">
+                            <option value="{$key}" <if condition="$dinfo.type eq $key">selected</if> >{$ttinfo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    通用政策-选择城市：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select id="area_id" name="area_id" class="form-control bs-select" title="请选择城市" >
+                        <volist name="city_arr" id="vo">
+                            <option value="{$vo.id}" <if condition="$vo.id eq $dinfo['area_id']">selected</if> > {$vo.region_name}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    状态：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="status" class="form-control bs-select" title="请选择状态">
+                        <volist name=":C('TEMPLATE_STATUS')" id="tsinfo">
+                            <option value="{$key}" <if condition="$dinfo.status eq $key">selected</if> >{$tsinfo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>

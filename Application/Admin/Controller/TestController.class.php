@@ -3806,6 +3806,40 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             $m_winecode->add($add_data);
             echo "code:$now_code \r\n";
         }
+    }
+
+    public function upgoodsprice(){
+        $m_area  = new \Admin\Model\AreaModel();
+        $res_area = $m_area->getHotelAreaList();
+        $area_arr = array();
+        foreach ($res_area as $v){
+            if($v['id']==246){
+                continue;
+            }
+            $area_arr[$v['id']]=$v;
+        }
+        $sql_goods = 'select * from savor_smallapp_dishgoods where type=43 and status=1 order by id asc ';
+        $res_goods = $m_area->query($sql_goods);
+        $m_goods_price = new \Admin\Model\Smallapp\GoodsPriceModel();
+        $m_goods_price_hotel = new \Admin\Model\Smallapp\GoodsPriceHotelModel();
+        foreach ($res_goods as $v){
+            $goods_id = $v['id'];
+            $price = $v['price'];
+            foreach ($area_arr as $av){
+                $name = $v['name'].'-'.$av['region_name'].'-'.'通用政策';
+
+                $pdata = array('name'=>$name,'goods_id'=>$goods_id,'price'=>$price,'area_id'=>$av['id'],'type'=>1,'status'=>1);
+                $goods_price_id = $m_goods_price->add($pdata);
+
+                echo "goods_id:$goods_id savor_smallapp_goods_price \r\n";
+
+                $m_goods_price_hotel->add(array('goods_price_id'=>$goods_price_id,'area_id'=>$av['id'],'hotel_id'=>0));
+
+                echo "goods_id:$goods_id savor_smallapp_goods_price_hotel \r\n";
+
+            }
+
+        }
 
 
     }

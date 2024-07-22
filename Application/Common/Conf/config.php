@@ -1176,6 +1176,8 @@ $config['ORDER_EXPRESS_DTYPES'] = array(
     '2'=>array('id'=>2,'name'=>'第三方发货'),
 
 );
+$config['TEMPLATE_TYPES'] = array('1'=>'通用政策','2'=>'特殊政策');
+$config['TEMPLATE_STATUS'] = array('1'=>'执行中','2'=>'已终止');
 $config['JOB_DEPARTMENT_LIST'] = array( '1'=>array('id'=>1,'name'=>'AC'),'2'=>array('id'=>2,'name'=>'BD'), 
                                         '3'=>array('id'=>3,'name'=>'BDM'),'4'=>array('id'=>4,'name'=>'CM'),
                                     
