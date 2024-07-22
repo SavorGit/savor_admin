@@ -286,4 +286,81 @@ and a.type in (15,20) group by hotel.id order by a.area_id ";
         $filename = '邀请函点播积分餐厅名录';
         $this->exportToExcel($cell,$datalist,$filename,2);
     }
+
+    public function managerdata(){
+        $start_date = I('sdate','');
+        $end_date = I('edate','');
+
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+        }else{
+            $start_time = date('Y-01-01 00:00:00');
+            $end_time = date('Y-m-d 23:59:59');
+        }
+        if($start_time<'2024-01-01 00:00:00'){
+            echo 'Please enter a date for 2024';
+            exit;
+        }
+        $where = array('a.type'=>array('neq',4),'a.status'=>1,'a.integral'=>array('gt',0));
+        $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $where['a.hotel_id'] = array('not in',C('TEST_HOTEL'));
+
+        $fields = 'a.openid,a.area_id,a.area_name,a.hotel_id,a.hotel_name,sum(a.integral) as total_integral,user.mobile,user.nickName as nick_name,user.name,ui.integral as now_integral';
+        $group = 'a.openid';
+        $m_integral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $res_data = $m_integral_record->alias('a')
+            ->join('savor_smallapp_user user on a.openid=user.openid','left')
+            ->join('savor_smallapp_user_integral ui on a.openid=ui.openid','left')
+            ->field($fields)
+            ->where($where)
+            ->group($group)
+            ->select();
+
+        $sql_exchange = "select sum(total_fee) as money,openid from savor_smallapp_exchange where status=21 and 
+            add_time>='{$start_time}' and add_time<='{$end_time}' group by openid";
+        $res_exchange = $m_integral_record->query($sql_exchange);
+        $exchange_openids = array();
+        foreach ($res_exchange as $ev){
+            $exchange_openids[$ev['openid']] = $ev['money'];
+        }
+        $datalist=array();
+        foreach ($res_data as $v){
+            $total_integral = $v['total_integral'];
+            $openid = $v['openid'];
+            $now_integral = intval($v['now_integral']);
+
+            $i_fields = 'sum(integral) as integral';
+            $i_where = array('openid'=>$openid,'type'=>4);
+            $all_exchange_integral = $m_integral_record->getDataList($i_fields,$i_where,'id desc');
+            $exchange_integral = 0;
+            if(!empty($all_exchange_integral)){
+                $exchange_integral = abs($all_exchange_integral[0]['integral']);
+            }
+            $exchange_money = isset($exchange_openids[$openid])?$exchange_openids[$openid]:0;
+            //城市、酒楼、酒楼ID、餐厅经理昵称、餐厅经理姓名、餐厅经理手机号、餐厅经理Openid、产生积分、消耗积分、兑换总金额、当前剩余积分
+            $datalist[]=array('area_name'=>$v['area_name'],'hotel_name'=>$v['hotel_name'],'hotel_id'=>$v['hotel_id'],'nick_name'=>$v['nick_name'],
+                'name'=>$v['name'],'mobile'=>$v['mobile'],'openid'=>$openid,'total_integral'=>$total_integral,'exchange_integral'=>$exchange_integral,
+                'exchange_money'=>$exchange_money,'now_integral'=>$now_integral);
+        }
+        $cell = array(
+            array('area_name','城市'),
+            array('hotel_name','酒楼'),
+            array('hotel_id','酒楼ID'),
+            array('nick_name','餐厅经理昵称'),
+            array('name','姓名'),
+            array('mobile','餐厅经理手机号'),
+            array('openid','餐厅经理Openid'),
+            array('total_integral','产生积分'),
+            array('exchange_integral','消耗积分'),
+            array('now_integral','当前剩余积分'),
+            array('exchange_money','兑换总金额'),
+        );
+        $filename = '餐厅经理积分';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+
+
+    }
 }
