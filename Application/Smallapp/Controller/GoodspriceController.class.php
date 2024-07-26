@@ -66,6 +66,7 @@ class GoodspriceController extends BaseController {
         if(IS_POST){
             $name = I('post.name','','trim');
             $price = I('post.price',0,'intval');
+            $line_price = I('post.line_price',0,'intval');
             $type = I('post.type',0,'intval');//1通用政策,2特殊政策
             $area_id = I('post.area_id',0,'intval');
             $status = I('post.status',0,'intval');
@@ -84,7 +85,7 @@ class GoodspriceController extends BaseController {
                 }
             }
             $userInfo = session('sysUserInfo');
-            $add_data = array('name'=>$name,'goods_id'=>$goods_id,'price'=>$price,
+            $add_data = array('name'=>$name,'goods_id'=>$goods_id,'price'=>$price,'line_price'=>$line_price,
                 'type'=>$type,'area_id'=>$area_id,'status'=>$status,'sysuser_id'=>$userInfo['id']);
             $m_goods_hotel = new \Admin\Model\Smallapp\GoodsPriceHotelModel();
             if($id){
