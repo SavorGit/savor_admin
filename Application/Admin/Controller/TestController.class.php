@@ -3825,10 +3825,11 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         foreach ($res_goods as $v){
             $goods_id = $v['id'];
             $price = $v['price'];
+            $line_price = $v['line_price'];
             foreach ($area_arr as $av){
                 $name = $v['name'].'-'.$av['region_name'].'-'.'通用政策';
 
-                $pdata = array('name'=>$name,'goods_id'=>$goods_id,'price'=>$price,'area_id'=>$av['id'],'type'=>1,'status'=>1);
+                $pdata = array('name'=>$name,'goods_id'=>$goods_id,'price'=>$price,'line_price'=>$line_price,'area_id'=>$av['id'],'type'=>1,'status'=>1,'sysuser_id'=>1);
                 $goods_price_id = $m_goods_price->add($pdata);
 
                 echo "goods_id:$goods_id savor_smallapp_goods_price \r\n";
