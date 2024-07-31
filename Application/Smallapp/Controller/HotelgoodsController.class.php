@@ -250,12 +250,12 @@ class HotelgoodsController extends BaseController {
                 $tv_media_id = 0;
             }
 
-            if($line_price && $line_price<$price){
-                $this->output('划线价必须大于零售价', "hotelgoods/goodsadd", 2, 0);
-            }
-            if(!$price){
-                $this->output('建议零售价不能为空', "hotelgoods/goodsadd", 2, 0);
-            }
+//            if($line_price && $line_price<$price){
+//                $this->output('划线价必须大于零售价', "hotelgoods/goodsadd", 2, 0);
+//            }
+//            if(!$price){
+//                $this->output('建议零售价不能为空', "hotelgoods/goodsadd", 2, 0);
+//            }
 //            $where = array('name'=>$name,'status'=>1);
 //            if($id){
 //                $where['id']= array('neq',$id);
