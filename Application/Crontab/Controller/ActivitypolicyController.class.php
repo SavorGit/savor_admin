@@ -63,7 +63,11 @@ class ActivitypolicyController extends Controller{
         $now_time = date('Y-m-d H:i:s');
         echo "zzhoteldata start:$now_time \r\n";
 
-        $pre_month = date('Ym',strtotime('-1 month'));
+//        $pre_month = date('Ym',strtotime('-1 month'));
+//        $pre_month = date('Ym', strtotime(date('Y-m-01') . "-1 month"));
+        $date = new \DateTime();
+        $date->sub(new \DateInterval('P1M'));
+        $pre_month = $date->format('Ym');
         $now_month = date('Y-m');
         $now_date = date('Y-m-d');
         $model = M();
@@ -127,6 +131,34 @@ class ActivitypolicyController extends Controller{
         }
         $now_time = date('Y-m-d H:i:s');
         echo "zzhoteldata end:$now_time \r\n";
+    }
+
+    public function recycleintegral(){
+        die('特殊情况用');
+        $m_award_hoteldata = new \Admin\Model\FinanceAwardHoteldataModel();
+        $m_userintegral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+        $sql = 'select * from savor_finance_award_hoteldata where static_date=202407 and is_confirm=1 and status=2 and integral+step_integral>0 order by id desc ';
+        $res_data = M()->query($sql);
+        foreach ($res_data as $v){
+            $all_integral = $v['integral']+$v['step_integral'];
+            $openid = $v['award_openid'];
+            $res_integral = $m_userintegral->getInfo(array('openid'=>$openid));
+            $userintegral = $res_integral['integral'];
+            echo "hotel_id:{$v['hotel_id']},hotel_name:{$v['hotel_name']},$userintegral<$all_integral \r\n";
+            continue;
+
+            if($userintegral>=$all_integral) {
+                echo "hotel_id:{$v['hotel_id']},$userintegral = $userintegral-$all_integral; \r\n";
+
+                $userintegral = $userintegral-$all_integral;
+                $m_userintegral->updateData(array('id'=>$res_integral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+
+                $m_userintegral_record->delData(array('openid'=>$openid,'jdorder_id'=>$v['id'],'type'=>array('in','26,27')));
+
+                $m_award_hoteldata->updateData(array('id'=>$v['id']),array('status'=>3,'is_confirm'=>0,'confirm_time'=>'0000-00-00 00:00:00'));
+            }
+        }
     }
 
     public function thawintegral(){
