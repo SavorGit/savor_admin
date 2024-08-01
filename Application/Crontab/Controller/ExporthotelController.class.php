@@ -353,6 +353,7 @@ class ExporthotelController extends BaseController{
 
 
     public function abnormalpricehotels(){
+        die('暂停使用等新上线商品酒楼售酒维护完毕');
         $now_time = date('Y-m-d H:i:s');
         echo "abnormalpricehotels start:$now_time \r\n";
 
