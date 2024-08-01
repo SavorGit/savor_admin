@@ -22,7 +22,7 @@ class HotelgoodsController extends BaseController {
 
         $goods_types = C('DISH_TYPE');
         unset($goods_types[21],$goods_types[22],$goods_types[23],$goods_types[42]);
-        $where = array();
+        $where = array('add_time'=>array('gt','2024-08-01 00:00:00'));
         $where['id'] = array('neq',622);
         if($type){
             $where['type'] = $type;
