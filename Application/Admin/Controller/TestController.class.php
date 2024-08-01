@@ -3809,6 +3809,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function upgoodsprice(){
+        exit;
         $m_area  = new \Admin\Model\AreaModel();
         $res_area = $m_area->getHotelAreaList();
         $area_arr = array();
@@ -3818,7 +3819,23 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             }
             $area_arr[$v['id']]=$v;
         }
-        $sql_goods = 'select * from savor_smallapp_dishgoods where type=43 and status=1 order by id asc ';
+//        $sql = 'select * from savor_smallapp_dishgoods where type=43 and status=1 and name not like "%测试%" group by finance_goods_id order  by id desc ';
+//        $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+//        $res_allgoods = $m_dishgoods->query($sql);
+//        foreach ($res_allgoods as $v){
+//            if($v['id']==11211){
+//                continue;
+//            }
+//            $v['status'] = 2;
+//            unset($v['id'],$v['update_time'],$v['add_time']);
+//            $row_id = $m_dishgoods->add($v);
+//            echo "goods_id:$row_id \r\n";
+//        }
+//        exit;
+
+
+//        $sql_goods = 'select * from savor_smallapp_dishgoods where type=43 and status=1 order by id asc ';
+        $sql_goods = "select * from savor_smallapp_dishgoods where type=43 and add_time>='2024-08-01 00:00:00' order by id asc";
         $res_goods = $m_area->query($sql_goods);
         $m_goods_price = new \Admin\Model\Smallapp\GoodsPriceModel();
         $m_goods_price_hotel = new \Admin\Model\Smallapp\GoodsPriceHotelModel();
