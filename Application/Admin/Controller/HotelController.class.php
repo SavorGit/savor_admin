@@ -1003,6 +1003,10 @@ class HotelController extends BaseController {
             $m_sysuser = new \Admin\Model\UserModel();
             $res_user = $m_sysuser->getUserInfo($residenter_id);
             $bd_name = $res_user['remark'];
+        }else{
+            if($bd_name=='无'){
+                $bd_name = '';
+            }
         }
         $data['bd_name'] = $bd_name;
         $data['bdm_name'] = $bdm_name;
