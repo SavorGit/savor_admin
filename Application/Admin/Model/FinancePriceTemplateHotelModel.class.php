@@ -29,7 +29,9 @@ class FinancePriceTemplateHotelModel extends BaseModel{
     }
 
     public function getHotelGoodsPrice($hotel_id,$goods_id){
-        $where = array('a.hotel_id'=>array('in',"$hotel_id,0"),'a.goods_id'=>$goods_id,'t.status'=>1);
+        $m_hotel = new \Admin\Model\HotelModel();
+        $res_hotel = $m_hotel->getRow('area_id',array('id'=>$hotel_id));
+        $where = array('a.hotel_id'=>array('in',"$hotel_id,0"),'a.goods_id'=>$goods_id,'t.status'=>1,'a.area_id'=>$res_hotel['area_id']);
         $result = $this->alias('a')
             ->join('savor_finance_price_template t on a.template_id=t.id','left')
             ->field('a.template_id')
