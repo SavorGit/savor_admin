@@ -62,6 +62,7 @@ class SaleuserController extends BaseController {
         $hotel_name = I('hotel_name','','trim');
         $openid = I('openid','','trim');
         $type = I('type',0,'intval');
+        $area_id = I('area_id',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
 
@@ -74,6 +75,9 @@ class SaleuserController extends BaseController {
         }
         if($type){
             $where['a.type'] = $type;
+        }
+        if($area_id){
+            $where['a.area_id'] = $area_id;
         }
         if($start_date && $end_date){
             $stime = strtotime($start_date);
@@ -144,6 +148,11 @@ class SaleuserController extends BaseController {
             $integral = intval($res_integral['integral']);
         }
         unset($integral_types[5]);
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+
+        $this->assign('area_id',$area_id);
+        $this->assign('area',$area_arr);
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('data',$data_list);
